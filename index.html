@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Finance Tracker</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Finance Tracker" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --patrick:#3B82F6; --patrick-light:#DBEAFE; --patrick-bg:#EFF6FF;
+    --aica:#F472B6; --aica-light:#FCE7F3; --aica-bg:#FDF2F8;
+    --bg:#F8FAFC; --card:#FFFFFF; --border:#E2E8F0;
+    --text:#1E293B; --text-muted:#64748B;
+    --success:#22C55E; --success-light:#DCFCE7;
+    --warning:#F59E0B; --warning-light:#FEF3C7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%;}
+  .app-header{background:white;border-bottom:1px solid var(--border);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px;}
+  .app-title{font-size:18px;font-weight:700;}
+  .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .user-toggle{display:flex;background:#F1F5F9;border-radius:12px;padding:3px;gap:3px;}
+  .user-btn{padding:8px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s;background:transparent;color:var(--text-muted);}
+  .user-btn.active-patrick{background:var(--patrick);color:white;box-shadow:0 2px 8px rgba(59,130,246,0.3);}
+  .user-btn.active-aica{background:var(--aica);color:white;box-shadow:0 2px 8px rgba(244,114,182,0.3);}
+  .container{max-width:1200px;margin:0 auto;padding:20px;}
+  .tabs{display:flex;gap:3px;background:white;border-radius:12px;padding:3px;margin-bottom:20px;border:1px solid var(--border);}
+  .tab-btn{flex:1;padding:10px 8px;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:12px;transition:all 0.2s;background:transparent;color:var(--text-muted);}
+  .tab-btn.active{background:var(--text);color:white;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+  .card h2{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group.full-width{grid-column:1/-1;}
+  .form-group label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+  .form-group input,.form-group select{padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;}
+  .form-group input:focus,.form-group select:focus{border-color:var(--patrick);box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+  .fund-options{display:flex;flex-wrap:wrap;gap:8px;}
+  .fund-option{padding:8px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;background:white;}
+  .fund-option.selected{border-color:var(--patrick);background:var(--patrick-bg);color:var(--patrick);}
+  .fund-option.selected-aica{border-color:var(--aica);background:var(--aica-bg);color:var(--aica);}
+  .submit-btn{padding:14px 28px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;color:white;width:100%;margin-top:8px;}
+  .submit-btn.patrick{background:var(--patrick);}
+  .submit-btn.patrick:hover{background:#2563EB;}
+  .submit-btn.aica{background:var(--aica);}
+  .submit-btn.aica:hover{background:#EC4899;}
+  .submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .summary-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+  .summary-card{background:white;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+  .summary-card .amount{font-size:20px;font-weight:800;margin:4px 0;}
+  .summary-card .label{font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;}
+  .filter-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+  .filter-bar select{padding:8px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;}
+  .expense-table{width:100%;border-collapse:separate;border-spacing:0 5px;}
+  .expense-table thead th{text-align:left;padding:6px 10px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+  .expense-table tbody tr{transition:transform 0.15s;}
+  .expense-table tbody td{padding:10px;font-size:13px;}
+  .expense-table tbody td:first-child{border-left:4px solid;border-top-left-radius:10px;border-bottom-left-radius:10px;}
+  .expense-table tbody td:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px;}
+  tr.row-patrick td{background:var(--patrick-bg);}
+  tr.row-patrick td:first-child{border-left-color:var(--patrick);}
+  tr.row-aica td{background:var(--aica-bg);}
+  tr.row-aica td:first-child{border-left-color:var(--aica);}
+  .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+  .badge-savings{background:#E0E7FF;color:#4338CA;}
+  .badge-opex{background:#FEF3C7;color:#B45309;}
+  .badge-patrick{background:var(--patrick-light);color:var(--patrick);}
+  .badge-aica{background:var(--aica-light);color:var(--aica);}
+  .reimburse-btn{padding:4px 10px;border:2px solid var(--warning);background:var(--warning-light);color:#B45309;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .reimburse-btn:hover{background:var(--warning);color:white;}
+  .reimbursed-badge{padding:4px 10px;background:var(--success-light);color:#16A34A;border:2px solid var(--success);border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .category-badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;background:#F1F5F9;color:var(--text-muted);white-space:nowrap;}
+  .delete-btn{padding:4px 8px;border:none;background:transparent;color:#CBD5E1;cursor:pointer;border-radius:6px;font-size:16px;transition:all 0.15s;}
+  .delete-btn:hover{background:#FEE2E2;color:#EF4444;}
+  .data-btn{padding:6px 12px;border:1px solid var(--border);background:white;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--text-muted);}
+  .data-btn:hover{background:#F1F5F9;color:var(--text);}
+  .empty-state{text-align:center;padding:50px 20px;color:var(--text-muted);}
+  .empty-state .icon{font-size:44px;margin-bottom:10px;}
+  .chart-row{display:flex;gap:20px;flex-wrap:wrap;}
+  .chart-box{flex:1;min-width:280px;}
+  .chart-box canvas{max-height:300px;}
+  .reimb-section{margin-top:10px;padding:12px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;}
+  .reimb-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .reimb-toggle input[type=checkbox]{width:18px;height:18px;accent-color:var(--warning);cursor:pointer;}
+  .reimb-toggle-label{font-size:14px;font-weight:600;color:#92400E;}
+  .reimb-details{margin-top:10px;display:flex;flex-direction:column;gap:10px;}
+  .reimb-to-options{display:flex;gap:8px;}
+  .reimb-to-opt{padding:6px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;background:white;}
+  .reimb-to-opt.sel-patrick{border-color:var(--patrick);background:var(--patrick-bg);color:var(--patrick);}
+  .reimb-to-opt.sel-aica{border-color:var(--aica);background:var(--aica-bg);color:var(--aica);}
+  .reimb-pct-row{display:flex;align-items:center;gap:12px;}
+  .reimb-pct-row input[type=range]{flex:1;accent-color:var(--warning);height:6px;}
+  .reimb-pct-value{font-size:18px;font-weight:800;min-width:52px;text-align:center;color:#92400E;}
+  .reimb-pct-calc{font-size:13px;color:#92400E;font-weight:500;margin-top:2px;}
+  .reimb-sublabel{font-size:12px;font-weight:600;color:#92400E;text-transform:uppercase;margin-bottom:4px;}
+  .balance-card{border-radius:16px;padding:28px;text-align:center;margin-bottom:16px;}
+  .balance-card.patrick-card{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:2px solid var(--patrick);}
+  .balance-card.aica-card{background:linear-gradient(135deg,#FDF2F8,#FCE7F3);border:2px solid var(--aica);}
+  .balance-amount{font-size:38px;font-weight:900;margin:10px 0 4px;}
+  .balance-subtitle{font-size:13px;color:var(--text-muted);font-weight:500;}
+  .balance-label{font-size:16px;font-weight:700;}
+  .balance-detail-table{width:100%;border-collapse:collapse;margin-top:14px;}
+  .balance-detail-table th{text-align:left;padding:6px 10px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;border-bottom:2px solid var(--border);}
+  .balance-detail-table td{padding:8px 10px;font-size:13px;border-bottom:1px solid var(--border);}
+  .net-banner{border-radius:16px;padding:20px;text-align:center;margin-bottom:16px;background:white;border:2px solid var(--border);}
+  .net-banner .net-amount{font-size:32px;font-weight:900;margin:6px 0;}
+  .acct-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+  .acct-card{border-radius:14px;padding:18px;text-align:center;border:2px solid var(--border);background:white;}
+  .acct-card .acct-icon{font-size:26px;margin-bottom:4px;}
+  .acct-card .acct-name{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;}
+  .acct-card .acct-bal{font-size:26px;font-weight:900;margin:4px 0;}
+  .acct-card .acct-sub{font-size:11px;color:var(--text-muted);}
+  .acct-edit{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:8px;}
+  .acct-edit input{width:110px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:14px;text-align:center;font-family:inherit;outline:none;}
+  .acct-edit button{padding:6px 10px;border:1px solid var(--border);background:#F1F5F9;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;}
+
+  /* Setup screen */
+  .setup-screen{max-width:500px;margin:60px auto;padding:30px;text-align:center;}
+  .setup-screen h1{font-size:28px;margin-bottom:8px;}
+  .setup-screen p{color:var(--text-muted);margin-bottom:20px;line-height:1.5;}
+  .setup-input{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit;outline:none;text-align:center;margin-bottom:12px;}
+  .setup-input:focus{border-color:var(--patrick);}
+  .setup-go{padding:14px 32px;background:var(--patrick);color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;width:100%;}
+  .setup-go:hover{background:#2563EB;}
+  .setup-go:disabled{opacity:0.5;}
+
+  /* Sync indicator */
+  .sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+  .sync-ok{background:var(--success);}
+  .sync-loading{background:var(--warning);animation:pulse 1s infinite;}
+  .sync-error{background:#EF4444;}
+  .sync-status{font-size:11px;color:var(--text-muted);display:flex;align-items:center;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  /* Loading overlay */
+  .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:12px;}
+  .spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--patrick);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  @media(max-width:768px){
+    .form-grid{grid-template-columns:1fr;}
+    .app-header{flex-direction:column;}
+    .container{padding:14px;}
+    .balance-amount{font-size:30px;}
+    .acct-cards{grid-template-columns:1fr;}
+    .summary-cards{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useMemo,useRef,useEffect,useCallback}=React;
+
+const CATEGORIES=['Groceries','Driver Salary','Maid Salary','Restaurant / Eating Out','Home Improvements','Hobbies Together','Housing Expenses'];
+const FUND_SOURCES=[
+  {id:'savings',label:'Savings Account',icon:'\uD83C\uDFE6'},
+  {id:'opex',label:'Opex Account',icon:'\uD83D\uDCB3'},
+  {id:'patrick',label:'Patrick',icon:'\uD83D\uDD35'},
+  {id:'aica',label:'Aica',icon:'\uD83E\uDE77'},
+];
+const CAT_COLORS=['#6366F1','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4'];
+const fmt=(n)=>'\u20B1'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+const SCRIPT_URL_KEY='finance_tracker_script_url';
+
+/* ─── API helper ─── */
+function api(scriptUrl,method,body){
+  if(method==='GET'){
+    return fetch(scriptUrl+'?action=getAll',{redirect:'follow'}).then(r=>r.json());
+  }
+  return fetch(scriptUrl,{method:'POST',redirect:'follow',body:JSON.stringify(body)}).then(r=>r.json());
+}
+
+/* ─── PieChart ─── */
+function PieChartCanvas({data,title}){
+  const canvasRef=useRef(null);const chartRef=useRef(null);
+  useEffect(()=>{
+    if(chartRef.current)chartRef.current.destroy();
+    if(!canvasRef.current||data.length===0)return;
+    chartRef.current=new Chart(canvasRef.current,{
+      type:'doughnut',
+      data:{labels:data.map(d=>d.name),datasets:[{data:data.map(d=>d.value),backgroundColor:data.map(d=>d.color),borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
+      options:{responsive:true,maintainAspectRatio:true,cutout:'45%',
+        plugins:{
+          legend:{display:true,position:'bottom',labels:{padding:14,usePointStyle:true,pointStyle:'circle',font:{size:11,weight:'600'}}},
+          tooltip:{callbacks:{label:function(ctx){return ' '+ctx.label+': '+fmt(ctx.parsed);}},padding:10,cornerRadius:10,bodyFont:{size:13}},
+          title:{display:!!title,text:title,font:{size:13,weight:'700'},color:'#64748B'}
+        }
+      }
+    });
+    return()=>{if(chartRef.current)chartRef.current.destroy();};
+  },[data,title]);
+  if(data.length===0)return React.createElement('div',{className:'empty-state',style:{padding:30}},React.createElement('div',null,'No data for this period'));
+  return React.createElement('canvas',{ref:canvasRef});
+}
+
+/* ─── Setup Screen ─── */
+function SetupScreen({onConnect}){
+  const[url,setUrl]=useState('');
+  return React.createElement('div',{className:'setup-screen card'},
+    React.createElement('div',{style:{fontSize:48,marginBottom:12}},'\uD83D\uDCB0'),
+    React.createElement('h1',null,'Finance Tracker'),
+    React.createElement('p',null,'Paste your Google Apps Script URL below to connect. You only need to do this once — it will be saved in this browser.'),
+    React.createElement('input',{className:'setup-input',placeholder:'https://script.google.com/macros/s/...',value:url,onChange:e=>setUrl(e.target.value)}),
+    React.createElement('button',{className:'setup-go',disabled:!url.includes('script.google.com'),onClick:()=>onConnect(url.trim())},'Connect'),
+    React.createElement('p',{style:{marginTop:16,fontSize:12,color:'#94A3B8'}},'See the setup guide that came with this file for instructions.')
+  );
+}
+
+/* ─── Main App ─── */
+function App(){
+  const[scriptUrl,setScriptUrl]=useState(()=>{try{return window.localStorage_disabled?'':localStorage.getItem(SCRIPT_URL_KEY)||'';}catch(e){return'';}});
+  const[connected,setConnected]=useState(!!scriptUrl);
+  const[loading,setLoading]=useState(false);
+  const[syncStatus,setSyncStatus]=useState('ok'); // ok, loading, error
+  const[currentUser,setCurrentUser]=useState('Patrick');
+  const[activeTab,setActiveTab]=useState('add');
+  const[expenses,setExpenses]=useState([]);
+  const[nextId,setNextId]=useState(1);
+
+  const[savingsStart,setSavingsStart]=useState(50000);
+  const[opexStart,setOpexStart]=useState(30000);
+  const[editingSavings,setEditingSavings]=useState(false);
+  const[editingOpex,setEditingOpex]=useState(false);
+  const[tempSavings,setTempSavings]=useState('50000');
+  const[tempOpex,setTempOpex]=useState('30000');
+
+  const today=new Date().toISOString().split('T')[0];
+  const[formDate,setFormDate]=useState(today);
+  const[formDesc,setFormDesc]=useState('');
+  const[formAmount,setFormAmount]=useState('');
+  const[formCategory,setFormCategory]=useState(CATEGORIES[0]);
+  const[formFund,setFormFund]=useState('');
+  const[formReimbursable,setFormReimbursable]=useState(false);
+  const[formReimbTo,setFormReimbTo]=useState('patrick');
+  const[formReimbPct,setFormReimbPct]=useState(50);
+
+  const now=new Date();
+  const curMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const[filterMonth,setFilterMonth]=useState(curMonth);
+  const[filterUser,setFilterUser]=useState('All');
+
+  // Connect
+  const handleConnect=(url)=>{
+    try{localStorage.setItem(SCRIPT_URL_KEY,url);}catch(e){}
+    setScriptUrl(url);
+    setConnected(true);
+    loadData(url);
+  };
+
+  // Disconnect
+  const handleDisconnect=()=>{
+    try{localStorage.removeItem(SCRIPT_URL_KEY);}catch(e){}
+    setScriptUrl('');
+    setConnected(false);
+    setExpenses([]);
+  };
+
+  // Load data from Google Sheets
+  const loadData=useCallback((url)=>{
+    var u=url||scriptUrl;if(!u)return;
+    setSyncStatus('loading');
+    api(u,'GET').then(d=>{
+      if(d.expenses){
+        setExpenses(d.expenses);
+        var maxId=d.expenses.reduce((m,e)=>Math.max(m,e.id||0),0);
+        setNextId(maxId+1);
+      }
+      if(d.settings){
+        setSavingsStart(d.settings.savingsStart||50000);
+        setOpexStart(d.settings.opexStart||30000);
+        setTempSavings(String(d.settings.savingsStart||50000));
+        setTempOpex(String(d.settings.opexStart||30000));
+      }
+      setSyncStatus('ok');
+    }).catch(()=>setSyncStatus('error'));
+  },[scriptUrl]);
+
+  // Auto-load on mount & refresh every 30s
+  useEffect(()=>{
+    if(!scriptUrl)return;
+    setLoading(true);
+    api(scriptUrl,'GET').then(d=>{
+      if(d.expenses){setExpenses(d.expenses);var maxId=d.expenses.reduce((m,e)=>Math.max(m,e.id||0),0);setNextId(maxId+1);}
+      if(d.settings){setSavingsStart(d.settings.savingsStart||50000);setOpexStart(d.settings.opexStart||30000);setTempSavings(String(d.settings.savingsStart||50000));setTempOpex(String(d.settings.opexStart||30000));}
+      setSyncStatus('ok');setLoading(false);
+    }).catch(()=>{setSyncStatus('error');setLoading(false);});
+
+    var interval=setInterval(()=>loadData(),30000);
+    return()=>clearInterval(interval);
+  },[scriptUrl]);
+
+  // Add expense
+  const handleSubmit=()=>{
+    if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!formFund)return;
+    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false};
+    setExpenses(prev=>[newExp,...prev]);
+    setNextId(n=>n+1);
+    setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+    setFormDesc('');setFormAmount('');setFormFund('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);
+    setActiveTab('list');
+  };
+
+  // Toggle reimbursed
+  const toggleReimbursed=(id)=>{
+    setExpenses(prev=>prev.map(e=>e.id===id?{...e,reimbursed:!e.reimbursed}:e));
+    setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'toggleReimbursed',id:id}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+  };
+
+  // Delete
+  const deleteExpense=(id)=>{
+    setExpenses(prev=>prev.filter(e=>e.id!==id));
+    setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'deleteExpense',id:id}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+  };
+
+  // Save account settings
+  const saveSettings=(sv,op)=>{
+    setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'updateSettings',settings:{savingsStart:sv,opexStart:op}}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+  };
+
+  const reimbAmt=(e)=>e.amount*(e.reimbPct||50)/100;
+
+  const monthOptions=useMemo(()=>{const s=new Set();expenses.forEach(e=>{const d=new Date(e.date);s.add(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));});s.add(curMonth);return Array.from(s).sort().reverse();},[expenses]);
+  const monthLabel=(ym)=>{const[y,m]=ym.split('-');return new Date(y,m-1).toLocaleDateString('en-US',{month:'long',year:'numeric'});};
+
+  const filtered=useMemo(()=>expenses.filter(e=>{const d=new Date(e.date);const ym=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');return ym===filterMonth&&(filterUser==='All'||e.user===filterUser);}).sort((a,b)=>new Date(b.date)-new Date(a.date)),[expenses,filterMonth,filterUser]);
+
+  const totalSpent=useMemo(()=>filtered.reduce((s,e)=>s+e.amount,0),[filtered]);
+  const patrickTotal=useMemo(()=>filtered.filter(e=>e.user==='Patrick').reduce((s,e)=>s+e.amount,0),[filtered]);
+  const aicaTotal=useMemo(()=>filtered.filter(e=>e.user==='Aica').reduce((s,e)=>s+e.amount,0),[filtered]);
+
+  const savingsSpent=useMemo(()=>expenses.filter(e=>e.fundSource==='savings').reduce((s,e)=>s+e.amount,0),[expenses]);
+  const opexSpent=useMemo(()=>expenses.filter(e=>e.fundSource==='opex').reduce((s,e)=>s+e.amount,0),[expenses]);
+  const savingsBalance=savingsStart-savingsSpent;
+  const opexBalance=opexStart-opexSpent;
+
+  const owedToPatrick=useMemo(()=>expenses.filter(e=>e.reimbursable&&e.reimbTo==='patrick'&&!e.reimbursed),[expenses]);
+  const owedToAica=useMemo(()=>expenses.filter(e=>e.reimbursable&&e.reimbTo==='aica'&&!e.reimbursed),[expenses]);
+  const owedToPatrickTotal=useMemo(()=>owedToPatrick.reduce((s,e)=>s+reimbAmt(e),0),[owedToPatrick]);
+  const owedToAicaTotal=useMemo(()=>owedToAica.reduce((s,e)=>s+reimbAmt(e),0),[owedToAica]);
+  const netOwed=owedToPatrickTotal-owedToAicaTotal;
+
+  const categoryPieData=useMemo(()=>{const m={};filtered.forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
+  const patrickPieData=useMemo(()=>{const m={};filtered.filter(e=>e.user==='Patrick').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
+  const aicaPieData=useMemo(()=>{const m={};filtered.filter(e=>e.user==='Aica').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
+
+  const fundBadgeEl=(fs)=>{const m={'savings':['badge badge-savings','\uD83C\uDFE6 Savings'],'opex':['badge badge-opex','\uD83D\uDCB3 Opex'],'patrick':['badge badge-patrick','\uD83D\uDD35 Patrick'],'aica':['badge badge-aica','\uD83E\uDE77 Aica']};const[cls,txt]=m[fs]||['badge',''];return React.createElement('span',{className:cls},txt);};
+  const reimbInfoEl=(e)=>{if(!e.reimbursable)return React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'\u2014');var who=e.reimbTo==='patrick'?'\uD83D\uDD35 Patrick':'\uD83E\uDE77 Aica';return React.createElement('span',{className:'badge '+(e.reimbTo==='patrick'?'badge-patrick':'badge-aica')},who+' '+e.reimbPct+'%');};
+
+  // ─── Setup screen ───
+  if(!connected) return React.createElement(SetupScreen,{onConnect:handleConnect});
+
+  // ─── Loading ───
+  if(loading) return React.createElement('div',{className:'loading-overlay'},React.createElement('div',{className:'spinner'}),React.createElement('div',{style:{fontWeight:600,color:'var(--text-muted)'}},'Loading your data...'));
+
+  return React.createElement('div',null,
+    React.createElement('div',{className:'app-header'},
+      React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10}},
+        React.createElement('div',{className:'app-title'},'\uD83D\uDCB0 Finance Tracker'),
+        React.createElement('div',{className:'sync-status'},
+          React.createElement('span',{className:'sync-dot '+(syncStatus==='ok'?'sync-ok':syncStatus==='loading'?'sync-loading':'sync-error')}),
+          syncStatus==='ok'?'Synced':syncStatus==='loading'?'Syncing...':'Offline'
+        )
+      ),
+      React.createElement('div',{className:'header-right'},
+        React.createElement('button',{className:'data-btn',onClick:()=>loadData()},'\u21BB Refresh'),
+        React.createElement('button',{className:'data-btn',onClick:handleDisconnect,style:{color:'#EF4444'}},'\u2715 Disconnect'),
+        React.createElement('div',{className:'user-toggle'},
+          React.createElement('button',{className:'user-btn '+(currentUser==='Patrick'?'active-patrick':''),onClick:()=>setCurrentUser('Patrick')},'\uD83D\uDD35 Patrick'),
+          React.createElement('button',{className:'user-btn '+(currentUser==='Aica'?'active-aica':''),onClick:()=>setCurrentUser('Aica')},'\uD83E\uDE77 Aica')
+        )
+      )
+    ),
+    React.createElement('div',{className:'container'},
+      React.createElement('div',{className:'tabs'},
+        React.createElement('button',{className:'tab-btn '+(activeTab==='add'?'active':''),onClick:()=>setActiveTab('add')},'+ Add'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='list'?'active':''),onClick:()=>setActiveTab('list')},'\uD83D\uDCCB Expenses'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='charts'?'active':''),onClick:()=>setActiveTab('charts')},'\uD83D\uDCCA Charts'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='balances'?'active':''),onClick:()=>setActiveTab('balances')},'\u2696\uFE0F Balances')
+      ),
+
+      /* ADD */
+      activeTab==='add'&&React.createElement('div',{className:'card'},
+        React.createElement('h2',null,currentUser==='Patrick'?'\uD83D\uDD35':'\uD83E\uDE77',' New Expense \u2014 ',currentUser),
+        React.createElement('div',{className:'form-grid'},
+          React.createElement('div',{className:'form-group'},React.createElement('label',null,'Date'),React.createElement('input',{type:'date',value:formDate,onChange:e=>setFormDate(e.target.value)})),
+          React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (\u20B1)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:formAmount,onChange:e=>setFormAmount(e.target.value)})),
+          React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Description'),React.createElement('input',{type:'text',placeholder:'What did you spend on?',value:formDesc,onChange:e=>setFormDesc(e.target.value)})),
+          React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:formCategory,onChange:e=>setFormCategory(e.target.value)},CATEGORIES.map(c=>React.createElement('option',{key:c,value:c},c)))),
+          React.createElement('div',{className:'form-group full-width'},
+            React.createElement('label',null,'Paid From'),
+            React.createElement('div',{className:'fund-options'},FUND_SOURCES.map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(formFund===fs.id?(currentUser==='Patrick'?'selected':'selected-aica'):''),onClick:()=>{setFormFund(fs.id);setFormReimbursable(false);}},fs.icon+' '+fs.label)))
+          ),
+          formFund&&React.createElement('div',{className:'form-group full-width'},
+            React.createElement('div',{className:'reimb-section'},
+              React.createElement('label',{className:'reimb-toggle'},
+                React.createElement('input',{type:'checkbox',checked:formReimbursable,onChange:e=>setFormReimbursable(e.target.checked)}),
+                React.createElement('span',{className:'reimb-toggle-label'},'Request reimbursement')
+              ),
+              formReimbursable&&React.createElement('div',{className:'reimb-details'},
+                React.createElement('div',null,
+                  React.createElement('div',{className:'reimb-sublabel'},'Reimburse to'),
+                  React.createElement('div',{className:'reimb-to-options'},
+                    React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setFormReimbTo('patrick')},'\uD83D\uDD35 Patrick'),
+                    React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='aica'?'sel-aica':''),onClick:()=>setFormReimbTo('aica')},'\uD83E\uDE77 Aica')
+                  )
+                ),
+                React.createElement('div',null,
+                  React.createElement('div',{className:'reimb-sublabel'},'Reimbursement %'),
+                  React.createElement('div',{className:'reimb-pct-row'},
+                    React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:formReimbPct,onChange:e=>setFormReimbPct(Number(e.target.value))}),
+                    React.createElement('div',{className:'reimb-pct-value'},formReimbPct+'%')
+                  ),
+                  formAmount&&Number(formAmount)>0&&React.createElement('div',{className:'reimb-pct-calc'},'Reimbursable: '+fmt(Number(formAmount)*formReimbPct/100))
+                )
+              )
+            )
+          ),
+          React.createElement('div',{className:'form-group full-width'},React.createElement('button',{className:'submit-btn '+(currentUser==='Patrick'?'patrick':'aica'),onClick:handleSubmit,disabled:!formFund},'\uFF0B Add Expense'))
+        )
+      ),
+
+      /* LIST */
+      activeTab==='list'&&React.createElement(React.Fragment,null,
+        React.createElement('div',{className:'summary-cards'},
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'Total'),React.createElement('div',{className:'amount',style:{color:'#1E293B'}},fmt(totalSpent))),
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83D\uDD35 Patrick'),React.createElement('div',{className:'amount',style:{color:'var(--patrick)'}},fmt(patrickTotal))),
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83E\uDE77 Aica'),React.createElement('div',{className:'amount',style:{color:'var(--aica)'}},fmt(aicaTotal))),
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83C\uDFE6 Savings'),React.createElement('div',{className:'amount',style:{color:savingsBalance>=0?'#4338CA':'#EF4444'}},fmt(savingsBalance))),
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83D\uDCB3 Opex'),React.createElement('div',{className:'amount',style:{color:opexBalance>=0?'#B45309':'#EF4444'}},fmt(opexBalance)))
+        ),
+        React.createElement('div',{className:'card'},
+          React.createElement('div',{className:'filter-bar'},
+            React.createElement('select',{value:filterMonth,onChange:e=>setFilterMonth(e.target.value)},monthOptions.map(m=>React.createElement('option',{key:m,value:m},monthLabel(m)))),
+            React.createElement('select',{value:filterUser,onChange:e=>setFilterUser(e.target.value)},React.createElement('option',{value:'All'},'All'),React.createElement('option',{value:'Patrick'},'Patrick'),React.createElement('option',{value:'Aica'},'Aica'))
+          ),
+          filtered.length===0
+            ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'\uD83D\uDCED'),React.createElement('div',{style:{fontWeight:600}},'No expenses this month'))
+            :React.createElement('div',{style:{overflowX:'auto'}},
+              React.createElement('table',{className:'expense-table'},
+                React.createElement('thead',null,React.createElement('tr',null,
+                  React.createElement('th',null,'Date'),React.createElement('th',null,'Description'),React.createElement('th',null,'Cat.'),
+                  React.createElement('th',{style:{textAlign:'right'}},'Amt'),React.createElement('th',null,'From'),
+                  React.createElement('th',null,'Reimb.'),React.createElement('th',null,'Status'),React.createElement('th',null,'')
+                )),
+                React.createElement('tbody',null,filtered.map(e=>
+                  React.createElement('tr',{key:e.id,className:'row-'+e.user.toLowerCase()},
+                    React.createElement('td',{style:{whiteSpace:'nowrap',fontWeight:500}},new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})),
+                    React.createElement('td',null,React.createElement('div',{style:{fontWeight:600}},e.description),React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},'by '+e.user)),
+                    React.createElement('td',null,React.createElement('span',{className:'category-badge'},e.category)),
+                    React.createElement('td',{style:{textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums'}},
+                      React.createElement('div',null,fmt(e.amount)),
+                      e.reimbursable&&React.createElement('div',{style:{fontSize:10,color:'#92400E',fontWeight:500}},'Reimb: '+fmt(reimbAmt(e)))
+                    ),
+                    React.createElement('td',null,fundBadgeEl(e.fundSource)),
+                    React.createElement('td',null,reimbInfoEl(e)),
+                    React.createElement('td',null,
+                      e.reimbursable
+                        ?(e.reimbursed?React.createElement('span',{className:'reimbursed-badge',onClick:()=>toggleReimbursed(e.id)},'\u2713 Done'):React.createElement('button',{className:'reimburse-btn',onClick:()=>toggleReimbursed(e.id)},'Mark Done'))
+                        :React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'\u2014')
+                    ),
+                    React.createElement('td',null,React.createElement('button',{className:'delete-btn',onClick:()=>deleteExpense(e.id)},'\u2715'))
+                  )
+                ))
+              )
+            )
+        )
+      ),
+
+      /* CHARTS */
+      activeTab==='charts'&&React.createElement(React.Fragment,null,
+        React.createElement('div',{className:'filter-bar',style:{marginBottom:16}},React.createElement('select',{value:filterMonth,onChange:e=>setFilterMonth(e.target.value),style:{fontSize:15,padding:'10px 16px'}},monthOptions.map(m=>React.createElement('option',{key:m,value:m},monthLabel(m))))),
+        React.createElement('div',{className:'card'},
+          React.createElement('h2',null,'\uD83D\uDCCA Combined \u2014 ',monthLabel(filterMonth)),
+          React.createElement('div',{style:{maxWidth:420,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:categoryPieData,title:''})),
+          React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:18}},'Total: ',fmt(totalSpent))
+        ),
+        React.createElement('div',{className:'chart-row'},
+          React.createElement('div',{className:'chart-box card'},
+            React.createElement('h2',{style:{justifyContent:'center'}},'\uD83D\uDD35 Patrick'),
+            React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:patrickPieData,title:''})),
+            patrickPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--patrick)'}},'Total: ',fmt(patrickTotal))
+          ),
+          React.createElement('div',{className:'chart-box card'},
+            React.createElement('h2',{style:{justifyContent:'center'}},'\uD83E\uDE77 Aica'),
+            React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:aicaPieData,title:''})),
+            aicaPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--aica)'}},'Total: ',fmt(aicaTotal))
+          )
+        )
+      ),
+
+      /* BALANCES */
+      activeTab==='balances'&&React.createElement(React.Fragment,null,
+        React.createElement('div',{className:'acct-cards'},
+          React.createElement('div',{className:'acct-card'},
+            React.createElement('div',{className:'acct-icon'},'\uD83C\uDFE6'),
+            React.createElement('div',{className:'acct-name'},'Savings Account'),
+            React.createElement('div',{className:'acct-bal',style:{color:savingsBalance>=0?'#4338CA':'#EF4444'}},fmt(savingsBalance)),
+            React.createElement('div',{className:'acct-sub'},'Starting: '+fmt(savingsStart)+' \u2022 Spent: '+fmt(savingsSpent)),
+            !editingSavings
+              ?React.createElement('div',{className:'acct-edit'},React.createElement('button',{onClick:()=>{setEditingSavings(true);setTempSavings(String(savingsStart));}},'Edit Balance'))
+              :React.createElement('div',{className:'acct-edit'},
+                React.createElement('input',{type:'number',value:tempSavings,onChange:e=>setTempSavings(e.target.value)}),
+                React.createElement('button',{onClick:()=>{var v=Number(tempSavings)||0;setSavingsStart(v);setEditingSavings(false);saveSettings(v,opexStart);}},'Save'),
+                React.createElement('button',{onClick:()=>setEditingSavings(false)},'Cancel'))
+          ),
+          React.createElement('div',{className:'acct-card'},
+            React.createElement('div',{className:'acct-icon'},'\uD83D\uDCB3'),
+            React.createElement('div',{className:'acct-name'},'Opex Account'),
+            React.createElement('div',{className:'acct-bal',style:{color:opexBalance>=0?'#B45309':'#EF4444'}},fmt(opexBalance)),
+            React.createElement('div',{className:'acct-sub'},'Starting: '+fmt(opexStart)+' \u2022 Spent: '+fmt(opexSpent)),
+            !editingOpex
+              ?React.createElement('div',{className:'acct-edit'},React.createElement('button',{onClick:()=>{setEditingOpex(true);setTempOpex(String(opexStart));}},'Edit Balance'))
+              :React.createElement('div',{className:'acct-edit'},
+                React.createElement('input',{type:'number',value:tempOpex,onChange:e=>setTempOpex(e.target.value)}),
+                React.createElement('button',{onClick:()=>{var v=Number(tempOpex)||0;setOpexStart(v);setEditingOpex(false);saveSettings(savingsStart,v);}},'Save'),
+                React.createElement('button',{onClick:()=>setEditingOpex(false)},'Cancel'))
+          )
+        ),
+        React.createElement('div',{className:'net-banner'},
+          React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text-muted)',textTransform:'uppercase'}},'Net Reimbursement'),
+          netOwed===0
+            ?React.createElement('div',{className:'net-amount',style:{color:'var(--success)'}},'\u2713 All Settled!')
+            :React.createElement(React.Fragment,null,
+              React.createElement('div',{className:'net-amount',style:{color:netOwed>0?'var(--patrick)':'var(--aica)'}},fmt(Math.abs(netOwed))),
+              React.createElement('div',{style:{fontSize:14,color:'var(--text-muted)',fontWeight:500}},netOwed>0?'owed to Patrick':'owed to Aica'))
+        ),
+        React.createElement('div',{className:'balance-card patrick-card'},
+          React.createElement('div',{className:'balance-label',style:{color:'var(--patrick)'}},'\uD83D\uDD35 Owed to Patrick'),
+          React.createElement('div',{className:'balance-amount',style:{color:'var(--patrick)'}},fmt(owedToPatrickTotal)),
+          React.createElement('div',{className:'balance-subtitle'},owedToPatrick.length+' pending')
+        ),
+        owedToPatrick.length>0&&React.createElement('div',{className:'card'},
+          React.createElement('table',{className:'balance-detail-table'},
+            React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,'Date'),React.createElement('th',null,'Description'),React.createElement('th',{style:{textAlign:'right'}},'Amt'),React.createElement('th',{style:{textAlign:'center'}},'%'),React.createElement('th',{style:{textAlign:'right'}},'Reimb'),React.createElement('th',null,''))),
+            React.createElement('tbody',null,owedToPatrick.map(e=>React.createElement('tr',{key:e.id},
+              React.createElement('td',null,new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})),
+              React.createElement('td',{style:{fontWeight:600}},e.description),
+              React.createElement('td',{style:{textAlign:'right'}},fmt(e.amount)),
+              React.createElement('td',{style:{textAlign:'center'}},e.reimbPct+'%'),
+              React.createElement('td',{style:{textAlign:'right',fontWeight:700,color:'var(--patrick)'}},fmt(reimbAmt(e))),
+              React.createElement('td',null,React.createElement('button',{className:'reimburse-btn',onClick:()=>toggleReimbursed(e.id)},'Done'))
+            )))
+          )
+        ),
+        React.createElement('div',{className:'balance-card aica-card',style:{marginTop:8}},
+          React.createElement('div',{className:'balance-label',style:{color:'var(--aica)'}},'\uD83E\uDE77 Owed to Aica'),
+          React.createElement('div',{className:'balance-amount',style:{color:'var(--aica)'}},fmt(owedToAicaTotal)),
+          React.createElement('div',{className:'balance-subtitle'},owedToAica.length+' pending')
+        ),
+        owedToAica.length>0&&React.createElement('div',{className:'card'},
+          React.createElement('table',{className:'balance-detail-table'},
+            React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,'Date'),React.createElement('th',null,'Description'),React.createElement('th',{style:{textAlign:'right'}},'Amt'),React.createElement('th',{style:{textAlign:'center'}},'%'),React.createElement('th',{style:{textAlign:'right'}},'Reimb'),React.createElement('th',null,''))),
+            React.createElement('tbody',null,owedToAica.map(e=>React.createElement('tr',{key:e.id},
+              React.createElement('td',null,new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})),
+              React.createElement('td',{style:{fontWeight:600}},e.description),
+              React.createElement('td',{style:{textAlign:'right'}},fmt(e.amount)),
+              React.createElement('td',{style:{textAlign:'center'}},e.reimbPct+'%'),
+              React.createElement('td',{style:{textAlign:'right',fontWeight:700,color:'var(--aica)'}},fmt(reimbAmt(e))),
+              React.createElement('td',null,React.createElement('button',{className:'reimburse-btn',onClick:()=>toggleReimbursed(e.id)},'Done'))
+            )))
+          )
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
