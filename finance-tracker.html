@@ -221,6 +221,38 @@
   .add-deposit-btn{padding:12px 20px;border:2px dashed var(--success);background:var(--success-light);color:#16A34A;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;width:100%;margin-bottom:16px;}
   .add-deposit-btn:hover{background:var(--success);color:white;}
   .snap-receipt-scanning{animation:pulse 1s infinite;}
+  .scope-toggle{display:flex;gap:4px;background:#F1F5F9;border-radius:10px;padding:3px;}
+  .scope-pill{flex:1;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;background:transparent;color:var(--text-muted);text-align:center;}
+  .scope-pill.active-shared{background:var(--success);color:white;}
+  .scope-pill.active-personal{background:#8B5CF6;color:white;}
+  .badge-personal{background:#EDE9FE;color:#7C3AED;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:700;margin-left:4px;}
+  .badge-scope{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+  .badge-scope.shared{background:#DCFCE7;color:#16A34A;}
+  .badge-scope.personal{background:#EDE9FE;color:#7C3AED;}
+  .reminder-banner{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:2px solid #F59E0B;border-radius:14px;padding:14px 18px;margin-bottom:16px;animation:glow 2s ease-in-out infinite alternate;}
+  @keyframes glow{from{box-shadow:0 0 0 rgba(245,158,11,0);}to{box-shadow:0 0 12px rgba(245,158,11,0.3);}}
+  .reminder-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;}
+  .reminder-item .bill-name{font-weight:700;color:#92400E;}
+  .reminder-item .bill-due{font-weight:600;font-size:12px;border-radius:8px;padding:3px 8px;}
+  .reminder-item .bill-due.overdue{background:#FEE2E2;color:#DC2626;}
+  .reminder-item .bill-due.soon{background:#FEF3C7;color:#B45309;}
+  .bill-card{background:white;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;border-left:4px solid var(--warning);}
+  .bill-card .bill-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .bill-card .bill-name{font-weight:700;font-size:15px;flex:1;}
+  .bill-card .bill-amt{font-weight:800;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .bill-card .bill-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;}
+  .bill-card .bill-actions{display:flex;gap:6px;margin-top:10px;justify-content:flex-end;align-items:center;}
+  .bill-paid-btn{padding:5px 12px;border:2px solid var(--success);background:var(--success-light);color:#16A34A;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+  .bill-paid-btn:hover{background:var(--success);color:white;}
+  .user-picker{position:fixed;inset:0;background:white;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;}
+  .user-picker h1{font-size:28px;font-weight:800;}
+  .user-picker p{color:var(--text-muted);font-size:15px;text-align:center;max-width:300px;}
+  .user-pick-btn{width:200px;padding:20px;border:3px solid var(--border);border-radius:16px;cursor:pointer;font-size:18px;font-weight:700;transition:all 0.2s;background:white;text-align:center;}
+  .user-pick-btn:hover{transform:scale(1.05);}
+  .user-pick-btn.pick-patrick:hover{border-color:var(--patrick);background:var(--patrick-bg);color:var(--patrick);}
+  .user-pick-btn.pick-aica:hover{border-color:var(--aica);background:var(--aica-bg);color:var(--aica);}
+  .current-user-badge{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;}
+  .switch-user-link{font-size:11px;color:var(--patrick);cursor:pointer;text-decoration:underline;font-weight:500;}
   @media(max-width:768px){
     .form-grid{grid-template-columns:1fr;}
     .app-header{flex-direction:column;}
@@ -336,11 +368,16 @@ function SetupScreen({onConnect}){
 
 /* --- Main App --- */
 function App(){
+  const today=new Date().toISOString().split('T')[0];
+  const now=new Date();
+  const curMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+
   const[scriptUrl,setScriptUrl]=useState(()=>{try{return window.localStorage_disabled?'':localStorage.getItem(SCRIPT_URL_KEY)||'';}catch(e){return'';}});
   const[connected,setConnected]=useState(!!scriptUrl);
   const[loading,setLoading]=useState(false);
   const[syncStatus,setSyncStatus]=useState('ok');
-  const[currentUser,setCurrentUser]=useState('Patrick');
+  const[currentUser,setCurrentUser]=useState(()=>{try{return localStorage.getItem('poledger_user')||'';}catch(e){return'';}});
+  const[showUserPicker,setShowUserPicker]=useState(false);
   const[activeTab,setActiveTab]=useState('add');
   const[expenses,setExpenses]=useState([]);
   const[nextId,setNextId]=useState(1);
@@ -401,7 +438,25 @@ function App(){
   const[ocrProcessing,setOcrProcessing]=useState(false);
   const[ocrError,setOcrError]=useState('');
 
-  const today=new Date().toISOString().split('T')[0];
+  // Scope
+  const[formScope,setFormScope]=useState('shared');
+  const[depScope,setDepScope]=useState('shared');
+
+  // Bills
+  const[bills,setBills]=useState([]);
+  const[billNextId,setBillNextId]=useState(1);
+  const[showBillForm,setShowBillForm]=useState(false);
+  const[editBillTarget,setEditBillTarget]=useState(null);
+  const[deleteBillTarget,setDeleteBillTarget]=useState(null);
+  const[billName,setBillName]=useState('');
+  const[billAmount,setBillAmount]=useState('');
+  const[billDueDay,setBillDueDay]=useState('1');
+  const[billType,setBillType]=useState('fixed');
+  const[billAccount,setBillAccount]=useState('opex');
+  const[billAssignedTo,setBillAssignedTo]=useState('Both');
+  const[billNotes,setBillNotes]=useState('');
+  const[dismissReminders,setDismissReminders]=useState(false);
+
   const[formDate,setFormDate]=useState(today);
   const[formDesc,setFormDesc]=useState('');
   const[formAmount,setFormAmount]=useState('');
@@ -412,17 +467,17 @@ function App(){
   const[formReimbTo,setFormReimbTo]=useState('patrick');
   const[formReimbPct,setFormReimbPct]=useState(50);
 
-  const now=new Date();
-  const curMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   const[filterMonth,setFilterMonth]=useState(curMonth);
   const[filterUser,setFilterUser]=useState('All');
 
   const handleConnect=(url)=>{try{localStorage.setItem(SCRIPT_URL_KEY,url);}catch(e){} setScriptUrl(url);setConnected(true);loadData(url);};
   const handleDisconnect=()=>{try{localStorage.removeItem(SCRIPT_URL_KEY);}catch(e){} setScriptUrl('');setConnected(false);setExpenses([]);};
+  const pickUser=(name)=>{try{localStorage.setItem('poledger_user',name);}catch(e){} setCurrentUser(name);setShowUserPicker(false);};
 
   const processApiData=(d)=>{
     if(d.expenses){var ne=normalizeExpenses(d.expenses);setExpenses(ne);var maxId=ne.reduce((m,e)=>Math.max(m,e.id||0),0);setNextId(maxId+1);}
     if(d.deposits){var nd=normalizeDeposits(d.deposits);setDeposits(nd);var maxDId=nd.reduce((m,d)=>Math.max(m,d.id||0),0);setDepositNextId(maxDId+1);}
+    if(d.bills){setBills(d.bills);var maxBId=d.bills.reduce((m,b)=>Math.max(m,b.id||0),0);setBillNextId(maxBId+1);}
     if(d.settings){setSavingsStart(d.settings.savingsStart||50000);setOpexStart(d.settings.opexStart||30000);setTempSavings(String(d.settings.savingsStart||50000));setTempOpex(String(d.settings.opexStart||30000));}
   };
 
@@ -442,13 +497,13 @@ function App(){
 
   const handleSubmit=()=>{
     if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!formFund)return;
-    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl};
+    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl,scope:formScope};
     setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+1);setSyncStatus('loading');
     api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
       if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
       setSyncStatus('ok');
     }).catch(()=>setSyncStatus('error'));
-    setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);
+    setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);setFormScope('shared');
     clearReceipt();
     setActiveTab('list');
   };
@@ -487,7 +542,7 @@ function App(){
   };
   const handleDepositSubmit=()=>{
     if(!depAmount||Number(depAmount)<=0||!depAccount)return;
-    var newDep={id:depositNextId,date:depDate,amount:Number(depAmount),account:depAccount,description:depDesc.trim()||'Deposit',user:currentUser,notes:depNotes.trim(),photoBase64:depPhotoBase64,photoName:depPhotoName};
+    var newDep={id:depositNextId,date:depDate,amount:Number(depAmount),account:depAccount,description:depDesc.trim()||'Deposit',user:currentUser,notes:depNotes.trim(),photoBase64:depPhotoBase64,photoName:depPhotoName,scope:depScope};
     // Optimistic update (without photoUrl yet)
     setDeposits(prev=>[{...newDep,photoUrl:''},...prev]);setDepositNextId(n=>n+1);
     setDepUploading(true);setSyncStatus('loading');
@@ -495,7 +550,7 @@ function App(){
       if(d.photoUrl){setDeposits(prev=>prev.map(dep=>dep.id===newDep.id?{...dep,photoUrl:d.photoUrl}:dep));}
       setSyncStatus('ok');setDepUploading(false);
     }).catch(()=>{setSyncStatus('error');setDepUploading(false);});
-    setDepDate(today);setDepAmount('');setDepAccount('');setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setShowDepositForm(false);
+    setDepDate(today);setDepAmount('');setDepAccount('');setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setDepScope('shared');setShowDepositForm(false);
   };
   const confirmDeleteDeposit=()=>{
     if(!deleteDepTarget)return;
@@ -503,6 +558,49 @@ function App(){
     api(scriptUrl,'POST',{action:'deleteDeposit',id:deleteDepTarget.id}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
     setDeleteDepTarget(null);
   };
+
+  // Bill handlers
+  const openBillForm=(bill)=>{
+    if(bill){setEditBillTarget(bill);setBillName(bill.name);setBillAmount(String(bill.amount||''));setBillDueDay(String(bill.dueDay));setBillType(bill.type||'fixed');setBillAccount(bill.account||'opex');setBillAssignedTo(bill.assignedTo||'Both');setBillNotes(bill.notes||'');}
+    else{setEditBillTarget(null);setBillName('');setBillAmount('');setBillDueDay('1');setBillType('fixed');setBillAccount('opex');setBillAssignedTo('Both');setBillNotes('');}
+    setShowBillForm(true);
+  };
+  const handleBillSubmit=()=>{
+    if(!billName.trim()||!billDueDay)return;
+    var billObj={id:editBillTarget?editBillTarget.id:billNextId,name:billName.trim(),amount:Number(billAmount)||0,dueDay:Number(billDueDay),type:billType,account:billAccount,assignedTo:billAssignedTo,active:true,notes:billNotes.trim(),lastPaidDate:editBillTarget?editBillTarget.lastPaidDate:''};
+    if(editBillTarget){setBills(prev=>prev.map(b=>b.id===billObj.id?billObj:b));api(scriptUrl,'POST',{action:'editBill',bill:billObj}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));}
+    else{setBills(prev=>[billObj,...prev]);setBillNextId(n=>n+1);api(scriptUrl,'POST',{action:'addBill',bill:billObj}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));}
+    setSyncStatus('loading');setShowBillForm(false);
+  };
+  const markBillPaid=(id)=>{
+    setBills(prev=>prev.map(b=>b.id===id?{...b,lastPaidDate:today}:b));setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'markBillPaid',id:id,date:today}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+  };
+  const confirmDeleteBill=()=>{
+    if(!deleteBillTarget)return;
+    setBills(prev=>prev.filter(b=>b.id!==deleteBillTarget.id));setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'deleteBill',id:deleteBillTarget.id}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+    setDeleteBillTarget(null);
+  };
+
+  // Bill reminders logic
+  const billReminders=useMemo(()=>{
+    if(!currentUser)return[];
+    var todayDay=now.getDate();var todayMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    return bills.filter(b=>{
+      if(!b.active)return false;
+      if(b.assignedTo!=='Both'&&b.assignedTo!==currentUser)return false;
+      var lp=b.lastPaidDate?String(b.lastPaidDate):'';
+      var paidThisMonth=lp.substring(0,7)===todayMonth;
+      if(paidThisMonth)return false;
+      var dueDay=Number(b.dueDay);
+      var diff=dueDay-todayDay;
+      return diff<=5; // due within 5 days or overdue
+    }).map(b=>{
+      var dueDay=Number(b.dueDay);var diff=dueDay-now.getDate();
+      return{...b,daysUntil:diff,overdue:diff<0};
+    }).sort((a,b)=>a.daysUntil-b.daysUntil);
+  },[bills,currentUser,today]);
 
   const toggleReimbursed=(id)=>{
     setExpenses(prev=>prev.map(e=>e.id===id?{...e,reimbursed:!e.reimbursed}:e));setSyncStatus('loading');
@@ -575,7 +673,7 @@ function App(){
     if(driverDayCount===0)return;
     var desc='Driver Salary \u2014 '+driverDateRange();
     var notes=buildDriverNotes();
-    var newExp={id:nextId,date:formDate,description:desc,amount:Math.round(driverGrandTotal*100)/100,category:'Driver Salary',fundSource:formFund||'opex',user:currentUser,notes:notes,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false};
+    var newExp={id:nextId,date:formDate,description:desc,amount:Math.round(driverGrandTotal*100)/100,category:'Driver Salary',fundSource:formFund||'opex',user:currentUser,notes:notes,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false,scope:'shared'};
     setExpenses(prev=>[newExp,...prev]);setNextId(n=>n+1);setSyncStatus('loading');
     api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
     setShowDriverCalc(false);setActiveTab('list');
@@ -601,25 +699,36 @@ function App(){
   const monthOptions=useMemo(()=>{const s=new Set();expenses.forEach(e=>{var ds=e.date;var ym=ds.substring(0,4)+'-'+ds.substring(5,7);s.add(ym);});s.add(curMonth);return Array.from(s).sort().reverse();},[expenses]);
   const monthLabel=(ym)=>{const[y,m]=ym.split('-');return new Date(y,m-1).toLocaleDateString('en-US',{month:'long',year:'numeric'});};
 
-  const filtered=useMemo(()=>expenses.filter(e=>{
+  // Scope filter: show shared + own personal items
+  const visibleExpenses=useMemo(()=>expenses.filter(e=>{
+    var sc=e.scope||'shared';
+    return sc==='shared'||(sc==='personal'&&e.user===currentUser);
+  }),[expenses,currentUser]);
+
+  const filtered=useMemo(()=>visibleExpenses.filter(e=>{
     var ym=e.date.substring(0,4)+'-'+e.date.substring(5,7);
     if(ym!==filterMonth)return false;
     if(filterUser!=='All'&&e.user!==filterUser)return false;
     if(searchText.trim()){var q=searchText.toLowerCase();if(!(e.description||'').toLowerCase().includes(q)&&!(e.notes||'').toLowerCase().includes(q)&&!(e.category||'').toLowerCase().includes(q))return false;}
     return true;
-  }).sort((a,b)=>b.date.localeCompare(a.date)),[expenses,filterMonth,filterUser,searchText]);
+  }).sort((a,b)=>b.date.localeCompare(a.date)),[visibleExpenses,filterMonth,filterUser,searchText]);
+
+  const visibleDeposits=useMemo(()=>deposits.filter(d=>{
+    var sc=d.scope||'shared';
+    return sc==='shared'||(sc==='personal'&&d.user===currentUser);
+  }),[deposits,currentUser]);
 
   const totalSpent=useMemo(()=>filtered.reduce((s,e)=>s+e.amount,0),[filtered]);
   const patrickTotal=useMemo(()=>filtered.filter(e=>e.user==='Patrick').reduce((s,e)=>s+e.amount,0),[filtered]);
   const aicaTotal=useMemo(()=>filtered.filter(e=>e.user==='Aica').reduce((s,e)=>s+e.amount,0),[filtered]);
-  const savingsSpent=useMemo(()=>expenses.filter(e=>e.fundSource==='savings').reduce((s,e)=>s+e.amount,0),[expenses]);
-  const opexSpent=useMemo(()=>expenses.filter(e=>e.fundSource==='opex').reduce((s,e)=>s+e.amount,0),[expenses]);
-  const savingsDeposited=useMemo(()=>deposits.filter(d=>d.account==='savings').reduce((s,d)=>s+d.amount,0),[deposits]);
-  const opexDeposited=useMemo(()=>deposits.filter(d=>d.account==='opex').reduce((s,d)=>s+d.amount,0),[deposits]);
+  const savingsSpent=useMemo(()=>visibleExpenses.filter(e=>e.fundSource==='savings').reduce((s,e)=>s+e.amount,0),[visibleExpenses]);
+  const opexSpent=useMemo(()=>visibleExpenses.filter(e=>e.fundSource==='opex').reduce((s,e)=>s+e.amount,0),[visibleExpenses]);
+  const savingsDeposited=useMemo(()=>visibleDeposits.filter(d=>d.account==='savings').reduce((s,d)=>s+d.amount,0),[visibleDeposits]);
+  const opexDeposited=useMemo(()=>visibleDeposits.filter(d=>d.account==='opex').reduce((s,d)=>s+d.amount,0),[visibleDeposits]);
   const savingsBalance=savingsStart+savingsDeposited-savingsSpent;
   const opexBalance=opexStart+opexDeposited-opexSpent;
-  const owedToPatrick=useMemo(()=>expenses.filter(e=>e.reimbursable&&e.reimbTo==='patrick'&&!e.reimbursed),[expenses]);
-  const owedToAica=useMemo(()=>expenses.filter(e=>e.reimbursable&&e.reimbTo==='aica'&&!e.reimbursed),[expenses]);
+  const owedToPatrick=useMemo(()=>visibleExpenses.filter(e=>e.reimbursable&&e.reimbTo==='patrick'&&!e.reimbursed),[visibleExpenses]);
+  const owedToAica=useMemo(()=>visibleExpenses.filter(e=>e.reimbursable&&e.reimbTo==='aica'&&!e.reimbursed),[visibleExpenses]);
   const owedToPatrickTotal=useMemo(()=>owedToPatrick.reduce((s,e)=>s+reimbAmt(e),0),[owedToPatrick]);
   const owedToAicaTotal=useMemo(()=>owedToAica.reduce((s,e)=>s+reimbAmt(e),0),[owedToAica]);
   const netOwed=owedToPatrickTotal-owedToAicaTotal;
@@ -647,11 +756,18 @@ function App(){
   },[journalAcct,expenses,deposits,savingsStart,opexStart]);
 
   // Deposit month options
-  const depMonthOptions=useMemo(()=>{const s=new Set();deposits.forEach(d=>{var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);s.add(ym);});s.add(curMonth);return Array.from(s).sort().reverse();},[deposits]);
-  const filteredDeposits=useMemo(()=>deposits.filter(d=>{var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);return ym===depFilterMonth;}).sort((a,b)=>b.date.localeCompare(a.date)),[deposits,depFilterMonth]);
+  const depMonthOptions=useMemo(()=>{const s=new Set();visibleDeposits.forEach(d=>{var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);s.add(ym);});s.add(curMonth);return Array.from(s).sort().reverse();},[visibleDeposits]);
+  const filteredDeposits=useMemo(()=>visibleDeposits.filter(d=>{var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);return ym===depFilterMonth;}).sort((a,b)=>b.date.localeCompare(a.date)),[visibleDeposits,depFilterMonth]);
 
   if(!connected) return React.createElement(SetupScreen,{onConnect:handleConnect});
   if(loading) return React.createElement('div',{className:'loading-overlay'},React.createElement('div',{className:'spinner'}),React.createElement('div',{style:{fontWeight:600,color:'var(--text-muted)'}},'Loading your data...'));
+  if(!currentUser||showUserPicker) return React.createElement('div',{className:'user-picker'},
+    React.createElement('div',{style:{fontSize:48}},'\uD83D\uDCB0'),
+    React.createElement('h1',null,'PoLedger'),
+    React.createElement('p',null,'Who\'s using this device?'),
+    React.createElement('button',{className:'user-pick-btn pick-patrick',onClick:()=>pickUser('Patrick')},'\uD83D\uDD35 I\'m Patrick'),
+    React.createElement('button',{className:'user-pick-btn pick-aica',onClick:()=>pickUser('Aica')},'\uD83E\uDE77 I\'m Aica')
+  );
 
   /* === MODALS === */
 
@@ -849,6 +965,13 @@ function App(){
           ),
           React.createElement('input',{id:'dep-photo-input',type:'file',accept:'image/*',style:{display:'none'},onChange:handleDepositPhoto})
         ),
+        React.createElement('div',{className:'form-group'},
+          React.createElement('label',null,'Visibility'),
+          React.createElement('div',{className:'scope-toggle'},
+            React.createElement('button',{className:'scope-pill '+(depScope==='shared'?'active-shared':''),onClick:()=>setDepScope('shared')},'\uD83C\uDFE0 Household'),
+            React.createElement('button',{className:'scope-pill '+(depScope==='personal'?'active-personal':''),onClick:()=>setDepScope('personal')},'\uD83D\uDD12 Personal')
+          )
+        ),
         React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',display:'flex',alignItems:'center',gap:6}},
           currentUser==='Patrick'?'\uD83D\uDD35':'\uD83E\uDE77',
           'Recording as ',React.createElement('strong',null,currentUser)
@@ -887,7 +1010,8 @@ function App(){
     React.createElement('div',{className:'expense-card-meta'},
       React.createElement('span',{className:'category-badge'},e.category),
       fundBadgeEl(e.fundSource),
-      e.reimbursable&&reimbInfoEl(e)
+      e.reimbursable&&reimbInfoEl(e),
+      (e.scope==='personal')&&React.createElement('span',{className:'badge-scope personal'},'\uD83D\uDD12 Personal')
     ),
     e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{className:'expense-card-notes'},'\uD83D\uDCDD '+e.notes),
     e.receiptUrl&&React.createElement('div',{style:{fontSize:12,marginTop:4}},React.createElement('span',{style:{cursor:'pointer',color:'var(--patrick)',fontWeight:600},onClick:()=>setViewPhoto(e.receiptUrl)},'\uD83E\uDDFE View Receipt')),
@@ -900,8 +1024,62 @@ function App(){
     )
   );
 
+  // Bill form modal
+  var billFormEl=showBillForm&&React.createElement('div',{className:'modal-overlay',onClick:()=>setShowBillForm(false)},
+    React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
+      React.createElement('h3',null,editBillTarget?'\u270F\uFE0F Edit Bill':'\u2795 Add Bill'),
+      React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:12}},
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Bill Name'),React.createElement('input',{type:'text',placeholder:'e.g. Internet, Electricity, Water',value:billName,onChange:e=>setBillName(e.target.value)})),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Type'),
+          React.createElement('div',{className:'fund-options'},
+            React.createElement('div',{className:'fund-option '+(billType==='fixed'?'selected':''),onClick:()=>setBillType('fixed')},'\uD83D\uDCB5 Fixed Amount'),
+            React.createElement('div',{className:'fund-option '+(billType==='variable'?'selected':''),onClick:()=>setBillType('variable')},'\uD83D\uDCC8 Variable')
+          )
+        ),
+        billType==='fixed'&&React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (\u20B1)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:billAmount,onChange:e=>setBillAmount(e.target.value)})),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Due Day of Month'),
+          React.createElement('select',{value:billDueDay,onChange:e=>setBillDueDay(e.target.value)},
+            Array.from({length:31},(_,i)=>i+1).map(d=>React.createElement('option',{key:d,value:String(d)},d))
+          )
+        ),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Pay From Account'),
+          React.createElement('div',{className:'fund-options'},
+            React.createElement('div',{className:'fund-option '+(billAccount==='opex'?'selected':''),onClick:()=>setBillAccount('opex')},'\uD83D\uDCB3 Opex'),
+            React.createElement('div',{className:'fund-option '+(billAccount==='savings'?'selected':''),onClick:()=>setBillAccount('savings')},'\uD83C\uDFE6 Savings')
+          )
+        ),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Assigned To'),
+          React.createElement('div',{className:'fund-options'},
+            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Both'?'selected':''),onClick:()=>setBillAssignedTo('Both')},'\uD83D\uDC65 Both'),
+            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Patrick'?'selected':''),onClick:()=>setBillAssignedTo('Patrick')},'\uD83D\uDD35 Patrick'),
+            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Aica'?'selected':''),onClick:()=>setBillAssignedTo('Aica')},'\uD83E\uDE77 Aica')
+          )
+        ),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes (optional)'),React.createElement('textarea',{rows:2,placeholder:'Add a memo...',value:billNotes,onChange:e=>setBillNotes(e.target.value)}))
+      ),
+      React.createElement('div',{className:'modal-actions'},
+        React.createElement('button',{className:'btn-cancel',onClick:()=>setShowBillForm(false)},'Cancel'),
+        React.createElement('button',{className:'btn-primary',onClick:handleBillSubmit,disabled:!billName.trim()},editBillTarget?'Save Changes':'\u2795 Add Bill'))
+    )
+  );
+
+  // Delete bill confirmation
+  var deleteBillEl=deleteBillTarget&&React.createElement('div',{className:'modal-overlay',onClick:()=>setDeleteBillTarget(null)},
+    React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
+      React.createElement('h3',null,'\uD83D\uDDD1\uFE0F Delete Bill?'),
+      React.createElement('p',{style:{marginBottom:10}},'Are you sure you want to delete this bill?'),
+      React.createElement('div',{style:{padding:12,background:'#FEE2E2',borderRadius:10,marginBottom:8}},
+        React.createElement('div',{style:{fontWeight:700}},deleteBillTarget.name),
+        React.createElement('div',{style:{fontSize:14,color:'#991B1B'}},'Due day '+deleteBillTarget.dueDay+(deleteBillTarget.type==='fixed'?' \u2022 '+fmt(deleteBillTarget.amount):''))
+      ),
+      React.createElement('div',{className:'modal-actions'},
+        React.createElement('button',{className:'btn-cancel',onClick:()=>setDeleteBillTarget(null)},'Cancel'),
+        React.createElement('button',{className:'btn-danger',onClick:confirmDeleteBill},'Delete'))
+    )
+  );
+
   return React.createElement('div',null,
-    editModalEl,deleteModalEl,driverCalcEl,breakdownEl,journalEl,photoViewerEl,depositFormEl,deleteDepEl,
+    editModalEl,deleteModalEl,driverCalcEl,breakdownEl,journalEl,photoViewerEl,depositFormEl,deleteDepEl,billFormEl,deleteBillEl,
     React.createElement('div',{className:'app-header'},
       React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10}},
         React.createElement('div',{className:'app-title'},'\uD83D\uDCB0 PoLedger \u2014 Personal & Family Finance'),
@@ -912,9 +1090,10 @@ function App(){
       React.createElement('div',{className:'header-right'},
         React.createElement('button',{className:'data-btn',onClick:()=>loadData()},'\u21BB Refresh'),
         React.createElement('button',{className:'data-btn',onClick:handleDisconnect,style:{color:'#EF4444'}},'\u2715 Disconnect'),
-        React.createElement('div',{className:'user-toggle'},
-          React.createElement('button',{className:'user-btn '+(currentUser==='Patrick'?'active-patrick':''),onClick:()=>setCurrentUser('Patrick')},'\uD83D\uDD35 Patrick'),
-          React.createElement('button',{className:'user-btn '+(currentUser==='Aica'?'active-aica':''),onClick:()=>setCurrentUser('Aica')},'\uD83E\uDE77 Aica'))
+        React.createElement('div',{className:'current-user-badge'},
+          currentUser==='Patrick'?'\uD83D\uDD35':'\uD83E\uDE77',
+          ' ',currentUser,
+          React.createElement('span',{className:'switch-user-link',onClick:()=>setShowUserPicker(true)},'Switch'))
       )
     ),
     React.createElement('div',{className:'container'},
@@ -923,7 +1102,20 @@ function App(){
         React.createElement('button',{className:'tab-btn '+(activeTab==='list'?'active':''),onClick:()=>setActiveTab('list')},'\uD83D\uDCCB Expenses'),
         React.createElement('button',{className:'tab-btn '+(activeTab==='deposits'?'active':''),onClick:()=>setActiveTab('deposits')},'\uD83D\uDCB0 Deposits'),
         React.createElement('button',{className:'tab-btn '+(activeTab==='charts'?'active':''),onClick:()=>setActiveTab('charts')},'\uD83D\uDCCA Charts'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='balances'?'active':''),onClick:()=>setActiveTab('balances')},'\u2696\uFE0F Balances')
+        React.createElement('button',{className:'tab-btn '+(activeTab==='balances'?'active':''),onClick:()=>setActiveTab('balances')},'\u2696\uFE0F Balances'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='bills'?'active':''),onClick:()=>setActiveTab('bills')},'\uD83D\uDCCB Bills')
+      ),
+
+      /* BILL REMINDERS BANNER */
+      billReminders.length>0&&!dismissReminders&&React.createElement('div',{className:'reminder-banner'},
+        React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:billReminders.length>1?8:0}},
+          React.createElement('div',{style:{fontSize:13,fontWeight:700,color:'#92400E'}},'\u23F0 Upcoming Bills'),
+          React.createElement('button',{onClick:()=>setDismissReminders(true),style:{border:'none',background:'transparent',cursor:'pointer',fontSize:16,color:'#B45309'}},'\u2715')
+        ),
+        billReminders.map(b=>React.createElement('div',{key:b.id,className:'reminder-item'},
+          React.createElement('span',{className:'bill-name'},b.name+(b.type==='fixed'&&b.amount?' \u2022 '+fmt(b.amount):'')),
+          React.createElement('span',{className:'bill-due '+(b.overdue?'overdue':'soon')},b.overdue?'Overdue!':b.daysUntil===0?'Due today!':'Due in '+b.daysUntil+' day'+(b.daysUntil!==1?'s':''))
+        ))
       ),
 
       /* ADD TAB */
@@ -966,6 +1158,13 @@ function App(){
                   React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimburse to'),React.createElement('div',{className:'reimb-to-options'},React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setFormReimbTo('patrick')},'\uD83D\uDD35 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='aica'?'sel-aica':''),onClick:()=>setFormReimbTo('aica')},'\uD83E\uDE77 Aica'))),
                   React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimbursement %'),React.createElement('div',{className:'reimb-pct-row'},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:formReimbPct,onChange:e=>setFormReimbPct(Number(e.target.value))}),React.createElement('div',{className:'reimb-pct-value'},formReimbPct+'%')),formAmount&&Number(formAmount)>0&&React.createElement('div',{className:'reimb-pct-calc'},'Reimbursable: '+fmt(Number(formAmount)*formReimbPct/100)))
                 )
+              )
+            ),
+            React.createElement('div',{className:'form-group full-width'},
+              React.createElement('label',null,'Visibility'),
+              React.createElement('div',{className:'scope-toggle'},
+                React.createElement('button',{className:'scope-pill '+(formScope==='shared'?'active-shared':''),onClick:()=>setFormScope('shared')},'\uD83C\uDFE0 Household'),
+                React.createElement('button',{className:'scope-pill '+(formScope==='personal'?'active-personal':''),onClick:()=>setFormScope('personal')},'\uD83D\uDD12 Personal')
               )
             ),
             React.createElement('div',{className:'form-group full-width'},React.createElement('button',{className:'submit-btn '+(currentUser==='Patrick'?'patrick':'aica'),onClick:handleSubmit,disabled:!formFund},'\uFF0B Add Expense'))
@@ -1084,6 +1283,31 @@ function App(){
             aicaPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--aica)'}},'Total: ',fmt(aicaTotal))
           )
         )
+      ),
+
+      /* BILLS TAB */
+      activeTab==='bills'&&React.createElement(React.Fragment,null,
+        React.createElement('button',{className:'add-deposit-btn',style:{borderColor:'var(--warning)',background:'#FFFBEB',color:'#B45309'},onClick:()=>openBillForm(null)},'\u2795 Add Bill'),
+        bills.filter(b=>b.active).length===0
+          ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'\uD83D\uDCCB'),React.createElement('div',{style:{fontWeight:600}},'No bills yet. Add your recurring bills!'))
+          :bills.filter(b=>b.active).map(b=>React.createElement('div',{key:b.id,className:'bill-card'},
+            React.createElement('div',{className:'bill-top'},
+              React.createElement('div',{className:'bill-name'},b.name),
+              React.createElement('div',{className:'bill-amt',style:{color:b.type==='variable'?'var(--text-muted)':'var(--text)'}},b.type==='variable'?'Variable':fmt(b.amount))
+            ),
+            React.createElement('div',{className:'bill-meta'},
+              React.createElement('span',{className:'badge badge-opex',style:b.account==='savings'?{background:'#E0E7FF',color:'#4338CA'}:{}},b.account==='savings'?'\uD83C\uDFE6 Savings':'\uD83D\uDCB3 Opex'),
+              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)',fontWeight:600}},'Due: Day '+b.dueDay),
+              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},b.assignedTo==='Both'?'\uD83D\uDC65 Both':b.assignedTo==='Patrick'?'\uD83D\uDD35 Patrick':'\uD83E\uDE77 Aica'),
+              b.lastPaidDate&&React.createElement('span',{style:{fontSize:11,color:'var(--success)',fontWeight:600}},'\u2713 Paid '+fmtDate(String(b.lastPaidDate).substring(0,10),{month:'short',day:'numeric'}))
+            ),
+            b.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'\uD83D\uDCDD '+b.notes),
+            React.createElement('div',{className:'bill-actions'},
+              React.createElement('button',{className:'bill-paid-btn',onClick:()=>markBillPaid(b.id)},'\u2705 Mark Paid'),
+              React.createElement('button',{className:'edit-btn',onClick:()=>openBillForm(b),title:'Edit'},'\u270F\uFE0F'),
+              React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteBillTarget(b),title:'Delete'},'\u2715')
+            )
+          ))
       ),
 
       /* BALANCES TAB */
