@@ -220,6 +220,7 @@
   .photo-upload-preview{max-width:100%;max-height:200px;border-radius:8px;margin-top:10px;}
   .add-deposit-btn{padding:12px 20px;border:2px dashed var(--success);background:var(--success-light);color:#16A34A;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;width:100%;margin-bottom:16px;}
   .add-deposit-btn:hover{background:var(--success);color:white;}
+  .snap-receipt-scanning{animation:pulse 1s infinite;}
   @media(max-width:768px){
     .form-grid{grid-template-columns:1fr;}
     .app-header{flex-direction:column;}
@@ -393,6 +394,13 @@ function App(){
   const[viewPhoto,setViewPhoto]=useState(null);
   const[depFilterMonth,setDepFilterMonth]=useState(curMonth);
 
+  // Receipt OCR
+  const[receiptBase64,setReceiptBase64]=useState('');
+  const[receiptName,setReceiptName]=useState('');
+  const[receiptUrl,setReceiptUrl]=useState('');
+  const[ocrProcessing,setOcrProcessing]=useState(false);
+  const[ocrError,setOcrError]=useState('');
+
   const today=new Date().toISOString().split('T')[0];
   const[formDate,setFormDate]=useState(today);
   const[formDesc,setFormDesc]=useState('');
@@ -434,14 +442,40 @@ function App(){
 
   const handleSubmit=()=>{
     if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!formFund)return;
-    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false};
-    setExpenses(prev=>[newExp,...prev]);setNextId(n=>n+1);setSyncStatus('loading');
-    api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptBase64,receiptName:receiptName,receiptUrl:receiptUrl};
+    setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+1);setSyncStatus('loading');
+    api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
+      if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
+      setSyncStatus('ok');
+    }).catch(()=>setSyncStatus('error'));
     setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);
+    clearReceipt();
     setActiveTab('list');
   };
 
   const handleQuickAdd=(qa)=>{setFormDesc(qa.desc);setFormCategory(qa.category);setActiveTab('add');};
+
+  // Receipt OCR handler
+  const handleReceiptPhoto=(ev)=>{
+    var file=ev.target.files[0];if(!file)return;
+    setReceiptName(file.name);setOcrError('');
+    var reader=new FileReader();
+    reader.onload=(e)=>{
+      var b64=e.target.result;
+      setReceiptBase64(b64);setOcrProcessing(true);
+      api(scriptUrl,'POST',{action:'ocrReceipt',photoBase64:b64}).then(d=>{
+        setOcrProcessing(false);
+        if(d.error){setOcrError(d.error);return;}
+        if(d.storeName)setFormDesc(d.storeName);
+        if(d.amount)setFormAmount(String(d.amount));
+        if(d.date)setFormDate(d.date);
+        if(d.category)setFormCategory(d.category);
+        if(d.receiptUrl)setReceiptUrl(d.receiptUrl);
+      }).catch(err=>{setOcrProcessing(false);setOcrError('OCR failed: '+err);});
+    };
+    reader.readAsDataURL(file);
+  };
+  const clearReceipt=()=>{setReceiptBase64('');setReceiptName('');setReceiptUrl('');setOcrError('');};
 
   // Deposit handlers
   const handleDepositPhoto=(ev)=>{
@@ -856,6 +890,7 @@ function App(){
       e.reimbursable&&reimbInfoEl(e)
     ),
     e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{className:'expense-card-notes'},'\uD83D\uDCDD '+e.notes),
+    e.receiptUrl&&React.createElement('div',{style:{fontSize:12,marginTop:4}},React.createElement('span',{style:{cursor:'pointer',color:'var(--patrick)',fontWeight:600},onClick:()=>setViewPhoto(e.receiptUrl)},'\uD83E\uDDFE View Receipt')),
     e.reimbursable&&e.amount*(e.reimbPct||50)/100>0&&React.createElement('div',{style:{fontSize:12,color:'#92400E',fontWeight:500,marginTop:4}},'Reimb amount: '+fmt(reimbAmt(e))),
     e.category==='Driver Salary'&&e.notes&&e.notes.length>10&&React.createElement('button',{onClick:()=>setBreakdownTarget(e),style:{width:'100%',marginTop:10,padding:'10px 14px',border:'2px solid #F59E0B',background:'#FFFBEB',borderRadius:10,cursor:'pointer',fontSize:13,fontWeight:700,color:'#92400E',display:'flex',alignItems:'center',justifyContent:'center',gap:6}},'\uD83D\uDCCB View Salary Breakdown'),
     React.createElement('div',{className:'expense-card-actions'},
@@ -897,7 +932,22 @@ function App(){
           React.createElement('div',{style:{fontSize:12,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',marginBottom:8,letterSpacing:0.5}},'\u26A1 Quick Add'),
           React.createElement('div',{className:'quick-add-row'},
             QUICK_ADDS.map(qa=>React.createElement('button',{key:qa.desc,className:'quick-add-btn',onClick:()=>handleQuickAdd(qa)},qa.icon,' ',qa.desc)),
-            React.createElement('button',{className:'quick-add-btn',onClick:openDriverCalc,style:{borderColor:'#F59E0B',color:'#B45309'}},'\uD83D\uDE97 Driver Salary')
+            React.createElement('button',{className:'quick-add-btn',onClick:openDriverCalc,style:{borderColor:'#F59E0B',color:'#B45309'}},'\uD83D\uDE97 Driver Salary'),
+            React.createElement('button',{className:'quick-add-btn',onClick:()=>document.getElementById('receipt-photo-input').click(),style:{borderColor:'var(--success)',color:'#16A34A',background:ocrProcessing?'#DCFCE7':'white'}},ocrProcessing?'\u23F3 Scanning...':'\uD83D\uDCF7 Snap Receipt'),
+            React.createElement('input',{id:'receipt-photo-input',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleReceiptPhoto})
+          )
+        ),
+        receiptBase64&&React.createElement('div',{className:'card',style:{padding:14,borderColor:ocrError?'#EF4444':'var(--success)',borderWidth:2}},
+          React.createElement('div',{style:{display:'flex',gap:12,alignItems:'flex-start'}},
+            React.createElement('img',{src:receiptBase64,style:{width:60,height:80,objectFit:'cover',borderRadius:8,border:'1px solid var(--border)'},onClick:()=>setViewPhoto(receiptBase64)}),
+            React.createElement('div',{style:{flex:1}},
+              React.createElement('div',{style:{fontSize:13,fontWeight:700,color:ocrError?'#EF4444':'var(--success)',marginBottom:4}},ocrProcessing?'\u23F3 Scanning receipt...':(ocrError?'\u26A0\uFE0F '+ocrError:'\u2713 Receipt scanned \u2014 review fields below')),
+              React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},receiptName)
+            ),
+            React.createElement('div',{style:{display:'flex',gap:6}},
+              React.createElement('button',{style:{padding:'4px 10px',border:'1px solid var(--border)',borderRadius:8,background:'white',fontSize:11,fontWeight:600,cursor:'pointer',color:'var(--text-muted)'},onClick:()=>document.getElementById('receipt-photo-input').click()},'\uD83D\uDD04 Rescan'),
+              React.createElement('button',{style:{padding:'4px 10px',border:'1px solid var(--border)',borderRadius:8,background:'white',fontSize:11,fontWeight:600,cursor:'pointer',color:'#EF4444'},onClick:clearReceipt},'\u2715')
+            )
           )
         ),
         React.createElement('div',{className:'card'},
@@ -954,7 +1004,8 @@ function App(){
                       React.createElement('td',null,
                         React.createElement('div',{style:{fontWeight:600}},e.description),
                         React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},'by '+e.user),
-                        e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)',fontStyle:'italic',marginTop:2}},'\uD83D\uDCDD '+e.notes)
+                        e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)',fontStyle:'italic',marginTop:2}},'\uD83D\uDCDD '+e.notes),
+                        e.receiptUrl&&React.createElement('div',{style:{fontSize:11,marginTop:2}},React.createElement('span',{style:{cursor:'pointer',color:'var(--patrick)'},onClick:()=>setViewPhoto(e.receiptUrl)},'\uD83E\uDDFE View Receipt'))
                       ),
                       React.createElement('td',null,React.createElement('span',{className:'category-badge'},e.category)),
                       React.createElement('td',{style:{textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums'}},
