@@ -244,14 +244,14 @@ if ('serviceWorker' in navigator) {
 <script type="text/babel">
 const{useState,useMemo,useRef,useEffect,useCallback}=React;
 
-const CATEGORIES=['Groceries','Driver Salary','Maid Salary','Restaurant / Eating Out','Home Improvements','Hobbies','Housing Expenses','Health/Medical','Other Expenses'];
+const CATEGORIES=['Groceries','Gas / Fuel','Driver Salary','Maid Salary','Restaurant / Eating Out','Home Improvements','Hobbies','Housing Expenses','Health/Medical','Other Expenses'];
 const FUND_SOURCES=[
   {id:'savings',label:'Savings Account',icon:'\uD83C\uDFE6'},
   {id:'opex',label:'Opex Account',icon:'\uD83D\uDCB3'},
   {id:'patrick',label:'Patrick',icon:'\uD83D\uDD35'},
   {id:'aica',label:'Aica',icon:'\uD83E\uDE77'},
 ];
-const CAT_COLORS=['#6366F1','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
+const CAT_COLORS=['#6366F1','#D97706','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
 const fmt=(n)=>'\u20B1'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const DRIVER_DAILY=1041.67;
 const DRIVER_OT_HR=86.80;
@@ -286,7 +286,7 @@ function fmtDate(ds,opts){return safeDate(ds).toLocaleDateString('en-US',opts||{
 
 const QUICK_ADDS=[
   {desc:'Groceries',category:'Groceries',icon:'\uD83D\uDED2'},
-  {desc:'Gas / Fuel',category:'Other Expenses',icon:'\u26FD'},
+  {desc:'Gas / Fuel',category:'Gas / Fuel',icon:'\u26FD'},
   {desc:'Eating Out',category:'Restaurant / Eating Out',icon:'\uD83C\uDF7D\uFE0F'},
 ];
 
@@ -442,7 +442,7 @@ function App(){
 
   const handleSubmit=()=>{
     if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!formFund)return;
-    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptBase64,receiptName:receiptName,receiptUrl:receiptUrl};
+    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:currentUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl};
     setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+1);setSyncStatus('loading');
     api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
       if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
