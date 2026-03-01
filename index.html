@@ -44,6 +44,10 @@
   .user-btn.active-patrick{background:var(--patrick);color:white;box-shadow:0 2px 8px rgba(37,99,235,0.35);}
   .user-btn.active-aica{background:var(--aica);color:white;box-shadow:0 2px 8px rgba(232,121,160,0.35);}
   .container{max-width:960px;margin:0 auto;padding:20px;}
+  .mode-toggle{display:flex;gap:6px;background:#F1F5F9;border-radius:var(--radius);padding:4px;margin-bottom:16px;}
+  .mode-pill{flex:1;padding:12px 20px;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;transition:all var(--transition);background:transparent;color:var(--text-muted);text-align:center;letter-spacing:-0.01em;}
+  .mode-pill.active-household{background:var(--success);color:white;box-shadow:0 2px 8px rgba(22,163,74,0.3);}
+  .mode-pill.active-personal{background:#7C3AED;color:white;box-shadow:0 2px 8px rgba(124,58,237,0.3);}
   .tabs{display:flex;gap:4px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);padding:4px;margin-bottom:20px;border:1px solid rgba(226,232,240,0.5);overflow-x:auto;-webkit-overflow-scrolling:touch;box-shadow:var(--shadow-sm);}
   .tab-btn{flex:1;padding:10px 8px;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:12px;transition:all var(--transition);background:transparent;color:var(--text-muted);white-space:nowrap;min-width:fit-content;letter-spacing:-0.01em;}
   .tab-btn:hover{color:var(--text);background:rgba(241,245,249,0.8);}
@@ -195,7 +199,6 @@
   .expense-card-notes{font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic;line-height:1.4;}
   .expense-card-actions{display:flex;gap:6px;margin-top:12px;justify-content:flex-end;align-items:center;padding-top:10px;border-top:1px solid rgba(226,232,240,0.5);}
   .desktop-table{display:block;}
-  /* Driver salary day picker */
   .day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0;}
   .day-cell{text-align:center;border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 4px;cursor:pointer;transition:all var(--transition);background:white;}
   .day-cell:hover{border-color:#CBD5E1;background:#F8FAFC;}
@@ -204,13 +207,11 @@
   .day-cell.checked .day-name{color:#16A34A;}
   .day-cell .day-date{font-size:12px;margin-top:2px;font-weight:600;}
   .day-cell .day-check{font-size:16px;margin-top:2px;}
-  /* Adjustment rows */
   .adj-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
   .adj-row input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:'Inter',inherit;outline:none;transition:border-color var(--transition);}
   .adj-row input:focus{border-color:var(--patrick);}
   .adj-row .adj-del{padding:4px 8px;border:none;background:transparent;color:#CBD5E1;cursor:pointer;font-size:16px;border-radius:6px;transition:all var(--transition);}
   .adj-row .adj-del:hover{background:#FEE2E2;color:#EF4444;}
-  /* Breakdown modal */
   .breakdown-sheet{background:white;padding:24px;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
   .breakdown-sheet h2{font-size:18px;font-weight:800;margin-bottom:4px;color:var(--text);letter-spacing:-0.02em;}
   .breakdown-sheet .period{font-size:13px;color:var(--text-muted);margin-bottom:16px;}
@@ -218,13 +219,11 @@
   .breakdown-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--border);}
   .breakdown-table td{padding:8px 10px;font-size:14px;border-bottom:1px solid #F1F5F9;}
   .breakdown-table .total-row td{border-top:2px solid var(--text);font-weight:800;font-size:16px;border-bottom:none;}
-  /* Journal modal */
   .journal-table{width:100%;border-collapse:collapse;}
   .journal-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--border);white-space:nowrap;}
   .journal-table td{padding:8px 10px;font-size:13px;border-bottom:1px solid #F1F5F9;}
   .journal-table .j-start td{background:#F0FDF4;font-weight:700;color:#16A34A;}
   .journal-table .j-end td{border-top:2px solid var(--text);font-weight:800;}
-  /* Deposit card styles */
   .deposit-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;border-left:4px solid;box-shadow:var(--shadow-sm);transition:all var(--transition);}
   .deposit-card.dep-savings{border-left-color:#4338CA;background:linear-gradient(135deg,#F5F3FF,#EDE9FE);}
   .deposit-card.dep-opex{border-left-color:#B45309;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);}
@@ -277,6 +276,86 @@
   .current-user-badge{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;}
   .switch-user-link{font-size:11px;color:var(--patrick);cursor:pointer;text-decoration:none;font-weight:600;opacity:0.8;transition:opacity var(--transition);}
   .switch-user-link:hover{opacity:1;text-decoration:underline;}
+  [data-theme="dark"] {
+  --patrick:#60A5FA; --patrick-light:#1E3A5F; --patrick-bg:#172554;
+  --aica:#F9A8D4; --aica-light:#4A1942; --aica-bg:#3B0764;
+  --bg:#0F172A; --card:#1E293B; --border:#334155;
+  --text:#F1F5F9; --text-muted:#94A3B8; --text-light:#64748B;
+  --success:#4ADE80; --success-light:#14532D;
+  --warning:#FBBF24; --warning-light:#78350F;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.2),0 2px 4px rgba(0,0,0,0.3);
+  --shadow-lg:0 10px 25px rgba(0,0,0,0.3),0 4px 10px rgba(0,0,0,0.2);
+  --shadow-xl:0 20px 50px rgba(0,0,0,0.4),0 8px 20px rgba(0,0,0,0.3);
+}
+  [data-theme="dark"] body{background:var(--bg);}
+  [data-theme="dark"] .app-header{background:rgba(30,41,59,0.85);border-bottom-color:var(--border);}
+  [data-theme="dark"] .tabs{background:rgba(30,41,59,0.7);border-color:var(--border);}
+  [data-theme="dark"] .tab-btn.active{background:#F1F5F9;color:#0F172A;}
+  [data-theme="dark"] .card{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .summary-card{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .form-group input,[data-theme="dark"] .form-group select,[data-theme="dark"] .form-group textarea{background:var(--bg);border-color:var(--border);color:var(--text);}
+  [data-theme="dark"] .fund-option{background:var(--bg);border-color:var(--border);color:var(--text-muted);}
+  [data-theme="dark"] .fund-option:hover{background:var(--card);border-color:#475569;}
+  [data-theme="dark"] .quick-add-btn{background:var(--card);border-color:var(--border);color:var(--text-muted);}
+  [data-theme="dark"] .expense-card-item{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .expense-card-item.card-patrick{background:var(--patrick-bg);border-left-color:var(--patrick);}
+  [data-theme="dark"] .expense-card-item.card-aica{background:var(--aica-bg);border-left-color:var(--aica);}
+  [data-theme="dark"] tr.row-patrick td{background:var(--patrick-bg);}
+  [data-theme="dark"] tr.row-aica td{background:var(--aica-bg);}
+  [data-theme="dark"] .deposit-card{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .deposit-card.dep-savings{background:#1E1B4B;border-left-color:#818CF8;}
+  [data-theme="dark"] .deposit-card.dep-opex{background:#451A03;border-left-color:#F59E0B;}
+  [data-theme="dark"] .bill-card{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .modal-overlay{background:rgba(0,0,0,0.6);}
+  [data-theme="dark"] .modal-box{background:var(--card);color:var(--text);}
+  [data-theme="dark"] .btn-cancel{background:#334155;color:var(--text-muted);}
+  [data-theme="dark"] .btn-cancel:hover{background:#475569;color:var(--text);}
+  [data-theme="dark"] .data-btn{background:var(--card);border-color:var(--border);color:var(--text-muted);}
+  [data-theme="dark"] .data-btn:hover{background:#334155;color:var(--text);}
+  [data-theme="dark"] .filter-bar select,[data-theme="dark"] .filter-bar input[type=text]{background:var(--bg);border-color:var(--border);color:var(--text);}
+  [data-theme="dark"] .category-badge{background:#334155;color:var(--text-muted);}
+  [data-theme="dark"] .badge-savings{background:#312E81;color:#A5B4FC;}
+  [data-theme="dark"] .badge-opex{background:#78350F;color:#FDE68A;}
+  [data-theme="dark"] .badge-patrick{background:var(--patrick-bg);color:var(--patrick);}
+  [data-theme="dark"] .badge-aica{background:var(--aica-bg);color:var(--aica);}
+  [data-theme="dark"] .balance-card.patrick-card{background:linear-gradient(145deg,#172554,#1E3A5F);border-color:rgba(96,165,250,0.3);}
+  [data-theme="dark"] .balance-card.aica-card{background:linear-gradient(145deg,#3B0764,#4A1942);border-color:rgba(249,168,212,0.3);}
+  [data-theme="dark"] .net-banner{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .acct-card{background:var(--card);border-color:var(--border);}
+  [data-theme="dark"] .acct-card:hover{border-color:rgba(96,165,250,0.4);}
+  [data-theme="dark"] .acct-edit input{background:var(--bg);border-color:var(--border);color:var(--text);}
+  [data-theme="dark"] .acct-edit button{background:#334155;border-color:var(--border);color:var(--text-muted);}
+  [data-theme="dark"] .reimb-section{background:#451A03;border-color:#78350F;}
+  [data-theme="dark"] .reimburse-btn{background:#78350F;border-color:#D97706;color:#FDE68A;}
+  [data-theme="dark"] .reimbursed-badge{background:#14532D;border-color:#4ADE80;color:#4ADE80;}
+  [data-theme="dark"] .add-deposit-btn{background:#14532D;border-color:#4ADE80;color:#4ADE80;}
+  [data-theme="dark"] .bill-paid-btn{background:#14532D;border-color:#4ADE80;color:#4ADE80;}
+  [data-theme="dark"] .reminder-banner{background:linear-gradient(145deg,#451A03,#78350F);border-color:#D97706;}
+  [data-theme="dark"] .reminder-item .bill-name{color:#FDE68A;}
+  [data-theme="dark"] .loading-overlay{background:rgba(15,23,42,0.9);}
+  [data-theme="dark"] .user-picker{background:linear-gradient(180deg,#0F172A,#1E293B);}
+  [data-theme="dark"] .user-pick-btn{background:var(--card);border-color:var(--border);color:var(--text);}
+  [data-theme="dark"] .setup-screen{color:var(--text);}
+  [data-theme="dark"] .setup-input{background:var(--bg);border-color:var(--border);color:var(--text);}
+  [data-theme="dark"] .mode-toggle{background:#1E293B;}
+  [data-theme="dark"] .mode-pill{color:var(--text-muted);}
+  [data-theme="dark"] .photo-upload-area{background:var(--bg);border-color:var(--border);}
+  [data-theme="dark"] .reimb-to-opt{background:var(--bg);border-color:var(--border);color:var(--text-muted);}
+  [data-theme="dark"] .balance-detail-table th{border-bottom-color:var(--border);}
+  [data-theme="dark"] .balance-detail-table td{border-bottom-color:#334155;}
+  [data-theme="dark"] .journal-table th{border-bottom-color:var(--border);}
+  [data-theme="dark"] .journal-table td{border-bottom-color:#334155;}
+  [data-theme="dark"] .journal-table .j-start td{background:#14532D;color:#4ADE80;}
+  [data-theme="dark"] .breakdown-sheet{background:var(--card);color:var(--text);}
+  [data-theme="dark"] .breakdown-table th{border-bottom-color:var(--border);color:var(--text-light);}
+  [data-theme="dark"] .breakdown-table td{border-bottom-color:#334155;color:var(--text);}
+  [data-theme="dark"] .delete-btn:hover{background:#7F1D1D;color:#FCA5A5;}
+  [data-theme="dark"] .edit-btn:hover{background:#1E3A5F;color:var(--patrick);}
+  .dark-toggle{padding:6px 10px;border:1.5px solid var(--border);background:transparent;border-radius:var(--radius);font-size:14px;cursor:pointer;transition:all var(--transition);line-height:1;}
+  .dark-toggle:hover{background:rgba(148,163,184,0.1);}
+
+
   @media(max-width:768px){
     .form-grid{grid-template-columns:1fr;}
     .app-header{flex-direction:column;}
@@ -290,6 +369,8 @@
     .card{padding:18px;}
     .tabs{padding:3px;}
     .tab-btn{font-size:11px;padding:9px 6px;}
+    .mode-toggle{gap:4px;padding:3px;}
+    .mode-pill{padding:10px 16px;font-size:12px;}
   }
 </style>
 </head>
@@ -307,52 +388,45 @@ const HOUSEHOLD_CATEGORIES=['Groceries','Gas / Fuel','Driver Salary','Maid Salar
 const PERSONAL_CATEGORIES=['Shopping','Entertainment','Food & Drinks','Transport','Personal Care','Subscriptions','Other Personal'];
 const CATEGORIES=[...HOUSEHOLD_CATEGORIES,...PERSONAL_CATEGORIES];
 const FUND_SOURCES=[
-  {id:'savings',label:'Savings Account',icon:'\uD83C\uDFE6'},
-  {id:'opex',label:'Opex Account',icon:'\uD83D\uDCB3'},
-  {id:'patrick',label:'Patrick',icon:'\uD83D\uDD35'},
-  {id:'aica',label:'Aica',icon:'\uD83E\uDE77'},
+  {id:'savings',label:'Savings Account',icon:'🏠'},
+  {id:'opex',label:'Opex Account',icon:'💳'},
+  {id:'patrick',label:'Patrick',icon:'🔵'},
+  {id:'aica',label:'Aica',icon:'🩷'},
 ];
 const HOUSEHOLD_COLORS=['#6366F1','#D97706','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
 const PERSONAL_COLORS=['#8B5CF6','#EC4899','#F97316','#06B6D4','#10B981','#6366F1','#78716C'];
 const CAT_COLORS=[...HOUSEHOLD_COLORS,...PERSONAL_COLORS];
 function getCategoriesForScope(scope){return scope==='personal'?PERSONAL_CATEGORIES:HOUSEHOLD_CATEGORIES;}
 function getColorsForScope(scope){return scope==='personal'?PERSONAL_COLORS:HOUSEHOLD_COLORS;}
-const fmt=(n)=>'\u20B1'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=(n)=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const DRIVER_DAILY=1041.67;
 const DRIVER_OT_HR=86.80;
 const DAY_NAMES=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-/* --- Date normalization (BUG FIX) --- */
 function normalizeDate(d){
   if(!d)return new Date().toISOString().split('T')[0];
   if(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d))return d;
   var dt=new Date(d);
   if(isNaN(dt.getTime())){
-    // Try parsing common Google Sheets formats
     var str=String(d);
     var m=str.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
     if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
-    // Try "Mon DD, YYYY" or other formats
     dt=new Date(str);
     if(isNaN(dt.getTime()))return new Date().toISOString().split('T')[0];
   }
   return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
 }
 
-function normalizeExpenses(arr){
-  return arr.map(function(e){return Object.assign({},e,{date:normalizeDate(e.date)});});
-}
-function normalizeDeposits(arr){
-  return arr.map(function(d){return Object.assign({},d,{date:normalizeDate(d.date)});});
-}
+function normalizeExpenses(arr){return arr.map(function(e){return Object.assign({},e,{date:normalizeDate(e.date)});});}
+function normalizeDeposits(arr){return arr.map(function(d){return Object.assign({},d,{date:normalizeDate(d.date)});});}
 
 function safeDate(ds){return new Date(ds+'T00:00:00');}
 function fmtDate(ds,opts){return safeDate(ds).toLocaleDateString('en-US',opts||{month:'short',day:'numeric'});}
 
 const QUICK_ADDS=[
-  {desc:'Groceries',category:'Groceries',icon:'\uD83D\uDED2'},
-  {desc:'Gas / Fuel',category:'Gas / Fuel',icon:'\u26FD'},
-  {desc:'Eating Out',category:'Restaurant / Eating Out',icon:'\uD83C\uDF7D\uFE0F'},
+  {desc:'Groceries',category:'Groceries',icon:'🛒'},
+  {desc:'Gas / Fuel',category:'Gas / Fuel',icon:'⛽'},
+  {desc:'Eating Out',category:'Restaurant / Eating Out',icon:'🍽️'},
 ];
 
 const SCRIPT_URL_KEY='finance_tracker_script_url';
@@ -362,7 +436,6 @@ function api(scriptUrl,method,body){
   return fetch(scriptUrl,{method:'POST',redirect:'follow',body:JSON.stringify(body)}).then(r=>r.json());
 }
 
-/* --- PieChart --- */
 function PieChartCanvas({data,title}){
   const canvasRef=useRef(null);const chartRef=useRef(null);
   useEffect(()=>{
@@ -385,11 +458,10 @@ function PieChartCanvas({data,title}){
   return React.createElement('canvas',{ref:canvasRef});
 }
 
-/* --- Setup Screen --- */
 function SetupScreen({onConnect}){
   const[url,setUrl]=useState('');
   return React.createElement('div',{className:'setup-screen card'},
-    React.createElement('div',{style:{fontSize:48,marginBottom:12}},'\uD83D\uDCB0'),
+    React.createElement('div',{style:{fontSize:48,marginBottom:12}},'💰'),
     React.createElement('h1',null,'PoLedger'),
     React.createElement('p',null,'Personal & Family Finance'),
     React.createElement('p',null,'Paste your Google Apps Script URL below to connect. You only need to do this once.'),
@@ -399,18 +471,19 @@ function SetupScreen({onConnect}){
   );
 }
 
-/* --- Main App --- */
 function App(){
   const today=new Date().toISOString().split('T')[0];
   const now=new Date();
   const curMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
 
   const[scriptUrl,setScriptUrl]=useState(()=>{try{return window.localStorage_disabled?'':localStorage.getItem(SCRIPT_URL_KEY)||'';}catch(e){return'';}});
+  const[darkMode,setDarkMode]=useState(()=>{try{return localStorage.getItem('poledger_dark')==='true';}catch(e){return false;}});
   const[connected,setConnected]=useState(!!scriptUrl);
   const[loading,setLoading]=useState(false);
   const[syncStatus,setSyncStatus]=useState('ok');
   const[currentUser,setCurrentUser]=useState(()=>{try{return localStorage.getItem('poledger_user')||'';}catch(e){return'';}});
   const[showUserPicker,setShowUserPicker]=useState(false);
+  const[appMode,setAppMode]=useState('household');
   const[activeTab,setActiveTab]=useState('add');
   const[expenses,setExpenses]=useState([]);
   const[nextId,setNextId]=useState(1);
@@ -440,20 +513,15 @@ function App(){
   const[editReimbPct,setEditReimbPct]=useState(50);
   const[searchText,setSearchText]=useState('');
 
-  // Driver salary calculator
   const[showDriverCalc,setShowDriverCalc]=useState(false);
   const[driverWeekStart,setDriverWeekStart]=useState('');
   const[driverDays,setDriverDays]=useState([false,false,false,false,false,false,false]);
   const[driverOT,setDriverOT]=useState('');
   const[driverAdj,setDriverAdj]=useState([]);
 
-  // Breakdown popup
   const[breakdownTarget,setBreakdownTarget]=useState(null);
-
-  // Journal popup
   const[journalAcct,setJournalAcct]=useState(null);
 
-  // Deposits
   const[deposits,setDeposits]=useState([]);
   const[depositNextId,setDepositNextId]=useState(1);
   const[showDepositForm,setShowDepositForm]=useState(false);
@@ -469,18 +537,12 @@ function App(){
   const[viewPhoto,setViewPhoto]=useState(null);
   const[depFilterMonth,setDepFilterMonth]=useState(curMonth);
 
-  // Receipt OCR
   const[receiptBase64,setReceiptBase64]=useState('');
   const[receiptName,setReceiptName]=useState('');
   const[receiptUrl,setReceiptUrl]=useState('');
   const[ocrProcessing,setOcrProcessing]=useState(false);
   const[ocrError,setOcrError]=useState('');
 
-  // Scope
-  const[formScope,setFormScope]=useState('shared');
-  const[depScope,setDepScope]=useState('shared');
-
-  // Bills
   const[bills,setBills]=useState([]);
   const[billNextId,setBillNextId]=useState(1);
   const[showBillForm,setShowBillForm]=useState(false);
@@ -493,7 +555,7 @@ function App(){
   const[billAccount,setBillAccount]=useState('opex');
   const[billAssignedTo,setBillAssignedTo]=useState('Both');
   const[billNotes,setBillNotes]=useState('');
-  const[billCategory,setBillCategory]=useState('Other Expenses');
+  const[billCategory,setBillCategory]=useState(PERSONAL_CATEGORIES[0]);
   const[dismissReminders,setDismissReminders]=useState(false);
 
   const[formDate,setFormDate]=useState(today);
@@ -508,6 +570,13 @@ function App(){
 
   const[filterMonth,setFilterMonth]=useState(curMonth);
   const[filterUser,setFilterUser]=useState('All');
+
+  const currentScope=appMode==='personal'?'personal':'shared';
+
+  useEffect(()=>{
+    document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+    try{localStorage.setItem('poledger_dark',String(darkMode));}catch(e){}
+  },[darkMode]);
 
   const handleConnect=(url)=>{try{localStorage.setItem(SCRIPT_URL_KEY,url);}catch(e){} setScriptUrl(url);setConnected(true);loadData(url);};
   const handleDisconnect=()=>{try{localStorage.removeItem(SCRIPT_URL_KEY);}catch(e){} setScriptUrl('');setConnected(false);setExpenses([]);};
@@ -537,21 +606,19 @@ function App(){
   const handleSubmit=()=>{
     if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!formFund)return;
     var expUser=(formFund==='patrick'?'Patrick':formFund==='aica'?'Aica':currentUser);
-    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:expUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl,scope:formScope};
+    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:expUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl,scope:currentScope};
     setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+1);setSyncStatus('loading');
     api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
       if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
       setSyncStatus('ok');
     }).catch(()=>setSyncStatus('error'));
-    var wasPersonal=formScope==='personal';
-    setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);setFormScope('shared');
+    setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);
     clearReceipt();
-    setActiveTab(wasPersonal?'personal':'list');
+    setActiveTab(currentScope==='personal'?'wallet':'list');
   };
 
   const handleQuickAdd=(qa)=>{setFormDesc(qa.desc);setFormCategory(qa.category);setActiveTab('add');};
 
-  // Receipt OCR handler
   const handleReceiptPhoto=(ev)=>{
     var file=ev.target.files[0];if(!file)return;
     setReceiptName(file.name);setOcrError('');
@@ -573,14 +640,12 @@ function App(){
   };
   const clearReceipt=()=>{setReceiptBase64('');setReceiptName('');setReceiptUrl('');setOcrError('');};
 
-  // When scope changes, reset category to first of new scope list + auto-set fund for personal
   useEffect(()=>{
-    var cats=getCategoriesForScope(formScope);
+    var cats=getCategoriesForScope(appMode==='personal'?'personal':'shared');
     if(!cats.includes(formCategory))setFormCategory(cats[0]);
-    if(formScope==='personal')setFormFund(currentUser.toLowerCase());
-  },[formScope]);
+    if(appMode==='personal')setFormFund(currentUser.toLowerCase());
+  },[appMode]);
 
-  // Deposit handlers
   const handleDepositPhoto=(ev)=>{
     var file=ev.target.files[0];if(!file)return;
     setDepPhotoName(file.name);
@@ -590,15 +655,14 @@ function App(){
   };
   const handleDepositSubmit=()=>{
     if(!depAmount||Number(depAmount)<=0||!depAccount)return;
-    var newDep={id:depositNextId,date:depDate,amount:Number(depAmount),account:depAccount,description:depDesc.trim()||'Deposit',user:currentUser,notes:depNotes.trim(),photoBase64:depPhotoBase64,photoName:depPhotoName,scope:depScope};
-    // Optimistic update (without photoUrl yet)
+    var newDep={id:depositNextId,date:depDate,amount:Number(depAmount),account:depAccount,description:depDesc.trim()||'Deposit',user:currentUser,notes:depNotes.trim(),photoBase64:depPhotoBase64,photoName:depPhotoName,scope:appMode==='personal'?'personal':'shared'};
     setDeposits(prev=>[{...newDep,photoUrl:''},...prev]);setDepositNextId(n=>n+1);
     setDepUploading(true);setSyncStatus('loading');
     api(scriptUrl,'POST',{action:'addDeposit',deposit:newDep}).then(d=>{
       if(d.photoUrl){setDeposits(prev=>prev.map(dep=>dep.id===newDep.id?{...dep,photoUrl:d.photoUrl}:dep));}
       setSyncStatus('ok');setDepUploading(false);
     }).catch(()=>{setSyncStatus('error');setDepUploading(false);});
-    setDepDate(today);setDepAmount('');setDepAccount('');setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setDepScope('shared');setShowDepositForm(false);
+    setDepDate(today);setDepAmount('');setDepAccount('');setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setShowDepositForm(false);
   };
   const confirmDeleteDeposit=()=>{
     if(!deleteDepTarget)return;
@@ -607,10 +671,9 @@ function App(){
     setDeleteDepTarget(null);
   };
 
-  // Bill handlers
   const openBillForm=(bill)=>{
-    if(bill){setEditBillTarget(bill);setBillName(bill.name);setBillAmount(String(bill.amount||''));setBillDueDay(String(bill.dueDay));setBillType(bill.type||'fixed');setBillAccount(bill.account||'opex');setBillAssignedTo(bill.assignedTo||'Both');setBillNotes(bill.notes||'');setBillCategory(bill.category||'Other Expenses');}
-    else{setEditBillTarget(null);setBillName('');setBillAmount('');setBillDueDay('1');setBillType('fixed');setBillAccount('opex');setBillAssignedTo('Both');setBillNotes('');setBillCategory('Other Expenses');}
+    if(bill){setEditBillTarget(bill);setBillName(bill.name);setBillAmount(String(bill.amount||''));setBillDueDay(String(bill.dueDay));setBillType(bill.type||'fixed');setBillAccount(bill.account||'opex');setBillAssignedTo(bill.assignedTo||'Both');setBillNotes(bill.notes||'');setBillCategory(bill.category||PERSONAL_CATEGORIES[0]);}
+    else{setEditBillTarget(null);setBillName('');setBillAmount('');setBillDueDay('1');setBillType('fixed');setBillAccount('opex');setBillAssignedTo('Both');setBillNotes('');setBillCategory(PERSONAL_CATEGORIES[0]);}
     setShowBillForm(true);
   };
   const handleBillSubmit=()=>{
@@ -627,8 +690,7 @@ function App(){
     if(paidAmount)payload.amount=Number(paidAmount);
     api(scriptUrl,'POST',payload).then(d=>{
       if(d.success&&d.expenseId){
-        // Add the auto-created expense to local state
-        var autoExp={id:d.expenseId,date:today,description:bill?bill.name:'Bill Payment',amount:d.expenseAmount||bill.amount||0,category:d.expenseCategory||(bill?bill.category:'Other Expenses'),fundSource:bill?bill.account:'opex',user:currentUser,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false,notes:'Auto-recorded from bill payment',receiptUrl:'',scope:'shared'};
+        var autoExp={id:d.expenseId,date:today,description:bill?bill.name:'Bill Payment',amount:d.expenseAmount||bill.amount||0,category:d.expenseCategory||(bill?bill.category:PERSONAL_CATEGORIES[0]),fundSource:bill?bill.account:'opex',user:currentUser,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false,notes:'Auto-recorded from bill payment',receiptUrl:'',scope:'personal'};
         setExpenses(prev=>[autoExp,...prev]);setNextId(n=>Math.max(n,d.expenseId+1));
       }
       setSyncStatus('ok');
@@ -641,7 +703,6 @@ function App(){
     setDeleteBillTarget(null);
   };
 
-  // Bill reminders logic
   const billReminders=useMemo(()=>{
     if(!currentUser)return[];
     var todayDay=now.getDate();var todayMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
@@ -653,7 +714,7 @@ function App(){
       if(paidThisMonth)return false;
       var dueDay=Number(b.dueDay);
       var diff=dueDay-todayDay;
-      return diff<=5; // due within 5 days or overdue
+      return diff<=5;
     }).map(b=>{
       var dueDay=Number(b.dueDay);var diff=dueDay-now.getDate();
       return{...b,daysUntil:diff,overdue:diff<0};
@@ -682,9 +743,7 @@ function App(){
   const saveSettings=(sv,op)=>{setSyncStatus('loading');api(scriptUrl,'POST',{action:'updateSettings',settings:{savingsStart:sv,opexStart:op}}).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));};
   const reimbAmt=(e)=>e.amount*(e.reimbPct||50)/100;
 
-  /* --- Driver salary helpers --- */
   const openDriverCalc=()=>{
-    // Default to this week's Monday
     var d=new Date();var day=d.getDay();var diff=d.getDate()-day+(day===0?-6:1);
     var mon=new Date(d.setDate(diff));
     setDriverWeekStart(mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0'));
@@ -708,7 +767,7 @@ function App(){
     var checked=dates.filter((d,i)=>driverDays[i]);
     if(checked.length===0)return'No days selected';
     var first=checked[0],last=checked[checked.length-1];
-    return fmtDate(first.dateStr,{month:'short',day:'numeric'})+' \u2013 '+fmtDate(last.dateStr,{month:'short',day:'numeric',year:'numeric'});
+    return fmtDate(first.dateStr,{month:'short',day:'numeric'})+' – '+fmtDate(last.dateStr,{month:'short',day:'numeric',year:'numeric'});
   };
 
   const NOTES_SEP='|||';
@@ -729,7 +788,7 @@ function App(){
 
   const submitDriverSalary=()=>{
     if(driverDayCount===0)return;
-    var desc='Driver Salary \u2014 '+driverDateRange();
+    var desc='Driver Salary — '+driverDateRange();
     var notes=buildDriverNotes();
     var driverFund=formFund||'opex';
     var driverUser=(driverFund==='patrick'?'Patrick':driverFund==='aica'?'Aica':currentUser);
@@ -747,11 +806,11 @@ function App(){
       if(l.startsWith('Period:'))period=l.replace('Period:','').trim();
       if(l.includes(': Present'))days.push(l.trim());
       var dm=l.match(/^Days:\s*(\d+)\s*x/);if(dm)dayCount=Number(dm[1]);
-      var dtm=l.match(/^Days:.*=\s*\u20B1([\d,.]+)/);if(dtm)dayTotal=Number(dtm[1].replace(/,/g,''));
+      var dtm=l.match(/^Days:.*=\s*₱([\d,.]+)/);if(dtm)dayTotal=Number(dtm[1].replace(/,/g,''));
       var om=l.match(/^OT:\s*([\d.]+)hrs/);if(om)otHrs=Number(om[1]);
-      var otm=l.match(/^OT:.*=\s*\u20B1([\d,.]+)/);if(otm)otTotal=Number(otm[1].replace(/,/g,''));
-      var am=l.match(/^Adj:\s*(.+?)\s*=\s*\u20B1([\d,.%-]+)/);if(am)adjs.push({desc:am[1],amount:am[2]});
-      var tm=l.match(/^TOTAL:\s*\u20B1([\d,.]+)/);if(tm)total=Number(tm[1].replace(/,/g,''));
+      var otm=l.match(/^OT:.*=\s*₱([\d,.]+)/);if(otm)otTotal=Number(otm[1].replace(/,/g,''));
+      var am=l.match(/^Adj:\s*(.+?)\s*=\s*₱([\d,.%-]+)/);if(am)adjs.push({desc:am[1],amount:am[2]});
+      var tm=l.match(/^TOTAL:\s*₱([\d,.]+)/);if(tm)total=Number(tm[1].replace(/,/g,''));
     });
     return{period:period,days:days,dayCount:dayCount,dayRate:dayRate,dayTotal:dayTotal,otHrs:otHrs,otTotal:otTotal,adjs:adjs,total:total};
   };
@@ -759,7 +818,6 @@ function App(){
   const monthOptions=useMemo(()=>{const s=new Set();expenses.forEach(e=>{var ds=e.date;var ym=ds.substring(0,4)+'-'+ds.substring(5,7);s.add(ym);});s.add(curMonth);return Array.from(s).sort().reverse();},[expenses]);
   const monthLabel=(ym)=>{const[y,m]=ym.split('-');return new Date(y,m-1).toLocaleDateString('en-US',{month:'long',year:'numeric'});};
 
-  // Scope filter: show shared + own personal items
   const visibleExpenses=useMemo(()=>expenses.filter(e=>{
     var sc=e.scope||'shared';
     return sc==='shared'||(sc==='personal'&&e.user===currentUser);
@@ -774,7 +832,6 @@ function App(){
     return true;
   }).sort((a,b)=>b.date.localeCompare(a.date)),[visibleExpenses,filterMonth,filterUser,searchText]);
 
-  // Personal expenses filtered
   const filteredPersonal=useMemo(()=>visibleExpenses.filter(e=>{
     if((e.scope||'shared')!=='personal')return false;
     var ym=e.date.substring(0,4)+'-'+e.date.substring(5,7);
@@ -788,7 +845,13 @@ function App(){
     return sc==='shared'||(sc==='personal'&&d.user===currentUser);
   }),[deposits,currentUser]);
 
-  // Personal deposits filtered
+  const filteredDeposits=useMemo(()=>visibleDeposits.filter(d=>{
+    if(appMode==='personal'){if((d.scope||'shared')!=='personal')return false;}
+    else{if((d.scope||'shared')!=='shared')return false;}
+    var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);
+    return ym===depFilterMonth;
+  }).sort((a,b)=>b.date.localeCompare(a.date)),[visibleDeposits,depFilterMonth,appMode]);
+
   const filteredPersonalDeposits=useMemo(()=>visibleDeposits.filter(d=>{
     if((d.scope||'shared')!=='personal')return false;
     var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);
@@ -813,7 +876,6 @@ function App(){
   const owedToAicaTotal=useMemo(()=>owedToAica.reduce((s,e)=>s+reimbAmt(e),0),[owedToAica]);
   const netOwed=owedToPatrickTotal-owedToAicaTotal;
 
-  // Personal finance calculations
   const myPersonalBudget=currentUser==='Patrick'?personalBudgetPatrick:personalBudgetAica;
   const myPersonalDeposits=useMemo(()=>deposits.filter(d=>(d.scope||'shared')==='personal'&&d.user===currentUser).reduce((s,d)=>s+d.amount,0),[deposits,currentUser]);
   const myPersonalExpenses=useMemo(()=>expenses.filter(e=>(e.scope||'shared')==='personal'&&e.user===currentUser).reduce((s,e)=>s+e.amount,0),[expenses,currentUser]);
@@ -829,14 +891,13 @@ function App(){
   };
 
   const categoryPieData=useMemo(()=>{const m={};filtered.filter(e=>(e.scope||'shared')==='shared').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return HOUSEHOLD_CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:HOUSEHOLD_COLORS[HOUSEHOLD_CATEGORIES.indexOf(c)]}));},[filtered]);
-  const personalPieData=useMemo(()=>{const m={};filtered.filter(e=>(e.scope||'shared')==='personal'&&e.user===currentUser).forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return PERSONAL_CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:PERSONAL_COLORS[PERSONAL_CATEGORIES.indexOf(c)]}));},[filtered,currentUser]);
+  const personalPieData=useMemo(()=>{const m={};expenses.filter(e=>(e.scope||'shared')==='personal'&&e.user===currentUser&&e.date.substring(0,7)===filterMonth).forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return PERSONAL_CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:PERSONAL_COLORS[PERSONAL_CATEGORIES.indexOf(c)]}));},[expenses,currentUser,filterMonth]);
   const patrickPieData=useMemo(()=>{const m={};filtered.filter(e=>e.user==='Patrick').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
   const aicaPieData=useMemo(()=>{const m={};filtered.filter(e=>e.user==='Aica').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
 
-  const fundBadgeEl=(fs)=>{const m={'savings':['badge badge-savings','\uD83C\uDFE6 Savings'],'opex':['badge badge-opex','\uD83D\uDCB3 Opex'],'patrick':['badge badge-patrick','\uD83D\uDD35 Patrick'],'aica':['badge badge-aica','\uD83E\uDE77 Aica']};const[cls,txt]=m[fs]||['badge',''];return React.createElement('span',{className:cls},txt);};
-  const reimbInfoEl=(e)=>{if(!e.reimbursable)return React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'\u2014');var who=e.reimbTo==='patrick'?'\uD83D\uDD35 Patrick':'\uD83E\uDE77 Aica';return React.createElement('span',{className:'badge '+(e.reimbTo==='patrick'?'badge-patrick':'badge-aica')},who+' '+e.reimbPct+'%');};
+  const fundBadgeEl=(fs)=>{const m={'savings':['badge badge-savings','🏠 Savings'],'opex':['badge badge-opex','💳 Opex'],'patrick':['badge badge-patrick','🔵 Patrick'],'aica':['badge badge-aica','🩷 Aica']};const[cls,txt]=m[fs]||['badge',''];return React.createElement('span',{className:cls},txt);};
+  const reimbInfoEl=(e)=>{if(!e.reimbursable)return React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'—');var who=e.reimbTo==='patrick'?'🔵 Patrick':'🩷 Aica';return React.createElement('span',{className:'badge '+(e.reimbTo==='patrick'?'badge-patrick':'badge-aica')},who+' '+e.reimbPct+'%');};
 
-  // Journal data (merged expenses + deposits)
   const journalData=useMemo(()=>{
     if(!journalAcct)return[];
     var expTxns=expenses.filter(e=>e.fundSource===journalAcct).map(e=>({...e,txnType:'expense'}));
@@ -851,37 +912,35 @@ function App(){
     });
   },[journalAcct,expenses,deposits,savingsStart,opexStart]);
 
-  // Deposit month options
   const depMonthOptions=useMemo(()=>{const s=new Set();visibleDeposits.forEach(d=>{var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);s.add(ym);});s.add(curMonth);return Array.from(s).sort().reverse();},[visibleDeposits]);
-  const filteredDeposits=useMemo(()=>visibleDeposits.filter(d=>{var ym=d.date.substring(0,4)+'-'+d.date.substring(5,7);return ym===depFilterMonth;}).sort((a,b)=>b.date.localeCompare(a.date)),[visibleDeposits,depFilterMonth]);
 
   if(!connected) return React.createElement(SetupScreen,{onConnect:handleConnect});
   if(loading) return React.createElement('div',{className:'loading-overlay'},React.createElement('div',{className:'spinner'}),React.createElement('div',{style:{fontWeight:600,color:'var(--text-muted)'}},'Loading your data...'));
   if(!currentUser||showUserPicker) return React.createElement('div',{className:'user-picker'},
-    React.createElement('div',{style:{fontSize:48}},'\uD83D\uDCB0'),
+    React.createElement('div',{style:{fontSize:48}},'💰'),
     React.createElement('h1',null,'PoLedger'),
     React.createElement('p',null,'Who\'s using this device?'),
-    React.createElement('button',{className:'user-pick-btn pick-patrick',onClick:()=>pickUser('Patrick')},'\uD83D\uDD35 I\'m Patrick'),
-    React.createElement('button',{className:'user-pick-btn pick-aica',onClick:()=>pickUser('Aica')},'\uD83E\uDE77 I\'m Aica')
+    React.createElement('button',{className:'user-pick-btn pick-patrick',onClick:()=>pickUser('Patrick')},'🔵 I\'m Patrick'),
+    React.createElement('button',{className:'user-pick-btn pick-aica',onClick:()=>pickUser('Aica')},'🩷 I\'m Aica')
   );
+
 
   /* === MODALS === */
 
-  // Edit modal
   var editModalEl=editTarget&&React.createElement('div',{className:'modal-overlay',onClick:()=>setEditTarget(null)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,'\u270F\uFE0F Edit Expense'),
+      React.createElement('h3',null,'✏️ Edit Expense'),
       React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:12}},
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Date'),React.createElement('input',{type:'date',value:editDate,onChange:e=>setEditDate(e.target.value)})),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Description'),React.createElement('input',{type:'text',value:editDesc,onChange:e=>setEditDesc(e.target.value)})),
-        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (\u20B1)'),React.createElement('input',{type:'number',min:'0',step:'0.01',value:editAmt,onChange:e=>setEditAmt(e.target.value)})),
-        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:editCat,onChange:e=>setEditCat(e.target.value)},CATEGORIES.map(c=>React.createElement('option',{key:c,value:c},c)))),/* show all categories in edit so we don't hide existing */
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (₱)'),React.createElement('input',{type:'number',min:'0',step:'0.01',value:editAmt,onChange:e=>setEditAmt(e.target.value)})),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:editCat,onChange:e=>setEditCat(e.target.value)},CATEGORIES.map(c=>React.createElement('option',{key:c,value:c},c)))),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},FUND_SOURCES.map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(editFund===fs.id?'selected':''),onClick:()=>setEditFund(fs.id)},fs.icon+' '+fs.label)))),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes'),React.createElement('textarea',{rows:2,value:editNotes,onChange:e=>setEditNotes(e.target.value),placeholder:'Optional notes...'})),
         React.createElement('div',{style:{padding:'10px 12px',background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:10}},
           React.createElement('label',{style:{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}},React.createElement('input',{type:'checkbox',checked:editReimb,onChange:e=>setEditReimb(e.target.checked),style:{width:16,height:16,accentColor:'var(--warning)'}}),React.createElement('span',{style:{fontSize:13,fontWeight:600,color:'#92400E'}},'Request reimbursement')),
           editReimb&&React.createElement('div',{style:{marginTop:10,display:'flex',flexDirection:'column',gap:8}},
-            React.createElement('div',{style:{display:'flex',gap:8}},React.createElement('div',{className:'reimb-to-opt '+(editReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setEditReimbTo('patrick')},'\uD83D\uDD35 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(editReimbTo==='aica'?'sel-aica':''),onClick:()=>setEditReimbTo('aica')},'\uD83E\uDE77 Aica')),
+            React.createElement('div',{style:{display:'flex',gap:8}},React.createElement('div',{className:'reimb-to-opt '+(editReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setEditReimbTo('patrick')},'🔵 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(editReimbTo==='aica'?'sel-aica':''),onClick:()=>setEditReimbTo('aica')},'🩷 Aica')),
             React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10}},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:editReimbPct,onChange:e=>setEditReimbPct(Number(e.target.value)),style:{flex:1,accentColor:'var(--warning)'}}),React.createElement('span',{style:{fontWeight:800,fontSize:16,color:'#92400E',minWidth:44,textAlign:'center'}},editReimbPct+'%'))
           )
         )
@@ -890,22 +949,20 @@ function App(){
     )
   );
 
-  // Delete modal
   var deleteModalEl=deleteTarget&&React.createElement('div',{className:'modal-overlay',onClick:()=>setDeleteTarget(null)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,'\u26A0\uFE0F Delete Expense?'),
+      React.createElement('h3',null,'⚠️ Delete Expense?'),
       React.createElement('p',{style:{color:'var(--text-muted)',lineHeight:1.6}},'Are you sure you want to delete this expense?'),
       React.createElement('div',{style:{background:'#FEF2F2',border:'1px solid #FECACA',borderRadius:12,padding:14,margin:'14px 0'}},
         React.createElement('div',{style:{fontWeight:700,fontSize:15}},deleteTarget.description),
-        React.createElement('div',{style:{fontSize:14,color:'var(--text-muted)',marginTop:4}},fmt(deleteTarget.amount)+' \u2022 '+deleteTarget.category+' \u2022 '+deleteTarget.user)),
+        React.createElement('div',{style:{fontSize:14,color:'var(--text-muted)',marginTop:4}},fmt(deleteTarget.amount)+' • '+deleteTarget.category+' • '+deleteTarget.user)),
       React.createElement('div',{className:'modal-actions'},React.createElement('button',{className:'btn-cancel',onClick:()=>setDeleteTarget(null)},'Cancel'),React.createElement('button',{className:'btn-danger',onClick:()=>confirmDelete(deleteTarget.id)},'Delete'))
     )
   );
 
-  // Driver salary calculator modal
   var driverCalcEl=showDriverCalc&&React.createElement('div',{className:'modal-overlay',onClick:()=>setShowDriverCalc(false)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,'\uD83D\uDE97 Driver Salary Calculator'),
+      React.createElement('h3',null,'🚗 Driver Salary Calculator'),
       React.createElement('div',{className:'form-group',style:{marginBottom:12}},
         React.createElement('label',null,'Week Starting (Monday)'),
         React.createElement('input',{type:'date',value:driverWeekStart,onChange:e=>setDriverWeekStart(e.target.value)})
@@ -916,7 +973,7 @@ function App(){
           React.createElement('div',{key:i,className:'day-cell '+(driverDays[i]?'checked':''),onClick:()=>{var nd=[...driverDays];nd[i]=!nd[i];setDriverDays(nd);}},
             React.createElement('div',{className:'day-name'},d.name),
             React.createElement('div',{className:'day-date'},d.date?String(d.date.getDate()):''),
-            React.createElement('div',{className:'day-check'},driverDays[i]?'\u2705':'\u2B1C')
+            React.createElement('div',{className:'day-check'},driverDays[i]?'✅':'⬜')
           )
         )),
         React.createElement('div',{style:{display:'flex',gap:12,margin:'12px 0'}},
@@ -926,17 +983,17 @@ function App(){
         React.createElement('div',{style:{marginBottom:12}},
           React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}},
             React.createElement('label',{style:{fontSize:12,fontWeight:600,color:'var(--text-muted)',textTransform:'uppercase'}},'Adjustments'),
-            React.createElement('button',{style:{padding:'4px 12px',border:'1px dashed var(--border)',borderRadius:8,background:'white',fontSize:12,fontWeight:600,cursor:'pointer',color:'var(--text-muted)'},onClick:()=>setDriverAdj(prev=>[...prev,{desc:'',amount:''}])},'+\u00A0Add')
+            React.createElement('button',{style:{padding:'4px 12px',border:'1px dashed var(--border)',borderRadius:8,background:'white',fontSize:12,fontWeight:600,cursor:'pointer',color:'var(--text-muted)'},onClick:()=>setDriverAdj(prev=>[...prev,{desc:'',amount:''}])},'+  Add')
           ),
           driverAdj.map((a,i)=>React.createElement('div',{key:i,className:'adj-row'},
             React.createElement('input',{placeholder:'Reason',value:a.desc,onChange:ev=>{var na=[...driverAdj];na[i]={...na[i],desc:ev.target.value};setDriverAdj(na);}}),
-            React.createElement('input',{type:'number',placeholder:'\u00B10',style:{width:90},value:a.amount,onChange:ev=>{var na=[...driverAdj];na[i]={...na[i],amount:ev.target.value};setDriverAdj(na);}}),
-            React.createElement('button',{className:'adj-del',onClick:()=>setDriverAdj(prev=>prev.filter((_,j)=>j!==i))},'\u2715')
+            React.createElement('input',{type:'number',placeholder:'₱0',style:{width:90},value:a.amount,onChange:ev=>{var na=[...driverAdj];na[i]={...na[i],amount:ev.target.value};setDriverAdj(na);}}),
+            React.createElement('button',{className:'adj-del',onClick:()=>setDriverAdj(prev=>prev.filter((_,j)=>j!==i))},'✕')
           ))
         ),
         React.createElement('div',{style:{background:'#F0FDF4',border:'1px solid #BBF7D0',borderRadius:12,padding:14,marginBottom:12}},
-          React.createElement('div',{style:{fontSize:13,color:'var(--text-muted)'}},driverDayCount+' days \u00D7 '+fmt(DRIVER_DAILY)+' = ',React.createElement('strong',null,fmt(driverDayTotal))),
-          driverOTHrs>0&&React.createElement('div',{style:{fontSize:13,color:'var(--text-muted)',marginTop:4}},driverOTHrs+' hrs OT \u00D7 '+fmt(DRIVER_OT_HR)+' = ',React.createElement('strong',null,fmt(driverOTTotal))),
+          React.createElement('div',{style:{fontSize:13,color:'var(--text-muted)'}},driverDayCount+' days × '+fmt(DRIVER_DAILY)+' = ',React.createElement('strong',null,fmt(driverDayTotal))),
+          driverOTHrs>0&&React.createElement('div',{style:{fontSize:13,color:'var(--text-muted)',marginTop:4}},driverOTHrs+' hrs OT × '+fmt(DRIVER_OT_HR)+' = ',React.createElement('strong',null,fmt(driverOTTotal))),
           driverAdj.filter(a=>a.amount).map((a,i)=>React.createElement('div',{key:i,style:{fontSize:13,color:'var(--text-muted)',marginTop:4}},a.desc||'Adjustment',': ',React.createElement('strong',null,fmt(Number(a.amount))))),
           React.createElement('div',{style:{borderTop:'2px solid #16A34A',marginTop:10,paddingTop:10,fontSize:18,fontWeight:900,color:'#16A34A'}},'Total: '+fmt(driverGrandTotal))
         ),
@@ -951,7 +1008,6 @@ function App(){
     )
   );
 
-  // Breakdown modal (screenshot-friendly)
   var breakdownEl=breakdownTarget&&(function(){
     var bd=parseBreakdown(breakdownTarget.notes);
     if(!bd)return React.createElement('div',{className:'modal-overlay',onClick:()=>setBreakdownTarget(null)},
@@ -964,15 +1020,15 @@ function App(){
     return React.createElement('div',{className:'modal-overlay',onClick:()=>setBreakdownTarget(null)},
       React.createElement('div',{className:'modal-box',style:{maxWidth:420,padding:0},onClick:function(ev){ev.stopPropagation();}},
         React.createElement('div',{className:'breakdown-sheet'},
-          React.createElement('h2',null,'\uD83D\uDE97 Driver Salary'),
+          React.createElement('h2',null,'🚗 Driver Salary'),
           React.createElement('div',{className:'period'},bd.period),
           React.createElement('table',{className:'breakdown-table'},
             React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,'Item'),React.createElement('th',{style:{textAlign:'right'}},'Amount'))),
             React.createElement('tbody',null,
               bd.days.map((d,i)=>React.createElement('tr',{key:'d'+i},React.createElement('td',{style:{color:'var(--success)'}},'\u2713 '+d.split(': ')[0]),React.createElement('td',{style:{textAlign:'right',color:'var(--text-muted)'}},fmt(DRIVER_DAILY)))),
-              React.createElement('tr',null,React.createElement('td',{style:{fontWeight:700}},bd.dayCount+' days \u00D7 '+fmt(DRIVER_DAILY)),React.createElement('td',{style:{textAlign:'right',fontWeight:700}},fmt(bd.dayTotal))),
-              bd.otHrs>0&&React.createElement('tr',null,React.createElement('td',null,'Overtime: '+bd.otHrs+' hrs \u00D7 '+fmt(DRIVER_OT_HR)),React.createElement('td',{style:{textAlign:'right',fontWeight:600}},fmt(bd.otTotal))),
-              bd.adjs.map((a,i)=>React.createElement('tr',{key:'a'+i},React.createElement('td',{style:{color:String(a.amount).startsWith('-')?'#EF4444':'var(--text)'}},a.desc),React.createElement('td',{style:{textAlign:'right'}},'\u20B1'+a.amount))),
+              React.createElement('tr',null,React.createElement('td',{style:{fontWeight:700}},bd.dayCount+' days × '+fmt(DRIVER_DAILY)),React.createElement('td',{style:{textAlign:'right',fontWeight:700}},fmt(bd.dayTotal))),
+              bd.otHrs>0&&React.createElement('tr',null,React.createElement('td',null,'Overtime: '+bd.otHrs+' hrs × '+fmt(DRIVER_OT_HR)),React.createElement('td',{style:{textAlign:'right',fontWeight:600}},fmt(bd.otTotal))),
+              bd.adjs.map((a,i)=>React.createElement('tr',{key:'a'+i},React.createElement('td',{style:{color:String(a.amount).startsWith('-')?'#EF4444':'var(--text)'}},a.desc),React.createElement('td',{style:{textAlign:'right'}},'₱'+a.amount))),
               React.createElement('tr',{className:'total-row'},React.createElement('td',null,'TOTAL'),React.createElement('td',{style:{textAlign:'right'}},fmt(bd.total)))
             )
           )
@@ -982,10 +1038,9 @@ function App(){
     );
   })();
 
-  // Journal modal
   var journalEl=journalAcct&&React.createElement('div',{className:'modal-overlay',onClick:()=>setJournalAcct(null)},
     React.createElement('div',{className:'modal-box',style:{maxWidth:650},onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,(journalAcct==='savings'?'\uD83C\uDFE6 Savings':'\uD83D\uDCB3 Opex')+' Account Journal'),
+      React.createElement('h3',null,(journalAcct==='savings'?'🏠 Savings':' 💳 Opex')+' Account Journal'),
       journalData.length===0
         ?React.createElement('div',{className:'empty-state',style:{padding:20}},React.createElement('div',null,'No transactions yet'))
         :React.createElement('div',{style:{overflowX:'auto'}},
@@ -996,9 +1051,9 @@ function App(){
             )),
             React.createElement('tbody',null,
               React.createElement('tr',{className:'j-start'},
-                React.createElement('td',null,'\u2014'),React.createElement('td',null,'Starting Balance'),React.createElement('td',null,'\u2014'),
-                React.createElement('td',{style:{textAlign:'right'}},'\u2014'),
-                React.createElement('td',{style:{textAlign:'right'}},'\u2014'),
+                React.createElement('td',null,'—'),React.createElement('td',null,'Starting Balance'),React.createElement('td',null,'—'),
+                React.createElement('td',{style:{textAlign:'right'}},'—'),
+                React.createElement('td',{style:{textAlign:'right'}},'—'),
                 React.createElement('td',{style:{textAlign:'right'}},fmt(journalAcct==='savings'?savingsStart:opexStart))
               ),
               journalData.map((t,idx)=>React.createElement('tr',{key:t.txnType+'-'+t.id},
@@ -1006,11 +1061,11 @@ function App(){
                 React.createElement('td',{style:{fontWeight:500}},
                   t.txnType==='deposit'?'\u2B06\uFE0F ':'\u2B07\uFE0F ',
                   t.description,
-                  t.txnType==='deposit'&&t.photoUrl?React.createElement('span',{style:{marginLeft:4,cursor:'pointer'},onClick:()=>setViewPhoto(t.photoUrl),title:'View receipt'},'\uD83D\uDCCE'):null
+                  t.txnType==='deposit'&&t.photoUrl?React.createElement('span',{style:{marginLeft:4,cursor:'pointer'},onClick:()=>setViewPhoto(t.photoUrl),title:'View receipt'},'📎'):null
                 ),
                 React.createElement('td',null,t.user),
-                React.createElement('td',{style:{textAlign:'right',color:t.txnType==='deposit'?'var(--success)':'#94A3B8',fontWeight:t.txnType==='deposit'?700:400}},t.txnType==='deposit'?'+'+fmt(t.amount):'\u2014'),
-                React.createElement('td',{style:{textAlign:'right',color:t.txnType==='expense'?'#EF4444':'#94A3B8',fontWeight:t.txnType==='expense'?600:400}},t.txnType==='expense'?'-'+fmt(t.amount):'\u2014'),
+                React.createElement('td',{style:{textAlign:'right',color:t.txnType==='deposit'?'var(--success)':'#94A3B8',fontWeight:t.txnType==='deposit'?700:400}},t.txnType==='deposit'?'+'+fmt(t.amount):'—'),
+                React.createElement('td',{style:{textAlign:'right',color:t.txnType==='expense'?'#EF4444':'#94A3B8',fontWeight:t.txnType==='expense'?600:400}},t.txnType==='expense'?'-'+fmt(t.amount):'—'),
                 React.createElement('td',{style:{textAlign:'right',fontWeight:700,color:t.runningBal>=0?'var(--text)':'#EF4444'}},fmt(t.runningBal))
               )),
               React.createElement('tr',{className:'j-end'},
@@ -1026,10 +1081,9 @@ function App(){
     )
   );
 
-  // Photo viewer modal
   var photoViewerEl=viewPhoto&&React.createElement('div',{className:'modal-overlay',onClick:()=>setViewPhoto(null)},
     React.createElement('div',{className:'modal-box',style:{maxWidth:600,padding:16},onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',{style:{marginBottom:12}},'\uD83D\uDCF7 Bank Slip / Receipt'),
+      React.createElement('h3',{style:{marginBottom:12}},'📷 Bank Slip / Receipt'),
       React.createElement('img',{src:viewPhoto,className:'photo-preview',alt:'Receipt'}),
       React.createElement('div',{className:'modal-actions'},
         React.createElement('a',{href:viewPhoto,target:'_blank',rel:'noopener',style:{padding:'10px 20px',background:'var(--patrick)',color:'white',borderRadius:10,textDecoration:'none',fontWeight:600,fontSize:14}},'Open in Drive'),
@@ -1037,17 +1091,16 @@ function App(){
     )
   );
 
-  // Deposit form modal
   var depositFormEl=showDepositForm&&React.createElement('div',{className:'modal-overlay',onClick:()=>setShowDepositForm(false)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,'\uD83D\uDCB0 Add Deposit'),
+      React.createElement('h3',null,'💰 Add Deposit'),
       React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:12}},
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Date'),React.createElement('input',{type:'date',value:depDate,onChange:e=>setDepDate(e.target.value)})),
-        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (\u20B1)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:depAmount,onChange:e=>setDepAmount(e.target.value)})),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (₱)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:depAmount,onChange:e=>setDepAmount(e.target.value)})),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Deposit To'),
           React.createElement('div',{className:'fund-options'},
-            React.createElement('div',{className:'fund-option '+(depAccount==='savings'?'selected':''),onClick:()=>setDepAccount('savings')},'\uD83C\uDFE6 Savings'),
-            React.createElement('div',{className:'fund-option '+(depAccount==='opex'?'selected':''),onClick:()=>setDepAccount('opex')},'\uD83D\uDCB3 Opex')
+            React.createElement('div',{className:'fund-option '+(depAccount==='savings'?'selected':''),onClick:()=>setDepAccount('savings')},'🏠 Savings'),
+            React.createElement('div',{className:'fund-option '+(depAccount==='opex'?'selected':''),onClick:()=>setDepAccount('opex')},'💳 Opex')
           )
         ),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Description'),React.createElement('input',{type:'text',placeholder:'e.g. Bank transfer, Salary, etc.',value:depDesc,onChange:e=>setDepDesc(e.target.value)})),
@@ -1057,36 +1110,24 @@ function App(){
           React.createElement('div',{className:'photo-upload-area'+(depPhotoBase64?' has-photo':''),onClick:()=>document.getElementById('dep-photo-input').click()},
             depPhotoBase64
               ?React.createElement(React.Fragment,null,React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--success)'}},'\u2713 Photo attached: '+depPhotoName),React.createElement('img',{src:depPhotoBase64,className:'photo-upload-preview'}),React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)',marginTop:6}},'Tap to change'))
-              :React.createElement(React.Fragment,null,React.createElement('div',{style:{fontSize:28}},'\uD83D\uDCF7'),React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text-muted)',marginTop:4}},'Tap to upload photo'),React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},'Accepts JPG, PNG, HEIC'))
+              :React.createElement(React.Fragment,null,React.createElement('div',{style:{fontSize:28}},'📷'),React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text-muted)',marginTop:4}},'Tap to upload photo'),React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},'Accepts JPG, PNG, HEIC'))
           ),
           React.createElement('input',{id:'dep-photo-input',type:'file',accept:'image/*',style:{display:'none'},onChange:handleDepositPhoto})
-        ),
-        React.createElement('div',{className:'form-group'},
-          React.createElement('label',null,'Deposit Type'),
-          React.createElement('div',{className:'scope-toggle'},
-            React.createElement('button',{className:'scope-pill '+(depScope==='shared'?'active-shared':''),onClick:()=>setDepScope('shared')},'\uD83C\uDFE0 Household'),
-            React.createElement('button',{className:'scope-pill '+(depScope==='personal'?'active-personal':''),onClick:()=>setDepScope('personal')},'\uD83D\uDD12 Personal')
-          )
-        ),
-        React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',display:'flex',alignItems:'center',gap:6}},
-          currentUser==='Patrick'?'\uD83D\uDD35':'\uD83E\uDE77',
-          'Recording as ',React.createElement('strong',null,currentUser)
         )
       ),
       React.createElement('div',{className:'modal-actions'},
         React.createElement('button',{className:'btn-cancel',onClick:()=>{setShowDepositForm(false);setDepPhotoBase64('');setDepPhotoName('');}},'Cancel'),
-        React.createElement('button',{className:'btn-primary',onClick:handleDepositSubmit,disabled:!depAmount||Number(depAmount)<=0||!depAccount||depUploading},depUploading?'Uploading...':'\u2B06\uFE0F Add Deposit'))
+        React.createElement('button',{className:'btn-primary',onClick:handleDepositSubmit,disabled:!depAmount||Number(depAmount)<=0||!depAccount||depUploading},depUploading?'Uploading...':'⬆️ Add Deposit'))
     )
   );
 
-  // Delete deposit confirmation
   var deleteDepEl=deleteDepTarget&&React.createElement('div',{className:'modal-overlay',onClick:()=>setDeleteDepTarget(null)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,'\uD83D\uDDD1\uFE0F Delete Deposit?'),
+      React.createElement('h3',null,'🗑️ Delete Deposit?'),
       React.createElement('p',{style:{marginBottom:10}},'Are you sure you want to delete this deposit?'),
       React.createElement('div',{style:{padding:12,background:'#FEE2E2',borderRadius:10,marginBottom:8}},
         React.createElement('div',{style:{fontWeight:700}},deleteDepTarget.description||'Deposit'),
-        React.createElement('div',{style:{fontSize:14,color:'#991B1B'}},fmt(deleteDepTarget.amount)+' \u2192 '+(deleteDepTarget.account==='savings'?'Savings':'Opex'))
+        React.createElement('div',{style:{fontSize:14,color:'#991B1B'}},fmt(deleteDepTarget.amount)+' → '+(deleteDepTarget.account==='savings'?'Savings':'Opex'))
       ),
       React.createElement('div',{className:'modal-actions'},
         React.createElement('button',{className:'btn-cancel',onClick:()=>setDeleteDepTarget(null)},'Cancel'),
@@ -1094,36 +1135,33 @@ function App(){
     )
   );
 
-  /* --- Mobile expense card --- */
   var renderExpenseCard=(e)=>React.createElement('div',{key:e.id,className:'expense-card-item card-'+e.user.toLowerCase()},
     React.createElement('div',{className:'expense-card-top'},
       React.createElement('div',null,
         React.createElement('div',{className:'expense-card-desc'},e.description),
-        React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:2}},fmtDate(e.date,{month:'short',day:'numeric',year:'numeric'})+' \u2022 by '+e.user)
+        React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:2}},fmtDate(e.date,{month:'short',day:'numeric',year:'numeric'})+' • by '+e.user)
       ),
       React.createElement('div',{className:'expense-card-amt'},fmt(e.amount))
     ),
     React.createElement('div',{className:'expense-card-meta'},
       React.createElement('span',{className:'category-badge'},e.category),
       fundBadgeEl(e.fundSource),
-      e.reimbursable&&reimbInfoEl(e),
-      (e.scope==='personal')&&React.createElement('span',{className:'badge-scope personal'},'\uD83D\uDD12 Personal')
+      e.reimbursable&&reimbInfoEl(e)
     ),
     e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{className:'expense-card-notes'},'\uD83D\uDCDD '+e.notes),
     e.receiptUrl&&React.createElement('div',{style:{fontSize:12,marginTop:4}},React.createElement('span',{style:{cursor:'pointer',color:'var(--patrick)',fontWeight:600},onClick:()=>setViewPhoto(e.receiptUrl)},'\uD83E\uDDFE View Receipt')),
     e.reimbursable&&e.amount*(e.reimbPct||50)/100>0&&React.createElement('div',{style:{fontSize:12,color:'#92400E',fontWeight:500,marginTop:4}},'Reimb amount: '+fmt(reimbAmt(e))),
-    e.category==='Driver Salary'&&e.notes&&e.notes.length>10&&React.createElement('button',{onClick:()=>setBreakdownTarget(e),style:{width:'100%',marginTop:10,padding:'10px 14px',border:'2px solid #F59E0B',background:'#FFFBEB',borderRadius:10,cursor:'pointer',fontSize:13,fontWeight:700,color:'#92400E',display:'flex',alignItems:'center',justifyContent:'center',gap:6}},'\uD83D\uDCCB View Salary Breakdown'),
+    e.category==='Driver Salary'&&e.notes&&e.notes.length>10&&React.createElement('button',{onClick:()=>setBreakdownTarget(e),style:{width:'100%',marginTop:10,padding:'10px 14px',border:'2px solid #F59E0B',background:'#FFFBEB',borderRadius:10,cursor:'pointer',fontSize:13,fontWeight:700,color:'#92400E',display:'flex',alignItems:'center',justifyContent:'center',gap:6}},'📋 View Salary Breakdown'),
     React.createElement('div',{className:'expense-card-actions'},
       e.reimbursable&&(e.reimbursed?React.createElement('span',{className:'reimbursed-badge',onClick:()=>toggleReimbursed(e.id)},'\u2713 Done'):React.createElement('button',{className:'reimburse-btn',onClick:()=>toggleReimbursed(e.id)},'Mark Done')),
-      React.createElement('button',{className:'edit-btn',onClick:()=>openEdit(e),title:'Edit'},'\u270F\uFE0F'),
-      React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteTarget(e),title:'Delete'},'\u2715')
+      React.createElement('button',{className:'edit-btn',onClick:()=>openEdit(e),title:'Edit'},'✏️'),
+      React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteTarget(e),title:'Delete'},'✕')
     )
   );
 
-  // Bill form modal
   var billFormEl=showBillForm&&React.createElement('div',{className:'modal-overlay',onClick:()=>setShowBillForm(false)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,editBillTarget?'\u270F\uFE0F Edit Bill':'\u2795 Add Bill'),
+      React.createElement('h3',null,editBillTarget?'✏️ Edit Bill':'\u2795 Add Bill'),
       React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:12}},
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Bill Name'),React.createElement('input',{type:'text',placeholder:'e.g. Internet, Electricity, Water',value:billName,onChange:e=>setBillName(e.target.value)})),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Type'),
@@ -1132,7 +1170,7 @@ function App(){
             React.createElement('div',{className:'fund-option '+(billType==='variable'?'selected':''),onClick:()=>setBillType('variable')},'\uD83D\uDCC8 Variable')
           )
         ),
-        billType==='fixed'&&React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (\u20B1)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:billAmount,onChange:e=>setBillAmount(e.target.value)})),
+        billType==='fixed'&&React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (₱)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:billAmount,onChange:e=>setBillAmount(e.target.value)})),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Due Day of Month'),
           React.createElement('select',{value:billDueDay,onChange:e=>setBillDueDay(e.target.value)},
             Array.from({length:31},(_,i)=>i+1).map(d=>React.createElement('option',{key:d,value:String(d)},d))
@@ -1141,17 +1179,17 @@ function App(){
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Pay From Account'),
           React.createElement('div',{className:'fund-options'},
             React.createElement('div',{className:'fund-option '+(billAccount==='opex'?'selected':''),onClick:()=>setBillAccount('opex')},'\uD83D\uDCB3 Opex'),
-            React.createElement('div',{className:'fund-option '+(billAccount==='savings'?'selected':''),onClick:()=>setBillAccount('savings')},'\uD83C\uDFE6 Savings')
+            React.createElement('div',{className:'fund-option '+(billAccount==='savings'?'selected':''),onClick:()=>setBillAccount('savings')},'🏠 Savings')
           )
         ),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Assigned To'),
           React.createElement('div',{className:'fund-options'},
             React.createElement('div',{className:'fund-option '+(billAssignedTo==='Both'?'selected':''),onClick:()=>setBillAssignedTo('Both')},'\uD83D\uDC65 Both'),
-            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Patrick'?'selected':''),onClick:()=>setBillAssignedTo('Patrick')},'\uD83D\uDD35 Patrick'),
-            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Aica'?'selected':''),onClick:()=>setBillAssignedTo('Aica')},'\uD83E\uDE77 Aica')
+            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Patrick'?'selected':''),onClick:()=>setBillAssignedTo('Patrick')},'🔵 Patrick'),
+            React.createElement('div',{className:'fund-option '+(billAssignedTo==='Aica'?'selected':''),onClick:()=>setBillAssignedTo('Aica')},'🩷 Aica')
           )
         ),
-        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Expense Category (when paid)'),React.createElement('select',{value:billCategory,onChange:e=>setBillCategory(e.target.value)},HOUSEHOLD_CATEGORIES.map(c=>React.createElement('option',{key:c,value:c},c)))),
+        React.createElement('div',{className:'form-group'},React.createElement('label',null,'Expense Category (when paid)'),React.createElement('select',{value:billCategory,onChange:e=>setBillCategory(e.target.value)},PERSONAL_CATEGORIES.map(c=>React.createElement('option',{key:c,value:c},c)))),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes (optional)'),React.createElement('textarea',{rows:2,placeholder:'Add a memo...',value:billNotes,onChange:e=>setBillNotes(e.target.value)}))
       ),
       React.createElement('div',{className:'modal-actions'},
@@ -1160,14 +1198,13 @@ function App(){
     )
   );
 
-  // Delete bill confirmation
   var deleteBillEl=deleteBillTarget&&React.createElement('div',{className:'modal-overlay',onClick:()=>setDeleteBillTarget(null)},
     React.createElement('div',{className:'modal-box',onClick:function(ev){ev.stopPropagation();}},
-      React.createElement('h3',null,'\uD83D\uDDD1\uFE0F Delete Bill?'),
+      React.createElement('h3',null,'🗑️ Delete Bill?'),
       React.createElement('p',{style:{marginBottom:10}},'Are you sure you want to delete this bill?'),
       React.createElement('div',{style:{padding:12,background:'#FEE2E2',borderRadius:10,marginBottom:8}},
         React.createElement('div',{style:{fontWeight:700}},deleteBillTarget.name),
-        React.createElement('div',{style:{fontSize:14,color:'#991B1B'}},'Due day '+deleteBillTarget.dueDay+(deleteBillTarget.type==='fixed'?' \u2022 '+fmt(deleteBillTarget.amount):''))
+        React.createElement('div',{style:{fontSize:14,color:'#991B1B'}},'Due day '+deleteBillTarget.dueDay+(deleteBillTarget.type==='fixed'?' • '+fmt(deleteBillTarget.amount):''))
       ),
       React.createElement('div',{className:'modal-actions'},
         React.createElement('button',{className:'btn-cancel',onClick:()=>setDeleteBillTarget(null)},'Cancel'),
@@ -1179,51 +1216,56 @@ function App(){
     editModalEl,deleteModalEl,driverCalcEl,breakdownEl,journalEl,photoViewerEl,depositFormEl,deleteDepEl,billFormEl,deleteBillEl,
     React.createElement('div',{className:'app-header'},
       React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10}},
-        React.createElement('div',{className:'app-title'},'\uD83D\uDCB0 PoLedger \u2014 Personal & Family Finance'),
+        React.createElement('div',{className:'app-title'},'💰 PoLedger — Personal & Family Finance'),
         React.createElement('div',{className:'sync-status'},
           React.createElement('span',{className:'sync-dot '+(syncStatus==='ok'?'sync-ok':syncStatus==='loading'?'sync-loading':'sync-error')}),
           syncStatus==='ok'?'Synced':syncStatus==='loading'?'Syncing...':'Offline')
       ),
       React.createElement('div',{className:'header-right'},
-        React.createElement('button',{className:'data-btn',onClick:()=>loadData()},'\u21BB Refresh'),
-        React.createElement('button',{className:'data-btn',onClick:handleDisconnect,style:{color:'#EF4444'}},'\u2715 Disconnect'),
+        React.createElement('button',{className:'dark-toggle',onClick:()=>setDarkMode(d=>!d),title:darkMode?'Light mode':'Dark mode'},darkMode?'☀️':'🌙'),
+        React.createElement('button',{className:'data-btn',onClick:()=>loadData()},'↻ Refresh'),
+        React.createElement('button',{className:'data-btn',onClick:handleDisconnect,style:{color:'#EF4444'}},'✕ Disconnect'),
         React.createElement('div',{className:'current-user-badge'},
-          currentUser==='Patrick'?'\uD83D\uDD35':'\uD83E\uDE77',
+          currentUser==='Patrick'?'🔵':'🩷',
           ' ',currentUser,
           React.createElement('span',{className:'switch-user-link',onClick:()=>setShowUserPicker(true)},'Switch'))
       )
     ),
     React.createElement('div',{className:'container'},
-      React.createElement('div',{className:'tabs'},
-        React.createElement('button',{className:'tab-btn '+(activeTab==='add'?'active':''),onClick:()=>setActiveTab('add')},'+ Add'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='list'?'active':''),onClick:()=>setActiveTab('list')},'\uD83C\uDFE0 Household'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='personal'?'active':''),onClick:()=>setActiveTab('personal')},'\uD83D\uDC64 Personal'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='deposits'?'active':''),onClick:()=>setActiveTab('deposits')},'\uD83D\uDCB0 Deposits'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='charts'?'active':''),onClick:()=>setActiveTab('charts')},'\uD83D\uDCCA Charts'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='balances'?'active':''),onClick:()=>setActiveTab('balances')},'\u2696\uFE0F Balances'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='bills'?'active':''),onClick:()=>setActiveTab('bills')},'\uD83D\uDCCB Bills')
+      React.createElement('div',{className:'mode-toggle'},
+        React.createElement('button',{className:'mode-pill '+(appMode==='household'?'active-household':''),onClick:()=>{setAppMode('household');setActiveTab('add');}},'🏠 Household'),
+        React.createElement('button',{className:'mode-pill '+(appMode==='personal'?'active-personal':''),onClick:()=>{setAppMode('personal');setActiveTab('add');}},'🔒 Personal')
       ),
 
-      /* BILL REMINDERS BANNER */
+      React.createElement('div',{className:'tabs'},
+        React.createElement('button',{className:'tab-btn '+(activeTab==='add'?'active':''),onClick:()=>setActiveTab('add')},'+ Add'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='list'?'active':''),onClick:()=>setActiveTab('list')},'📋 Expenses'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='deposits'?'active':''),onClick:()=>setActiveTab('deposits')},'💰 Deposits'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='charts'?'active':''),onClick:()=>setActiveTab('charts')},'📊 Charts'),
+        appMode==='household'&&React.createElement('button',{className:'tab-btn '+(activeTab==='balances'?'active':''),onClick:()=>setActiveTab('balances')},'⚖️ Balances'),
+        appMode==='personal'&&React.createElement('button',{className:'tab-btn '+(activeTab==='wallet'?'active':''),onClick:()=>setActiveTab('wallet')},'💵 Wallet'),
+        React.createElement('button',{className:'tab-btn '+(activeTab==='bills'?'active':''),onClick:()=>setActiveTab('bills')},'📝 Bills')
+      ),
+
       billReminders.length>0&&!dismissReminders&&React.createElement('div',{className:'reminder-banner'},
         React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:billReminders.length>1?8:0}},
-          React.createElement('div',{style:{fontSize:13,fontWeight:700,color:'#92400E'}},'\u23F0 Upcoming Bills'),
-          React.createElement('button',{onClick:()=>setDismissReminders(true),style:{border:'none',background:'transparent',cursor:'pointer',fontSize:16,color:'#B45309'}},'\u2715')
+          React.createElement('div',{style:{fontSize:13,fontWeight:700,color:'#92400E'}},'⏰ Upcoming Bills'),
+          React.createElement('button',{onClick:()=>setDismissReminders(true),style:{border:'none',background:'transparent',cursor:'pointer',fontSize:16,color:'#B45309'}},'✕')
         ),
         billReminders.map(b=>React.createElement('div',{key:b.id,className:'reminder-item'},
-          React.createElement('span',{className:'bill-name'},b.name+(b.type==='fixed'&&b.amount?' \u2022 '+fmt(b.amount):'')),
+          React.createElement('span',{className:'bill-name'},b.name+(b.type==='fixed'&&b.amount?' • '+fmt(b.amount):'')),
           React.createElement('span',{className:'bill-due '+(b.overdue?'overdue':'soon')},b.overdue?'Overdue!':b.daysUntil===0?'Due today!':'Due in '+b.daysUntil+' day'+(b.daysUntil!==1?'s':''))
         ))
       ),
 
-      /* ADD TAB */
+
       activeTab==='add'&&React.createElement(React.Fragment,null,
         React.createElement('div',{className:'card',style:{padding:14}},
-          React.createElement('div',{style:{fontSize:12,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',marginBottom:8,letterSpacing:0.5}},'\u26A1 Quick Add'),
+          React.createElement('div',{style:{fontSize:12,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',marginBottom:8,letterSpacing:0.5}},'⚡ Quick Add'),
           React.createElement('div',{className:'quick-add-row'},
-            QUICK_ADDS.map(qa=>React.createElement('button',{key:qa.desc,className:'quick-add-btn',onClick:()=>handleQuickAdd(qa)},qa.icon,' ',qa.desc)),
-            React.createElement('button',{className:'quick-add-btn',onClick:openDriverCalc,style:{borderColor:'#F59E0B',color:'#B45309'}},'\uD83D\uDE97 Driver Salary'),
-            React.createElement('button',{className:'quick-add-btn',onClick:()=>document.getElementById('receipt-photo-input').click(),style:{borderColor:'var(--success)',color:'#16A34A',background:ocrProcessing?'#DCFCE7':'white'}},ocrProcessing?'\u23F3 Scanning...':'\uD83D\uDCF7 Snap Receipt'),
+            appMode==='household'&&QUICK_ADDS.map(qa=>React.createElement('button',{key:qa.desc,className:'quick-add-btn',onClick:()=>handleQuickAdd(qa)},qa.icon,' ',qa.desc)),
+            appMode==='household'&&React.createElement('button',{className:'quick-add-btn',onClick:openDriverCalc,style:{borderColor:'#F59E0B',color:'#B45309'}},'🚗 Driver Salary'),
+            React.createElement('button',{className:'quick-add-btn',onClick:()=>document.getElementById('receipt-photo-input').click(),style:{borderColor:'var(--success)',color:'#16A34A',background:ocrProcessing?'#DCFCE7':'white'}},ocrProcessing?'⏳ Scanning...':'📷 Snap Receipt'),
             React.createElement('input',{id:'receipt-photo-input',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleReceiptPhoto})
           )
         ),
@@ -1231,62 +1273,57 @@ function App(){
           React.createElement('div',{style:{display:'flex',gap:12,alignItems:'flex-start'}},
             React.createElement('img',{src:receiptBase64,style:{width:60,height:80,objectFit:'cover',borderRadius:8,border:'1px solid var(--border)'},onClick:()=>setViewPhoto(receiptBase64)}),
             React.createElement('div',{style:{flex:1}},
-              React.createElement('div',{style:{fontSize:13,fontWeight:700,color:ocrError?'#EF4444':'var(--success)',marginBottom:4}},ocrProcessing?'\u23F3 Scanning receipt...':(ocrError?'\u26A0\uFE0F '+ocrError:'\u2713 Receipt scanned \u2014 review fields below')),
+              React.createElement('div',{style:{fontSize:13,fontWeight:700,color:ocrError?'#EF4444':'var(--success)',marginBottom:4}},ocrProcessing?'⏳ Scanning receipt...':(ocrError?'⚠️ '+ocrError:'✓ Receipt scanned — review fields below')),
               React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},receiptName)
             ),
             React.createElement('div',{style:{display:'flex',gap:6}},
-              React.createElement('button',{style:{padding:'4px 10px',border:'1px solid var(--border)',borderRadius:8,background:'white',fontSize:11,fontWeight:600,cursor:'pointer',color:'var(--text-muted)'},onClick:()=>document.getElementById('receipt-photo-input').click()},'\uD83D\uDD04 Rescan'),
-              React.createElement('button',{style:{padding:'4px 10px',border:'1px solid var(--border)',borderRadius:8,background:'white',fontSize:11,fontWeight:600,cursor:'pointer',color:'#EF4444'},onClick:clearReceipt},'\u2715')
+              React.createElement('button',{style:{padding:'4px 10px',border:'1px solid var(--border)',borderRadius:8,background:'white',fontSize:11,fontWeight:600,cursor:'pointer',color:'var(--text-muted)'},onClick:()=>document.getElementById('receipt-photo-input').click()},'🔄 Rescan'),
+              React.createElement('button',{style:{padding:'4px 10px',border:'1px solid var(--border)',borderRadius:8,background:'white',fontSize:11,fontWeight:600,cursor:'pointer',color:'#EF4444'},onClick:clearReceipt},'✕')
             )
           )
         ),
         React.createElement('div',{className:'card'},
-          React.createElement('h2',null,currentUser==='Patrick'?'\uD83D\uDD35':'\uD83E\uDE77',' New Expense \u2014 ',currentUser),
+          React.createElement('h2',null,currentUser==='Patrick'?'🔵':'🩷',' New Expense — ',currentUser),
           React.createElement('div',{className:'form-grid'},
             React.createElement('div',{className:'form-group'},React.createElement('label',null,'Date'),React.createElement('input',{type:'date',value:formDate,onChange:e=>setFormDate(e.target.value)})),
-            React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (\u20B1)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:formAmount,onChange:e=>setFormAmount(e.target.value)})),
+            React.createElement('div',{className:'form-group'},React.createElement('label',null,'Amount (₱)'),React.createElement('input',{type:'number',min:'0',step:'0.01',placeholder:'0.00',value:formAmount,onChange:e=>setFormAmount(e.target.value)})),
             React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Description'),React.createElement('input',{type:'text',placeholder:'What did you spend on?',value:formDesc,onChange:e=>setFormDesc(e.target.value)})),
-            React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:formCategory,onChange:e=>setFormCategory(e.target.value)},getCategoriesForScope(formScope).map(c=>React.createElement('option',{key:c,value:c},c)))),
+            React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:formCategory,onChange:e=>setFormCategory(e.target.value)},getCategoriesForScope(currentScope).map(c=>React.createElement('option',{key:c,value:c},c)))),
             React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes (optional)'),React.createElement('textarea',{rows:2,placeholder:'Add a memo or note...',value:formNotes,onChange:e=>setFormNotes(e.target.value)})),
-            React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},(formScope==='personal'?FUND_SOURCES.filter(fs=>fs.id===currentUser.toLowerCase()):FUND_SOURCES).map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(formFund===fs.id?(currentUser==='Patrick'?'selected':'selected-aica'):''),onClick:()=>{setFormFund(fs.id);setFormReimbursable(false);}},fs.icon+' '+fs.label)))),
-            formFund&&React.createElement('div',{className:'form-group full-width'},
+            React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},(appMode==='personal'?FUND_SOURCES.filter(fs=>fs.id===currentUser.toLowerCase()):FUND_SOURCES).map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(formFund===fs.id?(currentUser==='Patrick'?'selected':'selected-aica'):''),onClick:()=>{setFormFund(fs.id);setFormReimbursable(false);}},fs.icon+' '+fs.label)))),
+            appMode==='household'&&formFund&&React.createElement('div',{className:'form-group full-width'},
               React.createElement('div',{className:'reimb-section'},
                 React.createElement('label',{className:'reimb-toggle'},React.createElement('input',{type:'checkbox',checked:formReimbursable,onChange:e=>setFormReimbursable(e.target.checked)}),React.createElement('span',{className:'reimb-toggle-label'},'Request reimbursement')),
                 formReimbursable&&React.createElement('div',{className:'reimb-details'},
-                  React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimburse to'),React.createElement('div',{className:'reimb-to-options'},React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setFormReimbTo('patrick')},'\uD83D\uDD35 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='aica'?'sel-aica':''),onClick:()=>setFormReimbTo('aica')},'\uD83E\uDE77 Aica'))),
+                  React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimburse to'),React.createElement('div',{className:'reimb-to-options'},React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setFormReimbTo('patrick')},'🔵 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='aica'?'sel-aica':''),onClick:()=>setFormReimbTo('aica')},'🩷 Aica'))),
                   React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimbursement %'),React.createElement('div',{className:'reimb-pct-row'},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:formReimbPct,onChange:e=>setFormReimbPct(Number(e.target.value))}),React.createElement('div',{className:'reimb-pct-value'},formReimbPct+'%')),formAmount&&Number(formAmount)>0&&React.createElement('div',{className:'reimb-pct-calc'},'Reimbursable: '+fmt(Number(formAmount)*formReimbPct/100)))
                 )
               )
             ),
-            React.createElement('div',{className:'form-group full-width'},
-              React.createElement('label',null,'Expense Type'),
-              React.createElement('div',{className:'scope-toggle'},
-                React.createElement('button',{className:'scope-pill '+(formScope==='shared'?'active-shared':''),onClick:()=>setFormScope('shared')},'\uD83C\uDFE0 Household'),
-                React.createElement('button',{className:'scope-pill '+(formScope==='personal'?'active-personal':''),onClick:()=>setFormScope('personal')},'\uD83D\uDD12 Personal')
-              )
-            ),
-            React.createElement('div',{className:'form-group full-width'},React.createElement('button',{className:'submit-btn '+(currentUser==='Patrick'?'patrick':'aica'),onClick:handleSubmit,disabled:!formFund},'\uFF0B Add Expense'))
+            React.createElement('div',{className:'form-group full-width'},React.createElement('button',{className:'submit-btn '+(currentUser==='Patrick'?'patrick':'aica'),onClick:handleSubmit,disabled:!formFund},'+ Add Expense'))
           )
         )
       ),
 
-      /* LIST TAB */
       activeTab==='list'&&React.createElement(React.Fragment,null,
         React.createElement('div',{className:'summary-cards'},
           React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'Total'),React.createElement('div',{className:'amount',style:{color:'#1E293B'}},fmt(totalSpent))),
-          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83D\uDD35 Patrick'),React.createElement('div',{className:'amount',style:{color:'var(--patrick)'}},fmt(patrickTotal))),
-          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83E\uDE77 Aica'),React.createElement('div',{className:'amount',style:{color:'var(--aica)'}},fmt(aicaTotal))),
-          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83C\uDFE6 Savings'),React.createElement('div',{className:'amount',style:{color:savingsBalance>=0?'#4338CA':'#EF4444'}},fmt(savingsBalance))),
-          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83D\uDCB3 Opex'),React.createElement('div',{className:'amount',style:{color:opexBalance>=0?'#B45309':'#EF4444'}},fmt(opexBalance)))
+          appMode==='household'&&React.createElement(React.Fragment,null,
+            React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'🔵 Patrick'),React.createElement('div',{className:'amount',style:{color:'var(--patrick)'}},fmt(patrickTotal))),
+            React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'🩷 Aica'),React.createElement('div',{className:'amount',style:{color:'var(--aica)'}},fmt(aicaTotal))),
+            React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'🏠 Savings'),React.createElement('div',{className:'amount',style:{color:savingsBalance>=0?'#4338CA':'#EF4444'}},fmt(savingsBalance))),
+            React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'💳 Opex'),React.createElement('div',{className:'amount',style:{color:opexBalance>=0?'#B45309':'#EF4444'}},fmt(opexBalance)))
+          ),
+          appMode==='personal'&&React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'Budget Remaining'),React.createElement('div',{className:'amount',style:{color:myBudgetRemaining>=0?'var(--success)':'#EF4444'}},myPersonalBudget>0?fmt(myBudgetRemaining):'—'))
         ),
         React.createElement('div',{className:'card'},
           React.createElement('div',{className:'filter-bar'},
             React.createElement('select',{value:filterMonth,onChange:e=>setFilterMonth(e.target.value)},monthOptions.map(m=>React.createElement('option',{key:m,value:m},monthLabel(m)))),
-            React.createElement('select',{value:filterUser,onChange:e=>setFilterUser(e.target.value)},React.createElement('option',{value:'All'},'All'),React.createElement('option',{value:'Patrick'},'Patrick'),React.createElement('option',{value:'Aica'},'Aica')),
-            React.createElement('input',{type:'text',placeholder:'\uD83D\uDD0D Search expenses...',value:searchText,onChange:e=>setSearchText(e.target.value)})
+            appMode==='household'&&React.createElement('select',{value:filterUser,onChange:e=>setFilterUser(e.target.value)},React.createElement('option',{value:'All'},'All'),React.createElement('option',{value:'Patrick'},'Patrick'),React.createElement('option',{value:'Aica'},'Aica')),
+            React.createElement('input',{type:'text',placeholder:'🔍 Search expenses...',value:searchText,onChange:e=>setSearchText(e.target.value)})
           ),
-          filtered.length===0
-            ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'\uD83D\uDCED'),React.createElement('div',{style:{fontWeight:600}},searchText?'No matching expenses':'No expenses this month'))
+          (appMode==='household'?filtered:filteredPersonal).length===0
+            ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'📋'),React.createElement('div',{style:{fontWeight:600}},searchText?'No matching expenses':'No expenses this month'))
             :React.createElement(React.Fragment,null,
               React.createElement('div',{className:'desktop-table',style:{overflowX:'auto'}},
                 React.createElement('table',{className:'expense-table'},
@@ -1295,14 +1332,14 @@ function App(){
                     React.createElement('th',{style:{textAlign:'right'}},'Amt'),React.createElement('th',null,'From'),
                     React.createElement('th',null,'Reimb.'),React.createElement('th',null,'Status'),React.createElement('th',null,'')
                   )),
-                  React.createElement('tbody',null,filtered.map(e=>
+                  React.createElement('tbody',null,(appMode==='household'?filtered:filteredPersonal).map(e=>
                     React.createElement('tr',{key:e.id,className:'row-'+e.user.toLowerCase()},
                       React.createElement('td',{style:{whiteSpace:'nowrap',fontWeight:500}},fmtDate(e.date)),
                       React.createElement('td',null,
                         React.createElement('div',{style:{fontWeight:600}},e.description),
                         React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)'}},'by '+e.user),
-                        e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)',fontStyle:'italic',marginTop:2}},'\uD83D\uDCDD '+e.notes),
-                        e.receiptUrl&&React.createElement('div',{style:{fontSize:11,marginTop:2}},React.createElement('span',{style:{cursor:'pointer',color:'var(--patrick)'},onClick:()=>setViewPhoto(e.receiptUrl)},'\uD83E\uDDFE View Receipt'))
+                        e.notes&&!e.notes.startsWith('DRIVER')&&React.createElement('div',{style:{fontSize:11,color:'var(--text-muted)',fontStyle:'italic',marginTop:2}},'📝 '+e.notes),
+                        e.receiptUrl&&React.createElement('div',{style:{fontSize:11,marginTop:2}},React.createElement('span',{style:{cursor:'pointer',color:'var(--patrick)'},onClick:()=>setViewPhoto(e.receiptUrl)},'🧾 View Receipt'))
                       ),
                       React.createElement('td',null,React.createElement('span',{className:'category-badge'},e.category)),
                       React.createElement('td',{style:{textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums'}},
@@ -1312,92 +1349,92 @@ function App(){
                       React.createElement('td',null,fundBadgeEl(e.fundSource)),
                       React.createElement('td',null,reimbInfoEl(e)),
                       React.createElement('td',null,
-                        e.reimbursable?(e.reimbursed?React.createElement('span',{className:'reimbursed-badge',onClick:()=>toggleReimbursed(e.id)},'\u2713 Done'):React.createElement('button',{className:'reimburse-btn',onClick:()=>toggleReimbursed(e.id)},'Mark Done')):React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'\u2014')
+                        appMode==='household'&&e.reimbursable?(e.reimbursed?React.createElement('span',{className:'reimbursed-badge',onClick:()=>toggleReimbursed(e.id)},'\u2713 Done'):React.createElement('button',{className:'reimburse-btn',onClick:()=>toggleReimbursed(e.id)},'Mark Done')):React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'\u2014')
                       ),
                       React.createElement('td',{style:{whiteSpace:'nowrap'}},
-                        e.category==='Driver Salary'&&e.notes&&e.notes.length>10&&React.createElement('button',{onClick:()=>setBreakdownTarget(e),title:'View Breakdown',style:{padding:'3px 8px',border:'1px solid #F59E0B',background:'#FFFBEB',borderRadius:6,cursor:'pointer',fontSize:11,fontWeight:700,color:'#92400E',marginRight:4}},'\uD83D\uDCCB Breakdown'),
-                        React.createElement('button',{className:'edit-btn',onClick:()=>openEdit(e),title:'Edit'},'\u270F\uFE0F'),
-                        React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteTarget(e),title:'Delete'},'\u2715')
+                        e.category==='Driver Salary'&&e.notes&&e.notes.length>10&&React.createElement('button',{onClick:()=>setBreakdownTarget(e),title:'View Breakdown',style:{padding:'3px 8px',border:'1px solid #F59E0B',background:'#FFFBEB',borderRadius:6,cursor:'pointer',fontSize:11,fontWeight:700,color:'#92400E',marginRight:4}},'📋 Breakdown'),
+                        React.createElement('button',{className:'edit-btn',onClick:()=>openEdit(e),title:'Edit'},'✏️'),
+                        React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteTarget(e),title:'Delete'},'✕')
                       )
                     )
                   ))
                 )
               ),
-              React.createElement('div',{className:'expense-cards'},filtered.map(e=>renderExpenseCard(e)))
+              React.createElement('div',{className:'expense-cards'},(appMode==='household'?filtered:filteredPersonal).map(e=>renderExpenseCard(e)))
             )
         )
       ),
 
-      /* DEPOSITS TAB */
       activeTab==='deposits'&&React.createElement(React.Fragment,null,
-        React.createElement('button',{className:'add-deposit-btn',onClick:()=>{setDepDate(today);setDepAmount('');setDepAccount('');setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setShowDepositForm(true);}},'\u2795 Add Deposit'),
+        React.createElement('button',{className:'add-deposit-btn',onClick:()=>{setDepDate(today);setDepAmount('');setDepAccount(appMode==='personal'?currentUser.toLowerCase():'');setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setShowDepositForm(true);}},'+ Add Deposit'),
         React.createElement('div',{className:'summary-cards',style:{marginBottom:14}},
-          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83C\uDFE6 Savings Deposits'),React.createElement('div',{className:'amount',style:{color:'#16A34A'}},'+'+fmt(savingsDeposited))),
-          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'\uD83D\uDCB3 Opex Deposits'),React.createElement('div',{className:'amount',style:{color:'#16A34A'}},'+'+fmt(opexDeposited)))
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'🏠 Savings Deposits'),React.createElement('div',{className:'amount',style:{color:'#16A34A'}},'+'+fmt(savingsDeposited))),
+          React.createElement('div',{className:'summary-card'},React.createElement('div',{className:'label'},'💳 Opex Deposits'),React.createElement('div',{className:'amount',style:{color:'#16A34A'}},'+'+fmt(opexDeposited)))
         ),
         React.createElement('div',{className:'card'},
           React.createElement('div',{className:'filter-bar'},
             React.createElement('select',{value:depFilterMonth,onChange:e=>setDepFilterMonth(e.target.value)},depMonthOptions.map(m=>React.createElement('option',{key:m,value:m},monthLabel(m))))
           ),
           filteredDeposits.length===0
-            ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'\uD83D\uDCB0'),React.createElement('div',{style:{fontWeight:600}},'No deposits this month'))
+            ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'💰'),React.createElement('div',{style:{fontWeight:600}},'No deposits this month'))
             :filteredDeposits.map(d=>React.createElement('div',{key:d.id,className:'deposit-card dep-'+d.account},
               React.createElement('div',{className:'dep-top'},
                 React.createElement('div',{className:'dep-desc'},d.description||'Deposit'),
                 React.createElement('div',{className:'dep-amt'},'+'+fmt(d.amount))
               ),
               React.createElement('div',{className:'dep-meta'},
-                React.createElement('span',{className:'badge '+(d.account==='savings'?'badge-savings':'badge-opex')},d.account==='savings'?'\uD83C\uDFE6 Savings':'\uD83D\uDCB3 Opex'),
+                React.createElement('span',{className:'badge '+(d.account==='savings'?'badge-savings':'badge-opex')},d.account==='savings'?'🏠 Savings':'💳 Opex'),
                 React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},fmtDate(d.date,{month:'short',day:'numeric',year:'numeric'})),
                 React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},'by '+d.user),
                 d.photoUrl&&React.createElement('img',{src:d.photoUrl,className:'photo-thumb',onClick:()=>setViewPhoto(d.photoUrl),title:'View receipt',alt:'Receipt'})
               ),
-              d.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'\uD83D\uDCDD '+d.notes),
+              d.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'📝 '+d.notes),
               React.createElement('div',{className:'dep-actions'},
-                d.photoUrl&&React.createElement('button',{className:'edit-btn',onClick:()=>setViewPhoto(d.photoUrl),title:'View photo',style:{fontSize:12}},'\uD83D\uDCF7'),
-                React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteDepTarget(d),title:'Delete'},'\u2715')
+                d.photoUrl&&React.createElement('button',{className:'edit-btn',onClick:()=>setViewPhoto(d.photoUrl),title:'View photo',style:{fontSize:12}},'📷'),
+                React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteDepTarget(d),title:'Delete'},'✕')
               )
             ))
         )
       ),
 
-      /* CHARTS TAB */
       activeTab==='charts'&&React.createElement(React.Fragment,null,
         React.createElement('div',{className:'filter-bar',style:{marginBottom:16}},React.createElement('select',{value:filterMonth,onChange:e=>setFilterMonth(e.target.value),style:{fontSize:15,padding:'10px 16px'}},monthOptions.map(m=>React.createElement('option',{key:m,value:m},monthLabel(m))))),
-        React.createElement('div',{className:'card'},
-          React.createElement('h2',null,'\uD83D\uDCCA Combined \u2014 ',monthLabel(filterMonth)),
-          React.createElement('div',{style:{maxWidth:420,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:categoryPieData,title:''})),
-          React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:18}},'Total: ',fmt(totalSpent))
-        ),
-        personalPieData.length>0&&React.createElement('div',{className:'card'},
-          React.createElement('h2',null,'\uD83D\uDC5B Personal Expenses \u2014 ',currentUser),
-          React.createElement('div',{style:{maxWidth:420,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:personalPieData,title:''})),
-          React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:18,color:'#8B5CF6'}},'Total: ',fmt(personalPieData.reduce((s,d)=>s+d.value,0)))
-        ),
-        React.createElement('div',{className:'chart-row'},
-          React.createElement('div',{className:'chart-box card'},
-            React.createElement('h2',{style:{justifyContent:'center'}},'\uD83D\uDD35 Patrick'),
-            React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:patrickPieData,title:''})),
-            patrickPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--patrick)'}},'Total: ',fmt(patrickTotal))
+        appMode==='household'&&React.createElement(React.Fragment,null,
+          React.createElement('div',{className:'card'},
+            React.createElement('h2',null,'📊 Combined — ',monthLabel(filterMonth)),
+            React.createElement('div',{style:{maxWidth:420,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:categoryPieData,title:''})),
+            React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:18}},'Total: ',fmt(totalSpent))
           ),
-          React.createElement('div',{className:'chart-box card'},
-            React.createElement('h2',{style:{justifyContent:'center'}},'\uD83E\uDE77 Aica'),
-            React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:aicaPieData,title:''})),
-            aicaPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--aica)'}},'Total: ',fmt(aicaTotal))
+          React.createElement('div',{className:'chart-row'},
+            React.createElement('div',{className:'chart-box card'},
+              React.createElement('h2',{style:{justifyContent:'center'}},'🔵 Patrick'),
+              React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:patrickPieData,title:''})),
+              patrickPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--patrick)'}},'Total: ',fmt(patrickTotal))
+            ),
+            React.createElement('div',{className:'chart-box card'},
+              React.createElement('h2',{style:{justifyContent:'center'}},'🩷 Aica'),
+              React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:aicaPieData,title:''})),
+              aicaPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--aica)'}},'Total: ',fmt(aicaTotal))
+            )
+          )
+        ),
+        appMode==='personal'&&React.createElement(React.Fragment,null,
+          React.createElement('div',{className:'card'},
+            React.createElement('h2',null,'👜 Personal Spending'),
+            React.createElement('div',{style:{maxWidth:420,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:personalPieData,title:''})),
+            React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:18,color:'#8B5CF6'}},'Total: ',fmt(personalPieData.reduce((s,d)=>s+d.value,0)))
           )
         )
       ),
 
-      /* PERSONAL TAB */
-      activeTab==='personal'&&React.createElement(React.Fragment,null,
-        /* Personal wallet summary */
+      appMode==='personal'&&activeTab==='wallet'&&React.createElement(React.Fragment,null,
         React.createElement('div',{className:'card',style:{background:currentUser==='Patrick'?'linear-gradient(135deg,#EFF6FF,#DBEAFE)':'linear-gradient(135deg,#FDF2F8,#FCE7F3)',border:'2px solid '+(currentUser==='Patrick'?'var(--patrick)':'var(--aica)'),textAlign:'center',padding:20}},
-          React.createElement('div',{style:{fontSize:24}},'\uD83D\uDC5B'),
+          React.createElement('div',{style:{fontSize:24}},'💵'),
           React.createElement('div',{style:{fontSize:13,fontWeight:700,color:currentUser==='Patrick'?'var(--patrick)':'var(--aica)',textTransform:'uppercase',marginBottom:4}},currentUser+'\'s Wallet'),
           React.createElement('div',{style:{fontSize:32,fontWeight:900,color:myPersonalBalance>=0?'var(--text)':'#EF4444',margin:'4px 0'}},fmt(myPersonalBalance)),
           React.createElement('div',{style:{display:'flex',justifyContent:'center',gap:16,fontSize:12,color:'var(--text-muted)'}},
-            React.createElement('span',null,'\u2B06\uFE0F Income: ',React.createElement('strong',{style:{color:'var(--success)'}},fmt(myPersonalDeposits))),
-            React.createElement('span',null,'\u2B07\uFE0F Spent: ',React.createElement('strong',{style:{color:'#EF4444'}},fmt(myPersonalExpenses)))
+            React.createElement('span',null,'⬆️ Income: ',React.createElement('strong',{style:{color:'var(--success)'}},fmt(myPersonalDeposits))),
+            React.createElement('span',null,'⬇️ Spent: ',React.createElement('strong',{style:{color:'#EF4444'}},fmt(myPersonalExpenses)))
           ),
           myPersonalBudget>0&&React.createElement('div',{style:{marginTop:8}},
             React.createElement('div',{style:{background:'#E2E8F0',borderRadius:8,height:8,overflow:'hidden',marginBottom:4}},
@@ -1412,43 +1449,23 @@ function App(){
               React.createElement('button',{style:{padding:'5px 10px',border:'1px solid var(--border)',background:'#F1F5F9',borderRadius:8,fontSize:11,fontWeight:600,cursor:'pointer'},onClick:()=>savePersonalBudget(tempPersonalBudget)},'Save'),
               React.createElement('button',{style:{padding:'5px 10px',border:'1px solid var(--border)',background:'#F1F5F9',borderRadius:8,fontSize:11,fontWeight:600,cursor:'pointer'},onClick:()=>setEditingPersonalBudget(false)},'Cancel'))
         ),
-
-        /* Personal expenses section */
         React.createElement('div',{className:'card'},
-          React.createElement('h2',null,'\uD83D\uDCCB Personal Expenses'),
+          React.createElement('h2',null,'📋 Personal Expenses'),
           React.createElement('div',{className:'filter-bar'},
             React.createElement('select',{value:filterMonth,onChange:e=>setFilterMonth(e.target.value)},monthOptions.map(m=>React.createElement('option',{key:m,value:m},monthLabel(m)))),
-            React.createElement('input',{type:'text',placeholder:'\uD83D\uDD0D Search...',value:searchText,onChange:e=>setSearchText(e.target.value)})
+            React.createElement('input',{type:'text',placeholder:'🔍 Search...',value:searchText,onChange:e=>setSearchText(e.target.value)})
           ),
           React.createElement('div',{style:{textAlign:'right',marginBottom:10,fontSize:14,fontWeight:700,color:'#8B5CF6'}},'This month: '+fmt(personalMonthTotal)),
           filteredPersonal.length===0
-            ?React.createElement('div',{className:'empty-state',style:{padding:30}},React.createElement('div',{className:'icon'},'\uD83D\uDCED'),React.createElement('div',{style:{fontWeight:600}},'No personal expenses this month'))
-            :filteredPersonal.map(e=>React.createElement('div',{key:e.id,className:'expense-card-item card-'+currentUser.toLowerCase()},
-              React.createElement('div',{className:'expense-card-top'},
-                React.createElement('div',null,
-                  React.createElement('div',{className:'expense-card-desc'},e.description),
-                  React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:2}},fmtDate(e.date,{month:'short',day:'numeric',year:'numeric'}))
-                ),
-                React.createElement('div',{className:'expense-card-amt'},fmt(e.amount))
-              ),
-              React.createElement('div',{className:'expense-card-meta'},
-                React.createElement('span',{className:'category-badge'},e.category)
-              ),
-              e.notes&&React.createElement('div',{className:'expense-card-notes'},'\uD83D\uDCDD '+e.notes),
-              React.createElement('div',{className:'expense-card-actions'},
-                React.createElement('button',{className:'edit-btn',onClick:()=>openEdit(e),title:'Edit'},'\u270F\uFE0F'),
-                React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteTarget(e),title:'Delete'},'\u2715')
-              )
-            ))
+            ?React.createElement('div',{className:'empty-state',style:{padding:30}},React.createElement('div',{className:'icon'},'📋'),React.createElement('div',{style:{fontWeight:600}},'No personal expenses this month'))
+            :filteredPersonal.map(e=>renderExpenseCard(e))
         ),
-
-        /* Personal deposits section */
         React.createElement('div',{className:'card'},
-          React.createElement('h2',null,'\uD83D\uDCB0 Personal Income / Deposits'),
-          React.createElement('button',{className:'add-deposit-btn',style:{borderColor:'#8B5CF6',background:'#EDE9FE',color:'#7C3AED'},onClick:()=>{setDepDate(today);setDepAmount('');setDepAccount(currentUser.toLowerCase());setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setDepScope('personal');setShowDepositForm(true);}},'\u2795 Add Personal Income'),
+          React.createElement('h2',null,'💰 Personal Income / Deposits'),
+          React.createElement('button',{className:'add-deposit-btn',style:{borderColor:'#8B5CF6',background:'#EDE9FE',color:'#7C3AED'},onClick:()=>{setDepDate(today);setDepAmount('');setDepAccount(currentUser.toLowerCase());setDepDesc('');setDepNotes('');setDepPhotoBase64('');setDepPhotoName('');setShowDepositForm(true);}},'\u2795 Add Personal Income'),
           React.createElement('div',{style:{textAlign:'right',marginBottom:10,fontSize:14,fontWeight:700,color:'var(--success)'}},'This month: +'+fmt(personalMonthDeposits)),
           filteredPersonalDeposits.length===0
-            ?React.createElement('div',{className:'empty-state',style:{padding:20}},React.createElement('div',{className:'icon'},'\uD83D\uDCB0'),React.createElement('div',{style:{fontWeight:600}},'No personal deposits this month'))
+            ?React.createElement('div',{className:'empty-state',style:{padding:20}},React.createElement('div',{className:'icon'},'💰'),React.createElement('div',{style:{fontWeight:600}},'No personal deposits this month'))
             :filteredPersonalDeposits.map(d=>React.createElement('div',{key:d.id,className:'deposit-card',style:{borderLeftColor:'#8B5CF6',background:'#F5F3FF'}},
               React.createElement('div',{className:'dep-top'},
                 React.createElement('div',{className:'dep-desc'},d.description||'Income'),
@@ -1457,58 +1474,26 @@ function App(){
               React.createElement('div',{className:'dep-meta'},
                 React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},fmtDate(d.date,{month:'short',day:'numeric',year:'numeric'}))
               ),
-              d.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'\uD83D\uDCDD '+d.notes),
+              d.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'📝 '+d.notes),
               React.createElement('div',{className:'dep-actions'},
-                React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteDepTarget(d),title:'Delete'},'\u2715')
+                React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteDepTarget(d),title:'Delete'},'✕')
               )
             ))
         ),
-
-        /* Personal pie chart */
         personalPieData.length>0&&React.createElement('div',{className:'card'},
-          React.createElement('h2',null,'\uD83D\uDCCA Spending by Category'),
+          React.createElement('h2',null,'📊 Spending by Category'),
           React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:personalPieData,title:''})),
           React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'#8B5CF6'}},'Total: ',fmt(personalPieData.reduce((s,d)=>s+d.value,0)))
         )
       ),
 
-      /* BILLS TAB */
-      activeTab==='bills'&&React.createElement(React.Fragment,null,
-        React.createElement('button',{className:'add-deposit-btn',style:{borderColor:'var(--warning)',background:'#FFFBEB',color:'#B45309'},onClick:()=>openBillForm(null)},'\u2795 Add Bill'),
-        bills.filter(b=>b.active).length===0
-          ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'\uD83D\uDCCB'),React.createElement('div',{style:{fontWeight:600}},'No bills yet. Add your recurring bills!'))
-          :bills.filter(b=>b.active).map(b=>React.createElement('div',{key:b.id,className:'bill-card'},
-            React.createElement('div',{className:'bill-top'},
-              React.createElement('div',{className:'bill-name'},b.name),
-              React.createElement('div',{className:'bill-amt',style:{color:b.type==='variable'?'var(--text-muted)':'var(--text)'}},b.type==='variable'?'Variable':fmt(b.amount))
-            ),
-            React.createElement('div',{className:'bill-meta'},
-              React.createElement('span',{className:'badge badge-opex',style:b.account==='savings'?{background:'#E0E7FF',color:'#4338CA'}:{}},b.account==='savings'?'\uD83C\uDFE6 Savings':'\uD83D\uDCB3 Opex'),
-              React.createElement('span',{className:'category-badge'},b.category||'Other Expenses'),
-              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)',fontWeight:600}},'Due: Day '+b.dueDay),
-              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},b.assignedTo==='Both'?'\uD83D\uDC65 Both':b.assignedTo==='Patrick'?'\uD83D\uDD35 Patrick':'\uD83E\uDE77 Aica'),
-              b.lastPaidDate&&React.createElement('span',{style:{fontSize:11,color:'var(--success)',fontWeight:600}},'\u2713 Paid '+fmtDate(String(b.lastPaidDate).substring(0,10),{month:'short',day:'numeric'}))
-            ),
-            b.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'\uD83D\uDCDD '+b.notes),
-            React.createElement('div',{className:'bill-actions'},
-              React.createElement('button',{className:'bill-paid-btn',onClick:()=>{
-                if(b.type==='variable'){var amt=prompt('Enter the amount paid for '+b.name+':');if(!amt||isNaN(Number(amt)))return;markBillPaid(b.id,amt);}
-                else{markBillPaid(b.id);}
-              }},'\u2705 Mark Paid'),
-              React.createElement('button',{className:'edit-btn',onClick:()=>openBillForm(b),title:'Edit'},'\u270F\uFE0F'),
-              React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteBillTarget(b),title:'Delete'},'\u2715')
-            )
-          ))
-      ),
-
-      /* BALANCES TAB */
-      activeTab==='balances'&&React.createElement(React.Fragment,null,
+      appMode==='household'&&activeTab==='balances'&&React.createElement(React.Fragment,null,
         React.createElement('div',{className:'acct-cards'},
           React.createElement('div',{className:'acct-card',onClick:function(ev){if(ev.target.tagName==='INPUT'||ev.target.tagName==='BUTTON')return;setJournalAcct('savings');}},
-            React.createElement('div',{className:'acct-icon'},'\uD83C\uDFE6'),
+            React.createElement('div',{className:'acct-icon'},'🏠'),
             React.createElement('div',{className:'acct-name'},'Savings Account'),
             React.createElement('div',{className:'acct-bal',style:{color:savingsBalance>=0?'#4338CA':'#EF4444'}},fmt(savingsBalance)),
-            React.createElement('div',{className:'acct-sub'},'Start: '+fmt(savingsStart)+(savingsDeposited>0?' + Deposits: '+fmt(savingsDeposited):'')+' \u2022 Spent: '+fmt(savingsSpent)),
+            React.createElement('div',{className:'acct-sub'},'Start: '+fmt(savingsStart)+(savingsDeposited>0?' + Deposits: '+fmt(savingsDeposited):'')+' • Spent: '+fmt(savingsSpent)),
             React.createElement('div',{className:'acct-tap'},'Tap to view journal'),
             !editingSavings
               ?React.createElement('div',{className:'acct-edit'},React.createElement('button',{onClick:function(ev){ev.stopPropagation();setEditingSavings(true);setTempSavings(String(savingsStart));}},'Edit Balance'))
@@ -1518,10 +1503,10 @@ function App(){
                 React.createElement('button',{onClick:()=>setEditingSavings(false)},'Cancel'))
           ),
           React.createElement('div',{className:'acct-card',onClick:function(ev){if(ev.target.tagName==='INPUT'||ev.target.tagName==='BUTTON')return;setJournalAcct('opex');}},
-            React.createElement('div',{className:'acct-icon'},'\uD83D\uDCB3'),
+            React.createElement('div',{className:'acct-icon'},'💳'),
             React.createElement('div',{className:'acct-name'},'Opex Account'),
             React.createElement('div',{className:'acct-bal',style:{color:opexBalance>=0?'#B45309':'#EF4444'}},fmt(opexBalance)),
-            React.createElement('div',{className:'acct-sub'},'Start: '+fmt(opexStart)+(opexDeposited>0?' + Deposits: '+fmt(opexDeposited):'')+' \u2022 Spent: '+fmt(opexSpent)),
+            React.createElement('div',{className:'acct-sub'},'Start: '+fmt(opexStart)+(opexDeposited>0?' + Deposits: '+fmt(opexDeposited):'')+' • Spent: '+fmt(opexSpent)),
             React.createElement('div',{className:'acct-tap'},'Tap to view journal'),
             !editingOpex
               ?React.createElement('div',{className:'acct-edit'},React.createElement('button',{onClick:function(ev){ev.stopPropagation();setEditingOpex(true);setTempOpex(String(opexStart));}},'Edit Balance'))
@@ -1531,15 +1516,6 @@ function App(){
                 React.createElement('button',{onClick:()=>setEditingOpex(false)},'Cancel'))
           )
         ),
-        /* Personal Wallet Quick View */
-        React.createElement('div',{className:'acct-card',style:{gridColumn:'1/-1',background:currentUser==='Patrick'?'linear-gradient(135deg,#EFF6FF,#DBEAFE)':'linear-gradient(135deg,#FDF2F8,#FCE7F3)',border:'2px solid '+(currentUser==='Patrick'?'var(--patrick)':'var(--aica)'),cursor:'pointer'},onClick:()=>setActiveTab('personal')},
-          React.createElement('div',{className:'acct-icon'},'\uD83D\uDC5B'),
-          React.createElement('div',{className:'acct-name'},currentUser+'\'s Personal Wallet'),
-          React.createElement('div',{className:'acct-bal',style:{color:myPersonalBalance>=0?'#8B5CF6':'#EF4444'}},fmt(myPersonalBalance)),
-          React.createElement('div',{className:'acct-sub'},'Income: '+fmt(myPersonalDeposits)+' \u2022 Spent: '+fmt(myPersonalExpenses)),
-          React.createElement('div',{className:'acct-tap',style:{color:'#8B5CF6'}},'Tap to view personal finances')
-        ),
-
         React.createElement('div',{className:'net-banner'},
           React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text-muted)',textTransform:'uppercase'}},'Net Reimbursement'),
           netOwed===0
@@ -1567,7 +1543,7 @@ function App(){
           )
         ),
         React.createElement('div',{className:'balance-card aica-card',style:{marginTop:8}},
-          React.createElement('div',{className:'balance-label',style:{color:'var(--aica)'}},'\uD83E\uDE77 Owed to Aica'),
+          React.createElement('div',{className:'balance-label',style:{color:'var(--aica)'}},'🩷 Owed to Aica'),
           React.createElement('div',{className:'balance-amount',style:{color:'var(--aica)'}},fmt(owedToAicaTotal)),
           React.createElement('div',{className:'balance-subtitle'},owedToAica.length+' pending')
         ),
@@ -1584,6 +1560,34 @@ function App(){
             )))
           )
         )
+      ),
+
+      activeTab==='bills'&&React.createElement(React.Fragment,null,
+        React.createElement('button',{className:'add-deposit-btn',style:{borderColor:'var(--warning)',background:'#FFFBEB',color:'#B45309'},onClick:()=>openBillForm(null)},'\u2795 Add Bill'),
+        bills.filter(b=>b.active).length===0
+          ?React.createElement('div',{className:'empty-state'},React.createElement('div',{className:'icon'},'📋'),React.createElement('div',{style:{fontWeight:600}},'No bills yet. Add your recurring bills!'))
+          :bills.filter(b=>b.active).map(b=>React.createElement('div',{key:b.id,className:'bill-card'},
+            React.createElement('div',{className:'bill-top'},
+              React.createElement('div',{className:'bill-name'},b.name),
+              React.createElement('div',{className:'bill-amt',style:{color:b.type==='variable'?'var(--text-muted)':'var(--text)'}},b.type==='variable'?'Variable':fmt(b.amount))
+            ),
+            React.createElement('div',{className:'bill-meta'},
+              React.createElement('span',{className:'badge badge-opex',style:b.account==='savings'?{background:'#E0E7FF',color:'#4338CA'}:{}},b.account==='savings'?'🏠 Savings':'💳 Opex'),
+              React.createElement('span',{className:'category-badge'},b.category||PERSONAL_CATEGORIES[0]),
+              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)',fontWeight:600}},'Due: Day '+b.dueDay),
+              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},b.assignedTo==='Both'?'👥 Both':b.assignedTo==='Patrick'?'🔵 Patrick':'🩷 Aica'),
+              b.lastPaidDate&&React.createElement('span',{style:{fontSize:11,color:'var(--success)',fontWeight:600}},'\u2713 Paid '+fmtDate(String(b.lastPaidDate).substring(0,10),{month:'short',day:'numeric'}))
+            ),
+            b.notes&&React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginTop:6,fontStyle:'italic'}},'📝 '+b.notes),
+            React.createElement('div',{className:'bill-actions'},
+              React.createElement('button',{className:'bill-paid-btn',onClick:()=>{
+                if(b.type==='variable'){var amt=prompt('Enter the amount paid for '+b.name+':');if(!amt||isNaN(Number(amt)))return;markBillPaid(b.id,amt);}
+                else{markBillPaid(b.id);}
+              }},'✅ Mark Paid'),
+              React.createElement('button',{className:'edit-btn',onClick:()=>openBillForm(b),title:'Edit'},'✏️'),
+              React.createElement('button',{className:'delete-btn',onClick:()=>setDeleteBillTarget(b),title:'Delete'},'✕')
+            )
+          ))
       )
     )
   );
