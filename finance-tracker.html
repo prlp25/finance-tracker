@@ -116,6 +116,12 @@
   .chart-row{display:flex;gap:20px;flex-wrap:wrap;}
   .chart-box{flex:1;min-width:280px;}
   .chart-box canvas{max-height:300px;}
+  .toggle-circle{width:22px;height:22px;border-radius:50%;border:2px solid #CBD5E1;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);flex-shrink:0;}
+  .toggle-circle.on{border-color:var(--patrick);background:var(--patrick);}
+  .toggle-circle.on-purple{border-color:#7C3AED;background:#7C3AED;}
+  .toggle-circle.on-amber{border-color:#D97706;background:#D97706;}
+  .toggle-circle svg{width:13px;height:13px;stroke:white;stroke-width:2.5;fill:none;opacity:0;transition:opacity var(--transition);}
+  .toggle-circle.on svg,.toggle-circle.on-purple svg,.toggle-circle.on-amber svg{opacity:1;}
   .reimb-section{margin-top:10px;padding:14px 16px;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:var(--radius);}
   .reimb-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;}
   .reimb-toggle input[type=checkbox]{width:18px;height:18px;accent-color:var(--warning);cursor:pointer;}
@@ -567,6 +573,8 @@ function App(){
   const[formReimbursable,setFormReimbursable]=useState(false);
   const[formReimbTo,setFormReimbTo]=useState('patrick');
   const[formReimbPct,setFormReimbPct]=useState(50);
+  const[mirrorToHousehold,setMirrorToHousehold]=useState(false);
+  const[mirrorToPersonal,setMirrorToPersonal]=useState(false);
 
   const[filterMonth,setFilterMonth]=useState(curMonth);
   const[filterUser,setFilterUser]=useState('All');
@@ -604,23 +612,24 @@ function App(){
   },[scriptUrl]);
 
   const handleSubmit=()=>{
-    if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!formFund)return;
-    var expUser=(formFund==='patrick'?'Patrick':formFund==='aica'?'Aica':currentUser);
-    var needsPersonalCopy=currentScope==='shared'&&(formFund==='patrick'||formFund==='aica');
-    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:expUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl,scope:currentScope};
-    setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+(needsPersonalCopy?2:1));setSyncStatus('loading');
+    var effectiveFund=appMode==='personal'?currentUser.toLowerCase():formFund;
+    if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!effectiveFund)return;
+    var expUser=(effectiveFund==='patrick'?'Patrick':effectiveFund==='aica'?'Aica':currentUser);
+    var needsMirror=(appMode==='personal'&&mirrorToHousehold)||(appMode==='household'&&mirrorToPersonal);
+    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:effectiveFund,user:expUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl,scope:currentScope};
+    setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+(needsMirror?2:1));setSyncStatus('loading');
     api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
       if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
       setSyncStatus('ok');
     }).catch(()=>setSyncStatus('error'));
-    if(needsPersonalCopy){
-      var pUser=formFund==='patrick'?'Patrick':'Aica';
-      var pId=nextId+1;
-      var pExp={id:pId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:formFund,user:pUser,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false,notes:(formNotes.trim()?(formNotes.trim()+' | '):'')+'Auto-recorded from household expense',receiptUrl:receiptUrl||'',scope:'personal'};
-      setExpenses(prev=>[pExp,...prev]);
-      api(scriptUrl,'POST',{action:'addExpense',expense:pExp}).catch(()=>{});
+    if(needsMirror){
+      var mirrorScope=appMode==='personal'?'shared':'personal';
+      var mId=nextId+1;
+      var mExp={id:mId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:effectiveFund,user:expUser,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false,notes:(formNotes.trim()?(formNotes.trim()+' | '):'')+'Mirrored from '+(appMode==='personal'?'personal':'household'),receiptUrl:receiptUrl||'',scope:mirrorScope};
+      setExpenses(prev=>[mExp,...prev]);
+      api(scriptUrl,'POST',{action:'addExpense',expense:mExp}).catch(()=>{});
     }
-    setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);
+    setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);setMirrorToHousehold(false);setMirrorToPersonal(false);
     clearReceipt();
     setActiveTab(currentScope==='personal'?'wallet':'list');
   };
@@ -887,7 +896,7 @@ function App(){
   const pendingReimbForMe=useMemo(()=>{
     if(!currentUser)return[];
     var myKey=currentUser.toLowerCase();
-    return expenses.filter(e=>e.reimbursable&&!e.reimbursed&&e.reimbTo&&e.reimbTo!==myKey&&(e.scope||'shared')==='shared');
+    return expenses.filter(e=>e.reimbursable&&!e.reimbursed&&e.reimbTo&&e.reimbTo!==myKey);
   },[expenses,currentUser]);
   const pendingReimbForMeTotal=useMemo(()=>pendingReimbForMe.reduce((s,e)=>s+reimbAmt(e),0),[pendingReimbForMe]);
 
@@ -952,8 +961,11 @@ function App(){
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:editCat,onChange:e=>setEditCat(e.target.value)},CATEGORIES.map(c=>React.createElement('option',{key:c,value:c},c)))),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},FUND_SOURCES.map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(editFund===fs.id?'selected':''),onClick:()=>setEditFund(fs.id)},fs.icon+' '+fs.label)))),
         React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes'),React.createElement('textarea',{rows:2,value:editNotes,onChange:e=>setEditNotes(e.target.value),placeholder:'Optional notes...'})),
-        React.createElement('div',{style:{padding:'10px 12px',background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:10}},
-          React.createElement('label',{style:{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}},React.createElement('input',{type:'checkbox',checked:editReimb,onChange:e=>setEditReimb(e.target.checked),style:{width:16,height:16,accentColor:'var(--warning)'}}),React.createElement('span',{style:{fontSize:13,fontWeight:600,color:'#92400E'}},'Request reimbursement')),
+        React.createElement('div',{style:{padding:'10px 12px',background:editReimb?'#FEF3C7':'#FFFBEB',border:'1px solid '+(editReimb?'#F59E0B':'#FDE68A'),borderRadius:10,transition:'all 0.25s ease'}},
+          React.createElement('div',{style:{display:'flex',alignItems:'center',gap:8,cursor:'pointer'},onClick:()=>setEditReimb(!editReimb)},
+            React.createElement('div',{className:'toggle-circle '+(editReimb?'on-amber':'')},React.createElement('svg',{viewBox:'0 0 16 16'},React.createElement('polyline',{points:'3.5 8.5 6.5 11.5 12.5 5.5'}))),
+            React.createElement('span',{style:{fontSize:13,fontWeight:600,color:'#92400E'}},'Request reimbursement')
+          ),
           editReimb&&React.createElement('div',{style:{marginTop:10,display:'flex',flexDirection:'column',gap:8}},
             React.createElement('div',{style:{display:'flex',gap:8}},React.createElement('div',{className:'reimb-to-opt '+(editReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setEditReimbTo('patrick')},'🔵 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(editReimbTo==='aica'?'sel-aica':''),onClick:()=>setEditReimbTo('aica')},'🩷 Aica')),
             React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10}},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:editReimbPct,onChange:e=>setEditReimbPct(Number(e.target.value)),style:{flex:1,accentColor:'var(--warning)'}}),React.createElement('span',{style:{fontWeight:800,fontSize:16,color:'#92400E',minWidth:44,textAlign:'center'}},editReimbPct+'%'))
@@ -1305,17 +1317,30 @@ function App(){
             React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Description'),React.createElement('input',{type:'text',placeholder:'What did you spend on?',value:formDesc,onChange:e=>setFormDesc(e.target.value)})),
             React.createElement('div',{className:'form-group'},React.createElement('label',null,'Category'),React.createElement('select',{value:formCategory,onChange:e=>setFormCategory(e.target.value)},getCategoriesForScope(currentScope).map(c=>React.createElement('option',{key:c,value:c},c)))),
             React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes (optional)'),React.createElement('textarea',{rows:2,placeholder:'Add a memo or note...',value:formNotes,onChange:e=>setFormNotes(e.target.value)})),
-            React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},(appMode==='personal'?FUND_SOURCES.filter(fs=>fs.id===currentUser.toLowerCase()):FUND_SOURCES).map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(formFund===fs.id?(currentUser==='Patrick'?'selected':'selected-aica'):''),onClick:()=>{setFormFund(fs.id);setFormReimbursable(false);}},fs.icon+' '+fs.label)))),
-            appMode==='household'&&formFund&&React.createElement('div',{className:'form-group full-width'},
-              React.createElement('div',{className:'reimb-section'},
-                React.createElement('label',{className:'reimb-toggle'},React.createElement('input',{type:'checkbox',checked:formReimbursable,onChange:e=>setFormReimbursable(e.target.checked)}),React.createElement('span',{className:'reimb-toggle-label'},'Request reimbursement')),
+            appMode==='household'&&React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},FUND_SOURCES.map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(formFund===fs.id?(currentUser==='Patrick'?'selected':'selected-aica'):''),onClick:()=>{setFormFund(fs.id);setFormReimbursable(false);}},fs.icon+' '+fs.label)))),
+            React.createElement('div',{className:'form-group full-width'},
+              React.createElement('div',{style:{display:'flex',gap:10,alignItems:'center',padding:'12px 14px',background:appMode==='personal'?(mirrorToHousehold?'#DBEAFE':'#F8FAFC'):(mirrorToPersonal?'#EDE9FE':'#F8FAFC'),borderRadius:12,border:'1.5px solid '+(appMode==='personal'?(mirrorToHousehold?'var(--patrick)':'#E2E8F0'):(mirrorToPersonal?'#7C3AED':'#E2E8F0')),cursor:'pointer',transition:'all 0.25s ease'},onClick:()=>appMode==='personal'?setMirrorToHousehold(!mirrorToHousehold):setMirrorToPersonal(!mirrorToPersonal)},
+                React.createElement('div',{className:'toggle-circle '+(appMode==='personal'?(mirrorToHousehold?'on':''):(mirrorToPersonal?'on-purple':''))},
+                  React.createElement('svg',{viewBox:'0 0 16 16'},React.createElement('polyline',{points:'3.5 8.5 6.5 11.5 12.5 5.5'}))
+                ),
+                React.createElement('span',{style:{fontSize:13,fontWeight:600,color:appMode==='personal'?(mirrorToHousehold?'var(--patrick)':'var(--text-muted)'):(mirrorToPersonal?'#7C3AED':'var(--text-muted)'),transition:'color 0.25s ease'}},appMode==='personal'?'🏠 Also record in Household':'🔒 Also record in Personal')
+              )
+            ),
+            (appMode==='personal'||(appMode==='household'&&formFund))&&React.createElement('div',{className:'form-group full-width'},
+              React.createElement('div',{className:'reimb-section',style:{background:formReimbursable?'#FEF3C7':'#FFFBEB',borderColor:formReimbursable?'#F59E0B':'#FDE68A',transition:'all 0.25s ease'}},
+                React.createElement('div',{className:'reimb-toggle',onClick:()=>setFormReimbursable(!formReimbursable)},
+                  React.createElement('div',{className:'toggle-circle '+(formReimbursable?'on-amber':'')},
+                    React.createElement('svg',{viewBox:'0 0 16 16'},React.createElement('polyline',{points:'3.5 8.5 6.5 11.5 12.5 5.5'}))
+                  ),
+                  React.createElement('span',{className:'reimb-toggle-label',style:{color:formReimbursable?'#92400E':'#B45309'}},'Request reimbursement')
+                ),
                 formReimbursable&&React.createElement('div',{className:'reimb-details'},
                   React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimburse to'),React.createElement('div',{className:'reimb-to-options'},React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setFormReimbTo('patrick')},'🔵 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='aica'?'sel-aica':''),onClick:()=>setFormReimbTo('aica')},'🩷 Aica'))),
                   React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimbursement %'),React.createElement('div',{className:'reimb-pct-row'},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:formReimbPct,onChange:e=>setFormReimbPct(Number(e.target.value))}),React.createElement('div',{className:'reimb-pct-value'},formReimbPct+'%')),formAmount&&Number(formAmount)>0&&React.createElement('div',{className:'reimb-pct-calc'},'Reimbursable: '+fmt(Number(formAmount)*formReimbPct/100)))
                 )
               )
             ),
-            React.createElement('div',{className:'form-group full-width'},React.createElement('button',{className:'submit-btn '+(currentUser==='Patrick'?'patrick':'aica'),onClick:handleSubmit,disabled:!formFund},'+ Add Expense'))
+            React.createElement('div',{className:'form-group full-width'},React.createElement('button',{className:'submit-btn '+(currentUser==='Patrick'?'patrick':'aica'),onClick:handleSubmit,disabled:appMode==='household'&&!formFund},'+ Add Expense'))
           )
         )
       ),
