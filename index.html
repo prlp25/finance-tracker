@@ -390,17 +390,15 @@ if ('serviceWorker' in navigator) {
 <script type="text/babel">
 const{useState,useMemo,useRef,useEffect,useCallback}=React;
 
-const HOUSEHOLD_CATEGORIES=['Groceries','Gas / Fuel','Driver Salary','Maid Salary','Restaurant / Eating Out','Home Improvements','Hobbies','Housing Expenses','Health/Medical','Other Expenses'];
-const PERSONAL_CATEGORIES=['Shopping','Entertainment','Food & Drinks','Transport','Personal Care','Subscriptions','Other Personal'];
+const HOUSEHOLD_CATEGORIES=['Groceries','Gas / Fuel','Grab Delivery','Driver Salary','Maid Salary','Restaurant / Eating Out','Home Improvements','Hobbies','Housing Expenses','Health/Medical','Other Expenses'];
+const PERSONAL_CATEGORIES=['Shopping','Entertainment','Food & Drinks','Grab Delivery','Transport','Personal Care','Subscriptions','Other Personal'];
 const CATEGORIES=[...HOUSEHOLD_CATEGORIES,...PERSONAL_CATEGORIES];
 const FUND_SOURCES=[
   {id:'savings',label:'Savings Account',icon:'🏠'},
   {id:'opex',label:'Opex Account',icon:'💳'},
-  {id:'patrick',label:'Patrick',icon:'🔵'},
-  {id:'aica',label:'Aica',icon:'🩷'},
 ];
-const HOUSEHOLD_COLORS=['#6366F1','#D97706','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
-const PERSONAL_COLORS=['#8B5CF6','#EC4899','#F97316','#06B6D4','#10B981','#6366F1','#78716C'];
+const HOUSEHOLD_COLORS=['#6366F1','#D97706','#00B900','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
+const PERSONAL_COLORS=['#8B5CF6','#EC4899','#F97316','#00B900','#06B6D4','#10B981','#6366F1','#78716C'];
 const CAT_COLORS=[...HOUSEHOLD_COLORS,...PERSONAL_COLORS];
 function getCategoriesForScope(scope){return scope==='personal'?PERSONAL_CATEGORIES:HOUSEHOLD_CATEGORIES;}
 function getColorsForScope(scope){return scope==='personal'?PERSONAL_COLORS:HOUSEHOLD_COLORS;}
@@ -433,6 +431,13 @@ const QUICK_ADDS=[
   {desc:'Groceries',category:'Groceries',icon:'🛒'},
   {desc:'Gas / Fuel',category:'Gas / Fuel',icon:'⛽'},
   {desc:'Eating Out',category:'Restaurant / Eating Out',icon:'🍽️'},
+  {desc:'Grab Delivery',category:'Grab Delivery',icon:'🛵'},
+];
+const PERSONAL_QUICK_ADDS=[
+  {desc:'Coffee',category:'Food & Drinks',icon:'☕'},
+  {desc:'Lunch',category:'Food & Drinks',icon:'🍱'},
+  {desc:'Grab Delivery',category:'Grab Delivery',icon:'🛵'},
+  {desc:'Transport',category:'Transport',icon:'🚗'},
 ];
 
 const SCRIPT_URL_KEY='finance_tracker_script_url';
@@ -616,18 +621,38 @@ function App(){
     if(!formDesc.trim()||!formAmount||Number(formAmount)<=0||!effectiveFund)return;
     var expUser=(effectiveFund==='patrick'?'Patrick':effectiveFund==='aica'?'Aica':currentUser);
     var needsMirror=(appMode==='personal'&&mirrorToHousehold)||(appMode==='household'&&mirrorToPersonal);
-    var newExp={id:nextId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:effectiveFund,user:expUser,notes:formNotes.trim(),reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,reimbursed:false,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,receiptUrl:receiptUrl,scope:currentScope};
-    setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+(needsMirror?2:1));setSyncStatus('loading');
-    api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
-      if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
-      setSyncStatus('ok');
-    }).catch(()=>setSyncStatus('error'));
-    if(needsMirror){
-      var mirrorScope=appMode==='personal'?'shared':'personal';
-      var mId=nextId+1;
-      var mExp={id:mId,date:formDate,description:formDesc.trim(),amount:Number(formAmount),category:formCategory,fundSource:effectiveFund,user:expUser,reimbursable:false,reimbTo:null,reimbPct:50,reimbursed:false,notes:(formNotes.trim()?(formNotes.trim()+' | '):'')+'Mirrored from '+(appMode==='personal'?'personal':'household'),receiptUrl:receiptUrl||'',scope:mirrorScope};
-      setExpenses(prev=>[mExp,...prev]);
-      api(scriptUrl,'POST',{action:'addExpense',expense:mExp}).catch(()=>{});
+    var amt=Number(formAmount);
+    var desc=formDesc.trim();var notes=formNotes.trim();var cat=formCategory;
+    var common={date:formDate,description:desc,category:cat,fundSource:effectiveFund,reimbursed:false,receiptUrl:receiptUrl||''};
+    setSyncStatus('loading');
+    if(formReimbursable&&needsMirror){
+      var reimbAmt2=Math.round(amt*formReimbPct/100*100)/100;
+      var payerShare=Math.round((amt-reimbAmt2)*100)/100;
+      var paidByPerson=formReimbTo==='patrick'?'Patrick':'Aica';
+      var owesPerson=formReimbTo==='patrick'?'Aica':'Patrick';
+      var householdExp={...common,id:nextId,amount:amt,user:expUser,notes:notes,reimbursable:true,reimbTo:formReimbTo,reimbPct:formReimbPct,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,scope:'shared'};
+      var payerPersonalExp={...common,id:nextId+1,amount:payerShare,user:paidByPerson,notes:(notes?(notes+' | '):'')+'Your share (paid '+fmt(amt)+', '+formReimbPct+'% reimbursed)',reimbursable:false,reimbTo:null,reimbPct:50,scope:'personal'};
+      var owesPersonalExp={...common,id:nextId+2,amount:reimbAmt2,user:owesPerson,notes:(notes?(notes+' | '):'')+'Your share ('+formReimbPct+'% of '+fmt(amt)+' from '+paidByPerson+')',reimbursable:false,reimbTo:null,reimbPct:50,scope:'personal'};
+      setExpenses(prev=>[householdExp,payerPersonalExp,owesPersonalExp,...prev]);setNextId(n=>n+3);
+      api(scriptUrl,'POST',{action:'addExpense',expense:householdExp}).then(d=>{
+        if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===householdExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
+        setSyncStatus('ok');
+      }).catch(()=>setSyncStatus('error'));
+      api(scriptUrl,'POST',{action:'addExpense',expense:payerPersonalExp}).catch(()=>{});
+      api(scriptUrl,'POST',{action:'addExpense',expense:owesPersonalExp}).catch(()=>{});
+    } else {
+      var newExp={...common,id:nextId,amount:amt,user:expUser,notes:notes,reimbursable:formReimbursable,reimbTo:formReimbursable?formReimbTo:null,reimbPct:formReimbursable?formReimbPct:50,receiptBase64:receiptUrl?'':receiptBase64,receiptName:receiptUrl?'':receiptName,scope:currentScope};
+      setExpenses(prev=>[{...newExp,receiptUrl:receiptUrl},...prev]);setNextId(n=>n+(needsMirror?2:1));
+      api(scriptUrl,'POST',{action:'addExpense',expense:newExp}).then(d=>{
+        if(d.receiptUrl){setExpenses(prev=>prev.map(ex=>ex.id===newExp.id?{...ex,receiptUrl:d.receiptUrl}:ex));}
+        setSyncStatus('ok');
+      }).catch(()=>setSyncStatus('error'));
+      if(needsMirror){
+        var mirrorScope=appMode==='personal'?'shared':'personal';
+        var mExp={...common,id:nextId+1,amount:amt,user:expUser,notes:(notes?(notes+' | '):'')+'Mirrored from '+(appMode==='personal'?'personal':'household'),reimbursable:false,reimbTo:null,reimbPct:50,scope:mirrorScope};
+        setExpenses(prev=>[mExp,...prev]);
+        api(scriptUrl,'POST',{action:'addExpense',expense:mExp}).catch(()=>{});
+      }
     }
     setFormDesc('');setFormAmount('');setFormFund('');setFormNotes('');setFormReimbursable(false);setFormReimbTo('patrick');setFormReimbPct(50);setMirrorToHousehold(false);setMirrorToPersonal(false);
     clearReceipt();
@@ -1266,7 +1291,7 @@ function App(){
 
       React.createElement('div',{className:'tabs'},
         React.createElement('button',{className:'tab-btn '+(activeTab==='add'?'active':''),onClick:()=>setActiveTab('add')},'+ Add'),
-        React.createElement('button',{className:'tab-btn '+(activeTab==='list'?'active':''),onClick:()=>setActiveTab('list')},'📋 Expenses'),
+        appMode==='household'&&React.createElement('button',{className:'tab-btn '+(activeTab==='list'?'active':''),onClick:()=>setActiveTab('list')},'📋 Expenses'),
         React.createElement('button',{className:'tab-btn '+(activeTab==='deposits'?'active':''),onClick:()=>setActiveTab('deposits')},'💰 Deposits'),
         React.createElement('button',{className:'tab-btn '+(activeTab==='charts'?'active':''),onClick:()=>setActiveTab('charts')},'📊 Charts'),
         appMode==='household'&&React.createElement('button',{className:'tab-btn '+(activeTab==='balances'?'active':''),onClick:()=>setActiveTab('balances')},'⚖️ Balances'),
@@ -1291,6 +1316,7 @@ function App(){
           React.createElement('div',{style:{fontSize:12,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',marginBottom:8,letterSpacing:0.5}},'⚡ Quick Add'),
           React.createElement('div',{className:'quick-add-row'},
             appMode==='household'&&QUICK_ADDS.map(qa=>React.createElement('button',{key:qa.desc,className:'quick-add-btn',onClick:()=>handleQuickAdd(qa)},qa.icon,' ',qa.desc)),
+            appMode==='personal'&&PERSONAL_QUICK_ADDS.map(qa=>React.createElement('button',{key:qa.desc,className:'quick-add-btn',onClick:()=>handleQuickAdd(qa)},qa.icon,' ',qa.desc)),
             appMode==='household'&&React.createElement('button',{className:'quick-add-btn',onClick:openDriverCalc,style:{borderColor:'#F59E0B',color:'#B45309'}},'🚗 Driver Salary'),
             React.createElement('button',{className:'quick-add-btn',onClick:()=>document.getElementById('receipt-photo-input').click(),style:{borderColor:'var(--success)',color:'#16A34A',background:ocrProcessing?'#DCFCE7':'white'}},ocrProcessing?'⏳ Scanning...':'📷 Snap Receipt'),
             React.createElement('input',{id:'receipt-photo-input',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleReceiptPhoto})
@@ -1319,24 +1345,27 @@ function App(){
             React.createElement('div',{className:'form-group'},React.createElement('label',null,'Notes (optional)'),React.createElement('textarea',{rows:2,placeholder:'Add a memo or note...',value:formNotes,onChange:e=>setFormNotes(e.target.value)})),
             appMode==='household'&&React.createElement('div',{className:'form-group full-width'},React.createElement('label',null,'Paid From'),React.createElement('div',{className:'fund-options'},FUND_SOURCES.map(fs=>React.createElement('div',{key:fs.id,className:'fund-option '+(formFund===fs.id?(currentUser==='Patrick'?'selected':'selected-aica'):''),onClick:()=>{setFormFund(fs.id);setFormReimbursable(false);}},fs.icon+' '+fs.label)))),
             React.createElement('div',{className:'form-group full-width'},
-              React.createElement('div',{style:{display:'flex',gap:10,alignItems:'center',padding:'12px 14px',background:appMode==='personal'?(mirrorToHousehold?'#DBEAFE':'#F8FAFC'):(mirrorToPersonal?'#EDE9FE':'#F8FAFC'),borderRadius:12,border:'1.5px solid '+(appMode==='personal'?(mirrorToHousehold?'var(--patrick)':'#E2E8F0'):(mirrorToPersonal?'#7C3AED':'#E2E8F0')),cursor:'pointer',transition:'all 0.25s ease'},onClick:()=>appMode==='personal'?setMirrorToHousehold(!mirrorToHousehold):setMirrorToPersonal(!mirrorToPersonal)},
+              React.createElement('div',{style:{display:'flex',gap:10,alignItems:'center',padding:'12px 14px',background:appMode==='personal'?(mirrorToHousehold?'#DBEAFE':'#F8FAFC'):(mirrorToPersonal?'#EDE9FE':'#F8FAFC'),borderRadius:12,border:'1.5px solid '+(appMode==='personal'?(mirrorToHousehold?'var(--patrick)':'#E2E8F0'):(mirrorToPersonal?'#7C3AED':'#E2E8F0')),cursor:formReimbursable?'not-allowed':'pointer',transition:'all 0.25s ease',opacity:formReimbursable?0.7:1},onClick:()=>{if(formReimbursable)return;appMode==='personal'?setMirrorToHousehold(!mirrorToHousehold):setMirrorToPersonal(!mirrorToPersonal);}},
                 React.createElement('div',{className:'toggle-circle '+(appMode==='personal'?(mirrorToHousehold?'on':''):(mirrorToPersonal?'on-purple':''))},
                   React.createElement('svg',{viewBox:'0 0 16 16'},React.createElement('polyline',{points:'3.5 8.5 6.5 11.5 12.5 5.5'}))
                 ),
-                React.createElement('span',{style:{fontSize:13,fontWeight:600,color:appMode==='personal'?(mirrorToHousehold?'var(--patrick)':'var(--text-muted)'):(mirrorToPersonal?'#7C3AED':'var(--text-muted)'),transition:'color 0.25s ease'}},appMode==='personal'?'🏠 Also record in Household':'🔒 Also record in Personal')
+                React.createElement('div',null,
+                  React.createElement('span',{style:{fontSize:13,fontWeight:600,color:appMode==='personal'?(mirrorToHousehold?'var(--patrick)':'var(--text-muted)'):(mirrorToPersonal?'#7C3AED':'var(--text-muted)'),transition:'color 0.25s ease'}},appMode==='personal'?'🏠 Also record in Household':'🔒 Also record in Personal'),
+                  formReimbursable&&React.createElement('div',{style:{fontSize:10,color:'var(--text-light)',marginTop:2}},'Required for reimbursement')
+                )
               )
             ),
             (appMode==='personal'||(appMode==='household'&&formFund))&&React.createElement('div',{className:'form-group full-width'},
               React.createElement('div',{className:'reimb-section',style:{background:formReimbursable?'#FEF3C7':'#FFFBEB',borderColor:formReimbursable?'#F59E0B':'#FDE68A',transition:'all 0.25s ease'}},
-                React.createElement('div',{className:'reimb-toggle',onClick:()=>setFormReimbursable(!formReimbursable)},
+                React.createElement('div',{className:'reimb-toggle',onClick:()=>{var nv=!formReimbursable;setFormReimbursable(nv);if(nv){setFormReimbTo(currentUser.toLowerCase());if(appMode==='personal')setMirrorToHousehold(true);else setMirrorToPersonal(true);}}},
                   React.createElement('div',{className:'toggle-circle '+(formReimbursable?'on-amber':'')},
                     React.createElement('svg',{viewBox:'0 0 16 16'},React.createElement('polyline',{points:'3.5 8.5 6.5 11.5 12.5 5.5'}))
                   ),
                   React.createElement('span',{className:'reimb-toggle-label',style:{color:formReimbursable?'#92400E':'#B45309'}},'Request reimbursement')
                 ),
                 formReimbursable&&React.createElement('div',{className:'reimb-details'},
-                  React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimburse to'),React.createElement('div',{className:'reimb-to-options'},React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='patrick'?'sel-patrick':''),onClick:()=>setFormReimbTo('patrick')},'🔵 Patrick'),React.createElement('div',{className:'reimb-to-opt '+(formReimbTo==='aica'?'sel-aica':''),onClick:()=>setFormReimbTo('aica')},'🩷 Aica'))),
-                  React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimbursement %'),React.createElement('div',{className:'reimb-pct-row'},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:formReimbPct,onChange:e=>setFormReimbPct(Number(e.target.value))}),React.createElement('div',{className:'reimb-pct-value'},formReimbPct+'%')),formAmount&&Number(formAmount)>0&&React.createElement('div',{className:'reimb-pct-calc'},'Reimbursable: '+fmt(Number(formAmount)*formReimbPct/100)))
+                  React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'#92400E',padding:'6px 0'}},'Request ',fmt(formAmount&&Number(formAmount)>0?Number(formAmount)*formReimbPct/100:0),' reimbursement from '+(currentUser==='Patrick'?'🩷 Aica':'🔵 Patrick')),
+                  React.createElement('div',null,React.createElement('div',{className:'reimb-sublabel'},'Reimbursement %'),React.createElement('div',{className:'reimb-pct-row'},React.createElement('input',{type:'range',min:'5',max:'100',step:'5',value:formReimbPct,onChange:e=>setFormReimbPct(Number(e.target.value))}),React.createElement('div',{className:'reimb-pct-value'},formReimbPct+'%')),formAmount&&Number(formAmount)>0&&React.createElement('div',{className:'reimb-pct-calc'},'Your share: '+fmt(Number(formAmount)-Number(formAmount)*formReimbPct/100)+' • '+(currentUser==='Patrick'?'Aica':'Patrick')+'\'s share: '+fmt(Number(formAmount)*formReimbPct/100)))
                 )
               )
             ),
