@@ -791,6 +791,9 @@ function App(){
     api(scriptUrl,'POST',{action:'ocrStatement',photoBase64:b64}).then(function(d){
       setCCOcrProcessing(false);
       if(d.error){setCCOcrError(d.error);return;}
+      if(!d.items||d.items.length===0){
+        setCCOcrError('No transactions found. Raw OCR text:\n\n'+(d.rawText||'(empty)'));return;
+      }
       var card=creditCards.find(c=>c.id===selectedCard);
       var itemsWithMeta=(d.items||[]).map(function(item,idx){
         var isDuplicate=false;var dupType='';
@@ -1426,7 +1429,7 @@ function App(){
               React.createElement('input',{id:'cc-stmt-camera',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleStatementUpload}),
               React.createElement('input',{id:'cc-stmt-upload',type:'file',accept:'image/*',style:{display:'none'},onChange:handleStatementUpload})
             ),
-            ccOcrError&&React.createElement('div',{style:{color:'#EF4444',fontSize:12,marginBottom:12,fontWeight:600}},ccOcrError),
+            ccOcrError&&React.createElement('div',{style:{color:'#EF4444',fontSize:12,marginBottom:12,fontWeight:600,whiteSpace:'pre-wrap',maxHeight:200,overflowY:'auto',background:'#FEF2F2',padding:10,borderRadius:10,border:'1px solid #FECACA'}},ccOcrError),
             // Past statements
             cardStatements.length>0&&React.createElement('div',null,
               React.createElement('h3',{style:{fontSize:14,fontWeight:700,marginBottom:12,marginTop:16}},'Import History'),
