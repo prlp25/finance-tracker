@@ -1319,7 +1319,9 @@ function App(){
             appMode==='personal'&&PERSONAL_QUICK_ADDS.map(qa=>React.createElement('button',{key:qa.desc,className:'quick-add-btn',onClick:()=>handleQuickAdd(qa)},qa.icon,' ',qa.desc)),
             appMode==='household'&&React.createElement('button',{className:'quick-add-btn',onClick:openDriverCalc,style:{borderColor:'#F59E0B',color:'#B45309'}},'🚗 Driver Salary'),
             React.createElement('button',{className:'quick-add-btn',onClick:()=>document.getElementById('receipt-photo-input').click(),style:{borderColor:'var(--success)',color:'#16A34A',background:ocrProcessing?'#DCFCE7':'white'}},ocrProcessing?'⏳ Scanning...':'📷 Snap Receipt'),
-            React.createElement('input',{id:'receipt-photo-input',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleReceiptPhoto})
+            React.createElement('button',{className:'quick-add-btn',onClick:()=>document.getElementById('receipt-upload-input').click(),style:{borderColor:'#8B5CF6',color:'#7C3AED',background:ocrProcessing?'#EDE9FE':'white'}},ocrProcessing?'⏳ Scanning...':'🖼️ Upload Receipt'),
+            React.createElement('input',{id:'receipt-photo-input',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleReceiptPhoto}),
+            React.createElement('input',{id:'receipt-upload-input',type:'file',accept:'image/*',style:{display:'none'},onChange:handleReceiptPhoto})
           )
         ),
         receiptBase64&&React.createElement('div',{className:'card',style:{padding:14,borderColor:ocrError?'#EF4444':'var(--success)',borderWidth:2}},
