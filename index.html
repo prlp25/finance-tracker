@@ -591,30 +591,32 @@ function App(){
   const [batchRawText,setBatchRawText] = useState('');
   const [batchReimb,setBatchReimb] = useState(false);
   const [batchReimbPct,setBatchReimbPct] = useState(50);
+  const [cropImage,setCropImage] = useState(null);
+  const [cropMode,setCropMode] = useState(null); // 'receipt' or 'statement'
 
-  // OCR handler for camera/upload/PDF
+  // Image file → open crop modal first
   function handleReceiptUpload(ev){
     var file=ev.target.files[0];
     if(!file)return;
-    setOcrError('');
-    setOcrProcessing(true);
     var reader=new FileReader();
-    reader.onload=function(e2){
-      var b64=e2.target.result;
-      api(scriptUrl,'POST',{action:'ocrReceipt',photoBase64:b64}).then(function(d){
-        setOcrProcessing(false);
-        if(d.error){setOcrError(d.error);return;}
-        if(d.receiptUrl)setReceiptUrl(d.receiptUrl);
-        // Dispatch custom event with OCR data so inline ExpenseForm can pick it up
-        window.__ocrData={storeName:d.storeName,amount:d.amount,date:d.date,category:d.category,receiptUrl:d.receiptUrl};
-        window.dispatchEvent(new Event('ocr-complete'));
-      }).catch(function(err){
-        setOcrProcessing(false);
-        setOcrError('OCR failed: '+err);
-      });
-    };
+    reader.onload=function(e2){setCropImage(e2.target.result);setCropMode('receipt');};
     reader.readAsDataURL(file);
     ev.target.value='';
+  }
+
+  // After crop: send to OCR
+  function sendReceiptOCR(b64){
+    setOcrError('');setOcrProcessing(true);
+    api(scriptUrl,'POST',{action:'ocrReceipt',photoBase64:b64}).then(function(d){
+      setOcrProcessing(false);
+      if(d.error){setOcrError(d.error);return;}
+      if(d.receiptUrl)setReceiptUrl(d.receiptUrl);
+      window.__ocrData={storeName:d.storeName,amount:d.amount,date:d.date,category:d.category,receiptUrl:d.receiptUrl};
+      window.dispatchEvent(new Event('ocr-complete'));
+    }).catch(function(err){
+      setOcrProcessing(false);
+      setOcrError('OCR failed: '+err);
+    });
   }
 
   useEffect(() => {
@@ -777,60 +779,50 @@ function App(){
   function handleStatementUpload(ev){
     var file=ev.target.files[0];
     if(!file||!selectedCard)return;
-    setCCOcrError('');setCCOcrProcessing(true);
     var reader=new FileReader();
-    reader.onload=function(e2){
-      var b64=e2.target.result;
-      api(scriptUrl,'POST',{action:'ocrStatement',photoBase64:b64}).then(function(d){
-        setCCOcrProcessing(false);
-        if(d.error){setCCOcrError(d.error);return;}
-        // Find existing expenses for duplicate detection
-        var card=creditCards.find(c=>c.id===selectedCard);
-        var itemsWithMeta=(d.items||[]).map(function(item,idx){
-          // Check duplicates against existing expenses
-          var isDuplicate=false;var dupType='';
-          for(var ei=0;ei<expenses.length;ei++){
-            var ex=expenses[ei];
-            if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01 && ex.date===item.date){
-              isDuplicate=true;dupType='exact';break;
-            }
-            if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01){
-              var d1=new Date(ex.date),d2=new Date(item.date);
-              if(Math.abs(d1-d2)<=(2*86400000)){isDuplicate=true;dupType='close';break;}
-            }
-          }
-          // Auto-categorize from merchantMap
-          var cat=item.category||'';
-          var autoTagged=!!item.autoCategory;
-          if(!cat){
-            var descU=String(item.description).toUpperCase();
-            for(var mi=0;mi<merchantMap.length;mi++){
-              if(descU.indexOf(merchantMap[mi].pattern.toUpperCase())!==-1){
-                cat=merchantMap[mi].category;autoTagged=true;break;
-              }
-            }
-          }
-          return {
-            ...item,
-            idx:idx,
-            category:cat,
-            autoTagged:autoTagged,
-            isDuplicate:isDuplicate,
-            dupType:dupType,
-            skip:isDuplicate,
-            isHousehold:false,
-            fundSource:card?card.id:'',
-            user:currentUser,
-            scope:'personal',
-            merchantPattern:item.merchantPattern||''
-          };
-        });
-        setBatchItems(itemsWithMeta);
-        setBatchRawText(d.rawText||'');
-      }).catch(function(err){setCCOcrProcessing(false);setCCOcrError('OCR failed: '+err);});
-    };
+    reader.onload=function(e2){setCropImage(e2.target.result);setCropMode('statement');};
     reader.readAsDataURL(file);
     ev.target.value='';
+  }
+
+  // After crop: send statement to OCR
+  function sendStatementOCR(b64){
+    setCCOcrError('');setCCOcrProcessing(true);
+    api(scriptUrl,'POST',{action:'ocrStatement',photoBase64:b64}).then(function(d){
+      setCCOcrProcessing(false);
+      if(d.error){setCCOcrError(d.error);return;}
+      var card=creditCards.find(c=>c.id===selectedCard);
+      var itemsWithMeta=(d.items||[]).map(function(item,idx){
+        var isDuplicate=false;var dupType='';
+        for(var ei=0;ei<expenses.length;ei++){
+          var ex=expenses[ei];
+          if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01 && ex.date===item.date){
+            isDuplicate=true;dupType='exact';break;
+          }
+          if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01){
+            var d1=new Date(ex.date),d2=new Date(item.date);
+            if(Math.abs(d1-d2)<=(2*86400000)){isDuplicate=true;dupType='close';break;}
+          }
+        }
+        var cat=item.category||'';
+        var autoTagged=!!item.autoCategory;
+        if(!cat){
+          var descU=String(item.description).toUpperCase();
+          for(var mi=0;mi<merchantMap.length;mi++){
+            if(descU.indexOf(merchantMap[mi].pattern.toUpperCase())!==-1){
+              cat=merchantMap[mi].category;autoTagged=true;break;
+            }
+          }
+        }
+        return {
+          ...item,idx:idx,category:cat,autoTagged:autoTagged,isDuplicate:isDuplicate,dupType:dupType,
+          skip:isDuplicate,isHousehold:false,fundSource:card?card.id:'',user:currentUser,scope:'personal',
+          merchantPattern:item.merchantPattern||''
+        };
+      });
+      setBatchItems(itemsWithMeta);
+      setBatchRawText(d.rawText||'');
+    }).catch(function(err){setCCOcrProcessing(false);setCCOcrError('OCR failed: '+err);});
   }
   function handleApproveBatch(){
     if(!batchItems||!selectedCard)return;
@@ -900,6 +892,29 @@ function App(){
       api(scriptUrl,'POST',{action:'importCCStatement',statement:stmt,items:finalItems}).catch(function(err){console.error(err);});
     }
   }
+
+  // Crop modal — shown before OCR for both receipts and statements
+  var cropModalEl = null;
+  if(cropImage){
+    cropModalEl = React.createElement(CropModal,{
+      imageSrc:cropImage,
+      onConfirm:function(croppedB64){
+        setCropImage(null);
+        if(cropMode==='receipt'){sendReceiptOCR(croppedB64);}
+        else if(cropMode==='statement'){sendStatementOCR(croppedB64);}
+        setCropMode(null);
+      },
+      onSkip:function(){
+        var orig=cropImage;
+        setCropImage(null);
+        if(cropMode==='receipt'){sendReceiptOCR(orig);}
+        else if(cropMode==='statement'){sendStatementOCR(orig);}
+        setCropMode(null);
+      },
+      onCancel:function(){setCropImage(null);setCropMode(null);}
+    });
+  }
+  if(cropModalEl) return cropModalEl;
 
   if(!connected) return React.createElement(SetupScreen,{onConnect:handleConnect});
   if(!currentUser) return React.createElement(UserPicker,{onSelect:handleSelectUser});
@@ -1638,6 +1653,184 @@ function App(){
   }
 
   return React.createElement('div',null,'Loading...');
+}
+
+function CropModal({imageSrc,onConfirm,onSkip,onCancel}){
+  const canvasRef = useRef(null);
+  const imgRef = useRef(null);
+  const addFileRef = useRef(null);
+  const [imgLoaded,setImgLoaded] = useState(false);
+  const [dragging,setDragging] = useState(false);
+  const [dragType,setDragType] = useState(null);
+  const [startPos,setStartPos] = useState({x:0,y:0});
+  const [crop,setCrop] = useState({x:0,y:0,w:0,h:0});
+  const [imgDims,setImgDims] = useState({w:0,h:0,scale:1});
+  const [pages,setPages] = useState([]); // array of cropped base64 strings from previous pages
+  const [currentSrc,setCurrentSrc] = useState(imageSrc); // current image being cropped
+
+  function loadImage(src){
+    setImgLoaded(false);
+    var img=new Image();
+    img.onload=function(){
+      imgRef.current=img;
+      var maxW=window.innerWidth-40;
+      var maxH=window.innerHeight-200;
+      var scale=Math.min(maxW/img.width,maxH/img.height,1);
+      var dw=Math.round(img.width*scale);
+      var dh=Math.round(img.height*scale);
+      setImgDims({w:dw,h:dh,scale:scale,natW:img.width,natH:img.height});
+      var mx=Math.round(dw*0.05);
+      var my=Math.round(dh*0.05);
+      setCrop({x:mx,y:my,w:dw-mx*2,h:dh-my*2});
+      setImgLoaded(true);
+    };
+    img.src=src;
+  }
+
+  useEffect(function(){if(currentSrc)loadImage(currentSrc);},[currentSrc]);
+
+  function getPos(ev){
+    var t=ev.touches?ev.touches[0]:ev;
+    var r=canvasRef.current.getBoundingClientRect();
+    return {x:t.clientX-r.left,y:t.clientY-r.top};
+  }
+
+  function hitTest(pos){
+    var g=12;var c=crop;
+    var inX=pos.x>=c.x-g&&pos.x<=c.x+c.w+g;
+    var inY=pos.y>=c.y-g&&pos.y<=c.y+c.h+g;
+    if(!inX||!inY)return null;
+    var onN=Math.abs(pos.y-c.y)<g;var onS=Math.abs(pos.y-(c.y+c.h))<g;
+    var onW=Math.abs(pos.x-c.x)<g;var onE=Math.abs(pos.x-(c.x+c.w))<g;
+    if(onN&&onW)return 'nw';if(onN&&onE)return 'ne';if(onS&&onW)return 'sw';if(onS&&onE)return 'se';
+    if(onN)return 'n';if(onS)return 's';if(onW)return 'w';if(onE)return 'e';
+    if(pos.x>c.x&&pos.x<c.x+c.w&&pos.y>c.y&&pos.y<c.y+c.h)return 'move';
+    return null;
+  }
+
+  function onDown(ev){ev.preventDefault();var pos=getPos(ev);var ht=hitTest(pos);if(ht){setDragging(true);setDragType(ht);setStartPos({x:pos.x,y:pos.y,crop:{...crop}});}}
+  function onMove(ev){
+    if(!dragging)return;ev.preventDefault();var pos=getPos(ev);
+    var dx=pos.x-startPos.x;var dy=pos.y-startPos.y;var sc=startPos.crop;var nc={...sc};
+    var mW=imgDims.w;var mH=imgDims.h;
+    if(dragType==='move'){nc.x=Math.max(0,Math.min(mW-sc.w,sc.x+dx));nc.y=Math.max(0,Math.min(mH-sc.h,sc.y+dy));}
+    else{
+      if(dragType.indexOf('n')!==-1){nc.y=Math.max(0,sc.y+dy);nc.h=sc.h-(nc.y-sc.y);}
+      if(dragType.indexOf('s')!==-1){nc.h=Math.min(mH-sc.y,sc.h+dy);}
+      if(dragType.indexOf('w')!==-1){nc.x=Math.max(0,sc.x+dx);nc.w=sc.w-(nc.x-sc.x);}
+      if(dragType.indexOf('e')!==-1){nc.w=Math.min(mW-sc.x,sc.w+dx);}
+      if(nc.w<30)nc.w=30;if(nc.h<30)nc.h=30;
+    }
+    setCrop(nc);
+  }
+  function onUp(){setDragging(false);setDragType(null);}
+
+  function getCroppedB64(){
+    var s=imgDims.scale;
+    var natX=Math.round(crop.x/s);var natY=Math.round(crop.y/s);
+    var natW=Math.round(crop.w/s);var natH=Math.round(crop.h/s);
+    var c=document.createElement('canvas');c.width=natW;c.height=natH;
+    var ctx=c.getContext('2d');
+    ctx.drawImage(imgRef.current,natX,natY,natW,natH,0,0,natW,natH);
+    return c.toDataURL('image/jpeg',0.9);
+  }
+
+  // Stitch all pages into one tall image then send
+  function stitchAndSend(allPages){
+    if(allPages.length===1){onConfirm(allPages[0]);return;}
+    // Load all page images, stack vertically
+    var imgs=[];var loaded=0;
+    allPages.forEach(function(src,i){
+      var im=new Image();
+      im.onload=function(){imgs[i]=im;loaded++;if(loaded===allPages.length)doStitch();};
+      im.src=src;
+    });
+    function doStitch(){
+      var maxW=0;var totalH=0;
+      imgs.forEach(function(im){if(im.width>maxW)maxW=im.width;totalH+=im.height;});
+      var c=document.createElement('canvas');c.width=maxW;c.height=totalH;
+      var ctx=c.getContext('2d');var yOff=0;
+      imgs.forEach(function(im){ctx.drawImage(im,0,yOff);yOff+=im.height;});
+      onConfirm(c.toDataURL('image/jpeg',0.85));
+    }
+  }
+
+  function handleCropAndFinish(){stitchAndSend([...pages,getCroppedB64()]);}
+
+  function handleCropAndAddPage(){
+    var cropped=getCroppedB64();
+    setPages(function(prev){return [...prev,cropped];});
+    // Open file picker for next page
+    if(addFileRef.current)addFileRef.current.click();
+  }
+
+  function handleAddFile(ev){
+    var file=ev.target.files[0];
+    if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(e2){setCurrentSrc(e2.target.result);};
+    reader.readAsDataURL(file);
+    ev.target.value='';
+  }
+
+  function handleSkipAll(){
+    // If pages already saved, stitch those + current uncropped; if no pages, send original
+    if(pages.length>0){stitchAndSend([...pages,currentSrc]);}
+    else{onSkip();}
+  }
+
+  var overlayStyle={position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.92)',zIndex:9999,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:20};
+  var totalPages=pages.length+1;
+
+  return React.createElement('div',{style:overlayStyle},
+    React.createElement('input',{ref:addFileRef,type:'file',accept:'image/*',style:{display:'none'},onChange:handleAddFile}),
+    // Header with page count
+    React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12,marginBottom:8}},
+      React.createElement('div',{style:{color:'white',fontSize:16,fontWeight:700}},'Crop Image'),
+      totalPages>1&&React.createElement('div',{style:{background:'#3B82F6',color:'white',fontSize:11,fontWeight:700,padding:'3px 10px',borderRadius:12}},'Page '+totalPages)
+    ),
+    React.createElement('div',{style:{color:'rgba(255,255,255,0.6)',fontSize:12,marginBottom:12}},'Drag corners to adjust. Crop to just the transaction rows.'),
+    // Page thumbnails row
+    pages.length>0&&React.createElement('div',{style:{display:'flex',gap:6,marginBottom:12,overflowX:'auto',maxWidth:'100%'}},
+      pages.map(function(pg,i){
+        return React.createElement('div',{key:i,style:{position:'relative',flexShrink:0}},
+          React.createElement('img',{src:pg,style:{height:48,borderRadius:6,border:'2px solid #3B82F6',opacity:0.8}}),
+          React.createElement('div',{style:{position:'absolute',top:-4,right:-4,width:16,height:16,borderRadius:'50%',background:'#3B82F6',color:'white',fontSize:9,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}},i+1),
+          React.createElement('button',{style:{position:'absolute',top:-4,left:-4,width:16,height:16,borderRadius:'50%',background:'#DC2626',color:'white',fontSize:10,fontWeight:700,border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'},onClick:function(){setPages(function(p){return p.filter(function(_,j){return j!==i;});});}},'✕')
+        );
+      })
+    ),
+    // Crop area
+    imgLoaded&&React.createElement('div',{ref:canvasRef,style:{position:'relative',width:imgDims.w,height:imgDims.h,touchAction:'none',userSelect:'none',cursor:dragging?(dragType==='move'?'grabbing':'crosshair'):'default'},
+      onMouseDown:onDown,onMouseMove:onMove,onMouseUp:onUp,onMouseLeave:onUp,
+      onTouchStart:onDown,onTouchMove:onMove,onTouchEnd:onUp},
+      React.createElement('img',{src:currentSrc,style:{width:imgDims.w,height:imgDims.h,display:'block',pointerEvents:'none'}}),
+      React.createElement('div',{style:{position:'absolute',top:0,left:0,width:imgDims.w,height:crop.y,background:'rgba(0,0,0,0.55)'}}),
+      React.createElement('div',{style:{position:'absolute',top:crop.y,left:0,width:crop.x,height:crop.h,background:'rgba(0,0,0,0.55)'}}),
+      React.createElement('div',{style:{position:'absolute',top:crop.y,left:crop.x+crop.w,width:imgDims.w-crop.x-crop.w,height:crop.h,background:'rgba(0,0,0,0.55)'}}),
+      React.createElement('div',{style:{position:'absolute',top:crop.y+crop.h,left:0,width:imgDims.w,height:imgDims.h-crop.y-crop.h,background:'rgba(0,0,0,0.55)'}}),
+      React.createElement('div',{style:{position:'absolute',top:crop.y,left:crop.x,width:crop.w,height:crop.h,border:'2px solid #3B82F6',boxSizing:'border-box',pointerEvents:'none'}}),
+      ['nw','ne','sw','se'].map(function(corner){
+        var sx=corner.indexOf('w')!==-1?crop.x:crop.x+crop.w;
+        var sy=corner.indexOf('n')!==-1?crop.y:crop.y+crop.h;
+        return React.createElement('div',{key:corner,style:{position:'absolute',left:sx-6,top:sy-6,width:12,height:12,background:'#3B82F6',borderRadius:2,border:'2px solid white',cursor:corner+'-resize',pointerEvents:'auto',zIndex:2},
+          onMouseDown:function(ev){ev.preventDefault();ev.stopPropagation();var pos=getPos(ev);setDragging(true);setDragType(corner);setStartPos({x:pos.x,y:pos.y,crop:{...crop}});},
+          onTouchStart:function(ev){ev.stopPropagation();var pos=getPos(ev);setDragging(true);setDragType(corner);setStartPos({x:pos.x,y:pos.y,crop:{...crop}});}
+        });
+      })
+    ),
+    // Buttons row
+    React.createElement('div',{style:{display:'flex',gap:8,marginTop:16,flexWrap:'wrap',justifyContent:'center'}},
+      React.createElement('button',{style:{padding:'10px 20px',borderRadius:12,border:'1px solid rgba(255,255,255,0.3)',background:'transparent',color:'white',fontSize:13,fontWeight:600,cursor:'pointer'},onClick:onCancel},'Cancel'),
+      React.createElement('button',{style:{padding:'10px 20px',borderRadius:12,border:'1px solid rgba(255,255,255,0.3)',background:'transparent',color:'white',fontSize:13,fontWeight:600,cursor:'pointer'},onClick:handleSkipAll},'Skip Crop'),
+      React.createElement('button',{style:{padding:'10px 20px',borderRadius:12,border:'2px solid #3B82F6',background:'transparent',color:'#93C5FD',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:6},onClick:handleCropAndAddPage},
+        React.createElement('span',{style:{fontSize:18,lineHeight:'1'}},'+'),'Add Page'
+      ),
+      React.createElement('button',{style:{padding:'10px 24px',borderRadius:12,border:'none',background:'#3B82F6',color:'white',fontSize:13,fontWeight:700,cursor:'pointer'},onClick:handleCropAndFinish},
+        pages.length>0?'Crop & Upload All ('+totalPages+')':'Crop & Upload'
+      )
+    )
+  );
 }
 
 function CreditCardForm({onSubmit,onCancel,currentUser,editCard}){

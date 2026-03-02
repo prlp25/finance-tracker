@@ -1066,66 +1066,108 @@ function parseStatementText(text) {
     if (/^(statement|credit|card|account|page|date|description|amount|total|minimum|payment|balance|previous|new|transaction|posting|reference)/i.test(line)) continue;
     if (/^[\s\-=_]+$/.test(line)) continue;
 
-    // Pattern 1: MM/DD DESCRIPTION AMOUNT
-    var p1 = line.match(/^(\d{1,2})[\/.]\s*(\d{1,2})\s+(.+?)\s+([\d,]+\.\d{2})\s*$/);
+    // Pattern 0: BDO Credit Card Statement format
+    // Format: TransDate PostDate MERCHANT LOCATION COUNTRY  AMOUNT
+    // e.g., "01/10/26 01/11/26 MAKANAI BGC TAGUIG PH 11,099.82"
+    // Two MM/DD/YY dates, then merchant description, then amount (can be negative for payments/refunds)
+    // Continuation lines like "INSTALMENT 3 OF 6" or "Reference: ..." are skipped separately
+    var p0 = line.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+\d{1,2}\/\d{1,2}\/\d{2,4}\s+(.+?)\s+(-?[\d,]+\.\d{2})\s*$/);
+    if (p0) {
+      var mon0 = parseInt(p0[1], 10);
+      var day0 = parseInt(p0[2], 10);
+      var yr0 = parseInt(p0[3], 10);
+      if (yr0 < 100) yr0 += 2000;
+      if (mon0 > 12) { var tmp0 = mon0; mon0 = day0; day0 = tmp0; }
+      var dateStr0 = yr0 + '-' + String(mon0).padStart(2, '0') + '-' + String(day0).padStart(2, '0');
+      var amt0 = parseFloat(p0[5].replace(/,/g, ''));
+      var desc0 = p0[4].trim();
+      // Skip payment/thank you lines and instalment notes
+      if (!/^(PAYMENT RECEIVED|INSTALMENT)/i.test(desc0) && Math.abs(amt0) > 0 && Math.abs(amt0) < 10000000) {
+        items.push({ date: dateStr0, description: desc0, amount: Math.abs(amt0), category: '', merchantPattern: extractMerchantKey(desc0), isRefund: amt0 < 0 });
+      }
+      continue;
+    }
+
+    // Pattern 0b: MM/DD/YY MM/DD/YY DESCRIPTION AMOUNT (single date with year variant)
+    // e.g., "02/09/26 IKEA PASAY PH 17,423.12" (sometimes OCR merges onto one date)
+    var p0b = line.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+([A-Z].+?)\s+(-?[\d,]+\.\d{2})\s*$/);
+    if (p0b) {
+      var mon0b = parseInt(p0b[1], 10);
+      var day0b = parseInt(p0b[2], 10);
+      var yr0b = parseInt(p0b[3], 10);
+      if (yr0b < 100) yr0b += 2000;
+      if (mon0b > 12) { var tmp0b = mon0b; mon0b = day0b; day0b = tmp0b; }
+      var dateStr0b = yr0b + '-' + String(mon0b).padStart(2, '0') + '-' + String(day0b).padStart(2, '0');
+      var amt0b = parseFloat(p0b[5].replace(/,/g, ''));
+      var desc0b = p0b[4].trim();
+      if (!/^(PAYMENT RECEIVED|INSTALMENT|Reference)/i.test(desc0b) && Math.abs(amt0b) > 0 && Math.abs(amt0b) < 10000000) {
+        items.push({ date: dateStr0b, description: desc0b, amount: Math.abs(amt0b), category: '', merchantPattern: extractMerchantKey(desc0b), isRefund: amt0b < 0 });
+      }
+      continue;
+    }
+
+    // Skip continuation lines (instalment notes, reference numbers)
+    if (/^(INSTALMENT|Reference:|Ref\s)/i.test(line)) continue;
+
+    // Pattern 1: MM/DD DESCRIPTION AMOUNT (no year)
+    var p1 = line.match(/^(\d{1,2})[\/.]\s*(\d{1,2})\s+(.+?)\s+(-?[\d,]+\.\d{2})\s*$/);
     if (p1) {
       var mon = parseInt(p1[1], 10);
       var day = parseInt(p1[2], 10);
       if (mon > 12) { var tmp = mon; mon = day; day = tmp; }
       var dateStr = currentYear + '-' + String(mon).padStart(2, '0') + '-' + String(day).padStart(2, '0');
       var amt = parseFloat(p1[4].replace(/,/g, ''));
-      if (amt > 0 && amt < 10000000) {
-        items.push({ date: dateStr, description: p1[3].trim(), amount: amt, category: '', merchantPattern: extractMerchantKey(p1[3]) });
+      if (Math.abs(amt) > 0 && Math.abs(amt) < 10000000) {
+        items.push({ date: dateStr, description: p1[3].trim(), amount: Math.abs(amt), category: '', merchantPattern: extractMerchantKey(p1[3]), isRefund: amt < 0 });
       }
       continue;
     }
 
     // Pattern 2: DD Mon DESCRIPTION AMOUNT  or  Mon DD DESCRIPTION AMOUNT
-    var p2 = line.match(/^(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(.+?)\s+([\d,]+\.\d{2})\s*$/i);
+    var p2 = line.match(/^(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(.+?)\s+(-?[\d,]+\.\d{2})\s*$/i);
     if (p2) {
       var m2 = monthMap[p2[2].substring(0, 3).toLowerCase()] || 1;
       var d2 = parseInt(p2[1], 10);
       var dateStr2 = currentYear + '-' + String(m2).padStart(2, '0') + '-' + String(d2).padStart(2, '0');
       var amt2 = parseFloat(p2[4].replace(/,/g, ''));
-      if (amt2 > 0 && amt2 < 10000000) {
-        items.push({ date: dateStr2, description: p2[3].trim(), amount: amt2, category: '', merchantPattern: extractMerchantKey(p2[3]) });
+      if (Math.abs(amt2) > 0 && Math.abs(amt2) < 10000000) {
+        items.push({ date: dateStr2, description: p2[3].trim(), amount: Math.abs(amt2), category: '', merchantPattern: extractMerchantKey(p2[3]), isRefund: amt2 < 0 });
       }
       continue;
     }
 
-    var p2b = line.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2})\s+(.+?)\s+([\d,]+\.\d{2})\s*$/i);
+    var p2b = line.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2})\s+(.+?)\s+(-?[\d,]+\.\d{2})\s*$/i);
     if (p2b) {
       var m2b = monthMap[p2b[1].substring(0, 3).toLowerCase()] || 1;
       var d2b = parseInt(p2b[2], 10);
       var dateStr2b = currentYear + '-' + String(m2b).padStart(2, '0') + '-' + String(d2b).padStart(2, '0');
       var amt2b = parseFloat(p2b[4].replace(/,/g, ''));
-      if (amt2b > 0 && amt2b < 10000000) {
-        items.push({ date: dateStr2b, description: p2b[3].trim(), amount: amt2b, category: '', merchantPattern: extractMerchantKey(p2b[3]) });
+      if (Math.abs(amt2b) > 0 && Math.abs(amt2b) < 10000000) {
+        items.push({ date: dateStr2b, description: p2b[3].trim(), amount: Math.abs(amt2b), category: '', merchantPattern: extractMerchantKey(p2b[3]), isRefund: amt2b < 0 });
       }
       continue;
     }
 
-    // Pattern 3: DATE-DATE format (posting date - transaction date) common in PH statements
-    // e.g., "01/15 01/14 GRAB* GRABFOOD 125.00"
-    var p3 = line.match(/^(\d{1,2})[\/.]\s*(\d{1,2})\s+\d{1,2}[\/.]\s*\d{1,2}\s+(.+?)\s+([\d,]+\.\d{2})\s*$/);
+    // Pattern 3: MM/DD MM/DD DESCRIPTION AMOUNT (two dates without year)
+    var p3 = line.match(/^(\d{1,2})[\/.]\s*(\d{1,2})\s+\d{1,2}[\/.]\s*\d{1,2}\s+(.+?)\s+(-?[\d,]+\.\d{2})\s*$/);
     if (p3) {
       var mon3 = parseInt(p3[1], 10);
       var day3 = parseInt(p3[2], 10);
       if (mon3 > 12) { var tmp3 = mon3; mon3 = day3; day3 = tmp3; }
       var dateStr3 = currentYear + '-' + String(mon3).padStart(2, '0') + '-' + String(day3).padStart(2, '0');
       var amt3 = parseFloat(p3[4].replace(/,/g, ''));
-      if (amt3 > 0 && amt3 < 10000000) {
-        items.push({ date: dateStr3, description: p3[3].trim(), amount: amt3, category: '', merchantPattern: extractMerchantKey(p3[3]) });
+      if (Math.abs(amt3) > 0 && Math.abs(amt3) < 10000000) {
+        items.push({ date: dateStr3, description: p3[3].trim(), amount: Math.abs(amt3), category: '', merchantPattern: extractMerchantKey(p3[3]), isRefund: amt3 < 0 });
       }
       continue;
     }
 
     // Pattern 4: Just DESCRIPTION AMOUNT on a line (some statements have date on prev line)
-    var p4 = line.match(/^([A-Z].+?)\s+([\d,]+\.\d{2})\s*$/);
-    if (p4 && !/^(total|minimum|payment|balance|previous|new|credit limit|available)/i.test(p4[1])) {
+    var p4 = line.match(/^([A-Z].+?)\s+(-?[\d,]+\.\d{2})\s*$/);
+    if (p4 && !/^(total|minimum|payment|balance|previous|new|credit limit|available|INSTALMENT|Reference)/i.test(p4[1])) {
       var amt4 = parseFloat(p4[2].replace(/,/g, ''));
-      if (amt4 > 10 && amt4 < 10000000) {
-        items.push({ date: '', description: p4[1].trim(), amount: amt4, category: '', merchantPattern: extractMerchantKey(p4[1]) });
+      if (Math.abs(amt4) > 10 && Math.abs(amt4) < 10000000) {
+        items.push({ date: '', description: p4[1].trim(), amount: Math.abs(amt4), category: '', merchantPattern: extractMerchantKey(p4[1]), isRefund: amt4 < 0 });
       }
     }
   }
