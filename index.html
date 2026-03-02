@@ -941,8 +941,6 @@ function App(){
 
   const categoryPieData=useMemo(()=>{const m={};filtered.filter(e=>(e.scope||'shared')==='shared').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return HOUSEHOLD_CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:HOUSEHOLD_COLORS[HOUSEHOLD_CATEGORIES.indexOf(c)]}));},[filtered]);
   const personalPieData=useMemo(()=>{const m={};expenses.filter(e=>(e.scope||'shared')==='personal'&&e.user===currentUser&&e.date.substring(0,7)===filterMonth).forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return PERSONAL_CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:PERSONAL_COLORS[PERSONAL_CATEGORIES.indexOf(c)]}));},[expenses,currentUser,filterMonth]);
-  const patrickPieData=useMemo(()=>{const m={};filtered.filter(e=>e.user==='Patrick').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
-  const aicaPieData=useMemo(()=>{const m={};filtered.filter(e=>e.user==='Aica').forEach(e=>{m[e.category]=(m[e.category]||0)+e.amount;});return CATEGORIES.filter(c=>m[c]).map(c=>({name:c,value:m[c],color:CAT_COLORS[CATEGORIES.indexOf(c)]}));},[filtered]);
 
   const fundBadgeEl=(fs)=>{const m={'savings':['badge badge-savings','🏠 Savings'],'opex':['badge badge-opex','💳 Opex'],'patrick':['badge badge-patrick','🔵 Patrick'],'aica':['badge badge-aica','🩷 Aica']};const[cls,txt]=m[fs]||['badge',''];return React.createElement('span',{className:cls},txt);};
   const reimbInfoEl=(e)=>{if(!e.reimbursable)return React.createElement('span',{style:{color:'#94A3B8',fontSize:11}},'—');var who=e.reimbTo==='patrick'?'🔵 Patrick':'🩷 Aica';return React.createElement('span',{className:'badge '+(e.reimbTo==='patrick'?'badge-patrick':'badge-aica')},who+' '+e.reimbPct+'%');};
@@ -1476,18 +1474,7 @@ function App(){
             React.createElement('div',{style:{maxWidth:420,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:categoryPieData,title:''})),
             React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:18}},'Total: ',fmt(totalSpent))
           ),
-          React.createElement('div',{className:'chart-row'},
-            React.createElement('div',{className:'chart-box card'},
-              React.createElement('h2',{style:{justifyContent:'center'}},'🔵 Patrick'),
-              React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:patrickPieData,title:''})),
-              patrickPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--patrick)'}},'Total: ',fmt(patrickTotal))
-            ),
-            React.createElement('div',{className:'chart-box card'},
-              React.createElement('h2',{style:{justifyContent:'center'}},'🩷 Aica'),
-              React.createElement('div',{style:{maxWidth:360,margin:'0 auto'}},React.createElement(PieChartCanvas,{data:aicaPieData,title:''})),
-              aicaPieData.length>0&&React.createElement('div',{style:{textAlign:'center',marginTop:10,fontWeight:700,fontSize:16,color:'var(--aica)'}},'Total: ',fmt(aicaTotal))
-            )
-          )
+          React.createElement('div',null)
         ),
         appMode==='personal'&&React.createElement(React.Fragment,null,
           React.createElement('div',{className:'card'},
