@@ -1045,6 +1045,14 @@ function App(){
 
   var wrapperProps = darkMode ? {'data-theme':'dark', style:{background:'#000',minHeight:'100vh',color:'#fff'}} : {};
 
+  function navigateTo(tab){
+    if(tab === 'add'){
+      setShowExpenseForm(true);
+    } else {
+      setActiveTab(tab);
+    }
+  }
+
   if(activeTab === 'home'){
     return h('div', wrapperProps,
       h(HomeScreen, {
@@ -1057,7 +1065,7 @@ function App(){
         onSwitchUser:handleSwitchUser,
         onSync:loadData,
         onSettings:()=>{},
-        onNavigate:setActiveTab,
+        onNavigate:navigateTo,
         onReceiptUpload:handleReceiptUpload
       }),
       showExpenseForm && h('div', {className:'modal-overlay',onClick:()=>setShowExpenseForm(false)},
@@ -1086,7 +1094,7 @@ function App(){
       h(ExpensesScreen, {
         currentUser:currentUser,
         expenses:expenses,
-        onNavigate:setActiveTab,
+        onNavigate:navigateTo,
         onDeleteExpense:handleDeleteExpense
       })
     );
@@ -1097,7 +1105,7 @@ function App(){
       h(DriverScreen, {
         currentUser:currentUser,
         onSubmit:handleDriverSalary,
-        onNavigate:setActiveTab
+        onNavigate:navigateTo
       })
     );
   }
@@ -1108,7 +1116,7 @@ function App(){
         currentUser:currentUser,
         expenses:expenses,
         onMarkReimbursed:handleMarkReimbursed,
-        onNavigate:setActiveTab
+        onNavigate:navigateTo
       })
     );
   }
@@ -1125,7 +1133,7 @@ function App(){
       onSwitchUser:handleSwitchUser,
       onSync:loadData,
       onSettings:()=>{},
-      onNavigate:setActiveTab,
+      onNavigate:navigateTo,
       onReceiptUpload:handleReceiptUpload
     })
   );
