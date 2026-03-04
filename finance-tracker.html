@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="PoLedger" />
-<meta name="theme-color" content="#3B82F6" />
+<meta name="theme-color" content="#007AFF" />
 <link rel="apple-touch-icon" href="icon-192.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 <link rel="manifest" href="manifest.json" />
@@ -20,267 +20,222 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --patrick:#2563EB; --patrick-light:#DBEAFE; --patrick-bg:#EFF6FF;
-    --aica:#E879A0; --aica-light:#FCE7F3; --aica-bg:#FDF2F8;
-    --accent:#6366F1;
-    --bg:#F1F5F9; --card:#FFFFFF; --border:#E2E8F0;
-    --text:#0F172A; --text-muted:#64748B; --text-light:#94A3B8;
-    --success:#16A34A; --success-light:#DCFCE7;
-    --warning:#D97706; --warning-light:#FEF3C7;
-    --shadow-sm:0 1px 2px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.06);
-    --shadow-md:0 4px 6px rgba(0,0,0,0.04),0 2px 4px rgba(0,0,0,0.06);
-    --shadow-lg:0 10px 25px rgba(0,0,0,0.06),0 4px 10px rgba(0,0,0,0.04);
-    --shadow-xl:0 20px 50px rgba(0,0,0,0.1),0 8px 20px rgba(0,0,0,0.06);
-    --radius:14px;
-    --radius-lg:18px;
-    --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+    --ios-blue: #007AFF;
+    --ios-green: #34C759;
+    --ios-red: #FF3B30;
+    --ios-orange: #FF9500;
+    --ios-yellow: #FFCC00;
+    --ios-purple: #AF52DE;
+    --ios-pink: #FF2D55;
+    --ios-teal: #5AC8FA;
+    --ios-indigo: #5856D6;
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --separator: rgba(60,60,67,0.12);
+    --label: #000000;
+    --label-secondary: #3C3C43;
+    --label-tertiary: rgba(60,60,67,0.6);
+    --label-quaternary: rgba(60,60,67,0.3);
+    --fill: rgba(120,120,128,0.2);
+    --fill-secondary: rgba(120,120,128,0.16);
+    --patrick: #007AFF;
+    --patrick-light: #D6EAFF;
+    --patrick-bg: #EBF5FF;
+    --aica: #FF2D55;
+    --aica-light: #FFE0E6;
+    --aica-bg: #FFF0F3;
+    --radius-sm: 10px;
+    --radius: 13px;
+    --radius-lg: 16px;
+    --transition: 0.22s ease;
   }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-  .app-header{background:rgba(255,255,255,0.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(226,232,240,0.6);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px;}
-  .app-title{font-size:15px;font-weight:800;letter-spacing:-0.03em;color:var(--text);}
-  .header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .user-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:6px 12px;background:#F1F5F9;border-radius:20px;}
-  .switch-user-link{font-size:11px;color:var(--patrick);cursor:pointer;text-decoration:underline;font-weight:600;opacity:0.8;transition:opacity var(--transition);margin-left:8px;}
-  .switch-user-link:hover{opacity:1;}
-  .container{max-width:960px;margin:0 auto;padding:16px;padding-bottom:30px;}
-  .upload-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-  .upload-btn{flex:1;min-width:90px;padding:12px 10px;border:1.5px dashed var(--border);border-radius:var(--radius);background:white;cursor:pointer;font-size:11px;font-weight:700;color:var(--text-muted);transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
-  .upload-btn:hover{border-color:var(--patrick);color:var(--patrick);background:var(--patrick-bg);border-style:solid;box-shadow:var(--shadow-sm);}
-  .upload-btn .upload-icon{font-size:22px;}
-  .upload-btn.processing{opacity:0.6;pointer-events:none;}
-  .tab-bar{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(226,232,240,0.6);padding:6px 8px;display:flex;gap:4px;justify-content:space-around;max-width:960px;margin:0 auto;position:sticky;top:48px;z-index:99;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  .tab-btn{flex:1;padding:10px 8px;border:none;border-radius:var(--radius);cursor:pointer;font-weight:600;font-size:12px;transition:all var(--transition);background:transparent;color:var(--text-muted);white-space:nowrap;min-width:fit-content;letter-spacing:-0.01em;display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .tab-btn:hover{color:var(--text);background:rgba(241,245,249,0.8);}
-  .tab-btn.active{background:var(--text);color:white;box-shadow:0 2px 8px rgba(15,23,42,0.2);}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:16px;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition);}
-  .card:hover{box-shadow:var(--shadow-md);}
-  .card h2{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;letter-spacing:-0.02em;color:var(--text);}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .form-group{display:flex;flex-direction:column;gap:6px;}
-  .form-group.full-width{grid-column:1/-1;}
-  .form-group label{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;}
-  .form-group input,.form-group select,.form-group textarea{padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:'Inter',inherit;outline:none;-webkit-appearance:none;background:white;transition:all var(--transition);color:var(--text);}
-  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--patrick);box-shadow:0 0 0 3px rgba(37,99,235,0.12);background:white;}
-  .form-group textarea{resize:vertical;min-height:60px;}
-  .submit-btn{padding:14px 28px;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;transition:all var(--transition);color:white;width:100%;margin-top:10px;letter-spacing:-0.01em;}
-  .submit-btn.patrick{background:var(--patrick);box-shadow:0 2px 8px rgba(37,99,235,0.25);}
-  .submit-btn.patrick:hover{background:#1D4ED8;box-shadow:0 4px 12px rgba(37,99,235,0.35);transform:translateY(-1px);}
-  .submit-btn.patrick:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
-  .submit-btn.patrick:active:not(:disabled){transform:translateY(0);}
-  .summary-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
-  .summary-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;box-shadow:var(--shadow-sm);transition:all var(--transition);}
-  .summary-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
-  .summary-card .amount{font-size:20px;font-weight:800;margin:6px 0 2px;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;}
-  .summary-card .label{font-size:10px;color:var(--text-light);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
-  .filter-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
-  .filter-bar select,.filter-bar input[type=text]{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Inter',inherit;outline:none;background:white;transition:all var(--transition);color:var(--text);}
-  .filter-bar input[type=text]{flex:1;min-width:160px;}
-  .filter-bar input[type=text]:focus,.filter-bar select:focus{border-color:var(--patrick);box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
-  .expense-table{width:100%;border-collapse:separate;border-spacing:0 5px;}
-  .expense-table thead th{text-align:left;padding:6px 10px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;}
-  .expense-table tbody tr{transition:all var(--transition);}
-  .expense-table tbody tr:hover{transform:scale(1.005);}
-  .expense-table tbody td{padding:10px;font-size:13px;}
-  .expense-table tbody td:first-child{border-left:4px solid;border-top-left-radius:var(--radius);border-bottom-left-radius:var(--radius);}
-  .expense-table tbody td:last-child{border-top-right-radius:var(--radius);border-bottom-right-radius:var(--radius);}
-  tr.row-patrick td{background:var(--patrick-bg);}
-  tr.row-patrick td:first-child{border-left-color:var(--patrick);}
-  tr.row-aica td{background:var(--aica-bg);}
-  tr.row-aica td:first-child{border-left-color:var(--aica);}
-  .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
-  .badge-scope{background:#DCFCE7;color:#16A34A;}
-  .badge-personal{background:#EDE9FE;color:#7C3AED;}
-  .badge-patrick{background:var(--patrick-light);color:var(--patrick);}
-  .badge-aica{background:var(--aica-light);color:var(--aica);}
-  .category-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#F1F5F9;color:var(--text-muted);white-space:nowrap;}
-  .delete-btn{padding:6px 8px;border:none;background:transparent;color:#CBD5E1;cursor:pointer;border-radius:8px;font-size:16px;transition:all var(--transition);}
-  .delete-btn:hover{background:#FEE2E2;color:#EF4444;transform:scale(1.1);}
-  .edit-btn{padding:6px 8px;border:none;background:transparent;color:#CBD5E1;cursor:pointer;border-radius:8px;font-size:14px;transition:all var(--transition);}
-  .edit-btn:hover{background:#DBEAFE;color:var(--patrick);transform:scale(1.1);}
-  .empty-state{text-align:center;padding:60px 20px;color:var(--text-light);}
-  .empty-state .icon{font-size:48px;margin-bottom:12px;opacity:0.8;}
-  .chart-row{display:flex;gap:20px;flex-wrap:wrap;}
-  .chart-box{flex:1;min-width:280px;}
-  .chart-box canvas{max-height:300px;}
-  .toggle-circle{width:22px;height:22px;border-radius:50%;border:2px solid #CBD5E1;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);flex-shrink:0;}
-  .toggle-circle.on{border-color:var(--patrick);background:var(--patrick);}
-  .toggle-circle.on-purple{border-color:#7C3AED;background:#7C3AED;}
-  .toggle-circle.on-amber{border-color:#D97706;background:#D97706;}
-  .toggle-circle svg{width:13px;height:13px;stroke:white;stroke-width:2.5;fill:none;opacity:0;transition:opacity var(--transition);}
-  .toggle-circle.on svg,.toggle-circle.on-purple svg,.toggle-circle.on-amber svg{opacity:1;}
-  .quick-add-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-  .quick-add-btn{padding:9px 16px;border:1.5px dashed var(--border);border-radius:var(--radius);background:white;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-muted);transition:all var(--transition);display:flex;align-items:center;gap:5px;}
-  .quick-add-btn:hover{border-color:var(--patrick);color:var(--patrick);background:var(--patrick-bg);border-style:solid;box-shadow:var(--shadow-sm);}
-  .acct-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
-  .acct-card{border-radius:var(--radius-lg);padding:20px;text-align:center;border:1.5px solid var(--border);background:white;cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-sm);}
-  .acct-card:hover{border-color:rgba(37,99,235,0.3);box-shadow:var(--shadow-lg);transform:translateY(-2px);}
-  .acct-card .acct-icon{font-size:28px;margin-bottom:6px;}
-  .acct-card .acct-name{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;}
-  .acct-card .acct-bal{font-size:26px;font-weight:900;margin:6px 0;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;}
-  .acct-card .acct-sub{font-size:11px;color:var(--text-muted);line-height:1.5;}
-  .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn 0.2s ease-out;}
-  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-  .modal-box{background:white;border-radius:var(--radius-lg);padding:28px;max-width:540px;width:100%;box-shadow:var(--shadow-xl);max-height:90vh;overflow-y:auto;animation:slideUp 0.25s ease-out;}
-  @keyframes slideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-  .modal-box h3{font-size:17px;font-weight:700;margin-bottom:16px;letter-spacing:-0.02em;}
-  .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
-  .modal-actions button{padding:10px 20px;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);letter-spacing:-0.01em;}
-  .btn-cancel{background:#F1F5F9;color:var(--text-muted);}
-  .btn-cancel:hover{background:#E2E8F0;color:var(--text);}
-  .btn-danger{background:#EF4444;color:white;box-shadow:0 2px 6px rgba(239,68,68,0.25);}
-  .btn-danger:hover{background:#DC2626;box-shadow:0 4px 10px rgba(239,68,68,0.35);}
-  .btn-primary{background:var(--patrick);color:white;box-shadow:0 2px 6px rgba(37,99,235,0.25);}
-  .btn-primary:hover{background:#1D4ED8;box-shadow:0 4px 10px rgba(37,99,235,0.35);}
-  .setup-screen{max-width:440px;margin:60px auto;padding:36px;text-align:center;}
-  .setup-screen h1{font-size:30px;margin-bottom:8px;letter-spacing:-0.04em;font-weight:900;}
-  .setup-screen p{color:var(--text-muted);margin-bottom:20px;line-height:1.6;font-size:14px;}
-  .setup-input{width:100%;padding:14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:'Inter',inherit;outline:none;text-align:center;margin-bottom:12px;transition:all var(--transition);}
-  .setup-input:focus{border-color:var(--patrick);box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
-  .setup-go{padding:14px 32px;background:var(--patrick);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:all var(--transition);box-shadow:0 2px 8px rgba(37,99,235,0.25);}
-  .setup-go:hover{background:#1D4ED8;box-shadow:0 4px 12px rgba(37,99,235,0.35);transform:translateY(-1px);}
-  .setup-go:disabled{opacity:0.5;transform:none;box-shadow:none;}
-  .user-picker{position:fixed;inset:0;background:linear-gradient(180deg,#F8FAFC 0%,#E2E8F0 100%);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:30px;}
-  .user-picker h1{font-size:30px;font-weight:900;letter-spacing:-0.04em;}
-  .user-picker p{color:var(--text-muted);font-size:15px;text-align:center;max-width:300px;line-height:1.5;}
-  .user-pick-btn{width:200px;padding:22px;border:2px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;font-size:18px;font-weight:700;transition:all var(--transition);background:white;text-align:center;box-shadow:var(--shadow-sm);}
-  .user-pick-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
-  .user-pick-btn.pick-patrick:hover{border-color:var(--patrick);background:var(--patrick-bg);color:var(--patrick);}
-  .user-pick-btn.pick-aica:hover{border-color:var(--aica);background:var(--aica-bg);color:var(--aica);}
-  .rolling-banner{background:linear-gradient(145deg,#FEF9C3,#FDE68A);border:1.5px solid #F59E0B;border-radius:var(--radius);padding:4px 0;margin-bottom:16px;box-shadow:0 0 0 3px rgba(245,158,11,0.08);overflow:hidden;position:relative;}
-  .rolling-item{padding:8px 14px 8px 8px;display:flex;align-items:center;gap:6px;min-height:44px;flex-shrink:0;}
-  .rolling-item .notif-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
-  .rolling-item .notif-text{font-size:13px;font-weight:700;color:#78350F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .rolling-item .notif-sub{font-size:11px;color:#92400E;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .notif-dismiss{background:none;border:none;color:#B45309;font-size:13px;cursor:pointer;padding:2px 6px;border-radius:50%;transition:all var(--transition);flex-shrink:0;line-height:1;opacity:0.5;}
-  .notif-dismiss:hover{opacity:1;background:rgba(180,83,9,0.12);}
-  .rolling-item .notif-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .rolling-item .notif-badge{font-weight:700;font-size:12px;border-radius:8px;padding:3px 10px;white-space:nowrap;}
-  .rolling-item .notif-badge.overdue{background:#FEE2E2;color:#DC2626;}
-  .rolling-item .notif-badge.soon{background:#FEF3C7;color:#B45309;}
-  .rolling-item .notif-badge.info{background:#DBEAFE;color:#2563EB;}
-  .notif-pay-btn{padding:4px 12px;border:1.5px solid var(--success);background:var(--success-light);color:#16A34A;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;transition:all var(--transition);white-space:nowrap;}
-  .notif-pay-btn:hover{background:var(--success);color:white;}
-  .rolling-dots{display:flex;justify-content:center;gap:5px;padding:6px 0 8px;background:transparent;}
-  .rolling-dot{width:6px;height:6px;border-radius:50%;background:#D4A017;opacity:0.35;transition:all 0.3s;cursor:pointer;}
-  .rolling-dot.active{opacity:1;width:16px;border-radius:3px;}
-  .bill-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;border-left:4px solid var(--warning);box-shadow:var(--shadow-sm);transition:all var(--transition);}
-  .bill-card:hover{box-shadow:var(--shadow-md);}
-  .bill-card .bill-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-  .bill-card .bill-name{font-weight:700;font-size:15px;flex:1;letter-spacing:-0.01em;}
-  .bill-card .bill-amt{font-weight:800;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-0.02em;}
-  .bill-card .bill-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;}
-  .bill-card .bill-actions{display:flex;gap:6px;margin-top:12px;justify-content:flex-end;align-items:center;padding-top:10px;border-top:1px solid rgba(226,232,240,0.5);}
-  .bill-paid-btn{padding:6px 14px;border:1.5px solid var(--success);background:var(--success-light);color:#16A34A;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:all var(--transition);}
-  .bill-paid-btn:hover{background:var(--success);color:white;box-shadow:0 2px 6px rgba(22,163,74,0.3);}
-  .reimb-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow-sm);transition:all var(--transition);}
-  .reimb-card:hover{box-shadow:var(--shadow-md);}
-  .reimb-card.owed{border-left:4px solid var(--warning);}
-  .reimb-card.requested{border-left:4px solid var(--patrick);}
-  .reimb-card.paid{border-left:4px solid var(--success);opacity:0.7;}
-  .reimb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-  .reimb-desc{font-weight:700;font-size:14px;letter-spacing:-0.01em;}
-  .reimb-amt{font-weight:800;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-0.02em;}
-  .reimb-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;font-size:12px;color:var(--text-muted);}
-  .reimb-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-  .reimb-badge.pending{background:#FEF3C7;color:#B45309;}
-  .reimb-badge.complete{background:#DCFCE7;color:#16A34A;}
-  .reimb-actions{display:flex;gap:6px;margin-top:12px;justify-content:flex-end;align-items:center;padding-top:10px;border-top:1px solid rgba(226,232,240,0.5);}
-  .reimb-pay-btn{padding:8px 18px;border:1.5px solid var(--success);background:var(--success-light);color:#16A34A;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;transition:all var(--transition);}
-  .reimb-pay-btn:hover{background:var(--success);color:white;box-shadow:0 2px 6px rgba(22,163,74,0.3);}
-  .reimb-section-title{font-size:15px;font-weight:800;margin-bottom:12px;margin-top:20px;letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;}
-  .reimb-section-title:first-child{margin-top:0;}
-  .reimb-count{background:var(--patrick-light);color:var(--patrick);font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;}
-  .day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0;}
-  .day-cell{text-align:center;border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 4px;cursor:pointer;transition:all var(--transition);background:white;}
-  .day-cell:hover{border-color:#CBD5E1;background:#F8FAFC;}
-  .day-cell.checked{border-color:var(--success);background:var(--success-light);color:#16A34A;box-shadow:0 0 0 2px rgba(22,163,74,0.1);}
-  .day-cell .day-name{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-light);letter-spacing:0.04em;}
-  .day-cell.checked .day-name{color:#16A34A;}
-  .day-cell .day-date{font-size:12px;margin-top:2px;font-weight:600;}
-  .day-cell .day-check{font-size:16px;margin-top:2px;}
-  .adj-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
-  .adj-row input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:'Inter',inherit;outline:none;transition:border-color var(--transition);}
-  .adj-row input:focus{border-color:var(--patrick);}
-  .adj-row .adj-del{padding:4px 8px;border:none;background:transparent;color:#CBD5E1;cursor:pointer;font-size:16px;border-radius:6px;transition:all var(--transition);}
-  .adj-row .adj-del:hover{background:#FEE2E2;color:#EF4444;}
-  .deposit-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;border-left:4px solid;box-shadow:var(--shadow-sm);transition:all var(--transition);}
-  .deposit-card .dep-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-  .deposit-card .dep-desc{font-weight:700;font-size:15px;flex:1;letter-spacing:-0.01em;}
-  .deposit-card .dep-amt{font-weight:800;font-size:17px;color:var(--success);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-0.02em;}
-  .deposit-card .dep-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;}
-  .deposit-card .dep-actions{display:flex;gap:6px;margin-top:12px;justify-content:flex-end;align-items:center;padding-top:10px;border-top:1px solid rgba(226,232,240,0.5);}
-  .add-deposit-btn{padding:13px 20px;border:2px dashed var(--success);background:var(--success-light);color:#16A34A;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;transition:all var(--transition);width:100%;margin-bottom:16px;letter-spacing:-0.01em;}
-  .add-deposit-btn:hover{background:var(--success);color:white;border-style:solid;box-shadow:0 2px 8px rgba(22,163,74,0.3);}
-  .dark-toggle{padding:6px 10px;border:1.5px solid var(--border);background:transparent;border-radius:var(--radius);font-size:14px;cursor:pointer;transition:all var(--transition);line-height:1;}
-  .dark-toggle:hover{background:rgba(148,163,184,0.1);}
-  @media(max-width:768px){
-    .form-grid{grid-template-columns:1fr;}
-    .app-header{padding:10px 14px;}
-    .container{padding:12px;padding-bottom:24px;}
-    .summary-cards{grid-template-columns:repeat(2,1fr);}
-    .acct-cards{grid-template-columns:1fr;}
-    .card{padding:16px;margin-bottom:12px;}
-    .day-grid{grid-template-columns:repeat(4,1fr);}
-    .tab-btn{font-size:11px;padding:8px 4px;gap:2px;}
-    .tab-bar{padding:4px 6px;gap:2px;top:44px;}
-    .app-header .app-title{font-size:14px;}
-    .upload-row{gap:6px;}
-    .upload-btn{padding:10px 6px;font-size:10px;min-width:80px;}
-    .upload-btn .upload-icon{font-size:18px;}
-    .modal-box{padding:20px;margin:10px;}
-    .form-group input,.form-group select,.form-group textarea{padding:10px 12px;font-size:14px;}
-    .submit-btn{padding:12px 20px;font-size:14px;}
-    .expense-table tbody td{padding:8px 6px;font-size:12px;}
-    .expense-table thead th{font-size:9px;padding:4px 6px;}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Inter', BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    background: var(--bg);
+    color: var(--label);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    max-width: 430px;
+    margin: 0 auto;
+    overflow-x: hidden;
   }
-  @media(max-width:380px){
-    .tab-btn{font-size:10px;padding:6px 2px;}
-    .upload-btn{min-width:70px;font-size:9px;}
-  }
+
+  /* ===== NAV BAR ===== */
+  .ios-nav { padding: 8px 20px 0; background: var(--bg); position: sticky; top: 0; z-index: 100; }
+  .ios-nav-top { display: flex; justify-content: space-between; align-items: center; height: 44px; }
+  .ios-nav-top .nav-action { font-size: 17px; color: var(--ios-blue); font-weight: 400; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .ios-nav-large-title { font-size: 34px; font-weight: 700; letter-spacing: 0.37px; padding: 0 0 8px; line-height: 1.15; }
+
+  /* ===== SYNC BAR ===== */
+  .sync-bar { display: flex; align-items: center; gap: 6px; padding: 0 20px 12px; font-size: 13px; color: var(--label-tertiary); }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ios-green); flex-shrink: 0; }
+
+  /* ===== SECTION / GROUP ===== */
+  .ios-section { margin: 0 16px 24px; }
+  .ios-section-header { font-size: 13px; font-weight: 600; color: var(--label-tertiary); text-transform: uppercase; letter-spacing: -0.08px; padding: 0 16px 6px; display: flex; justify-content: space-between; align-items: center; }
+  .ios-section-header .header-link { text-transform: none; color: var(--ios-blue); font-size: 15px; font-weight: 400; letter-spacing: -0.24px; cursor: pointer; }
+  .ios-group { background: var(--card); border-radius: var(--radius); overflow: hidden; }
+  .ios-row { display: flex; align-items: center; padding: 11px 16px; min-height: 44px; gap: 12px; }
+  .ios-row + .ios-row { border-top: 0.5px solid var(--separator); margin-left: 16px; padding-left: 0; }
+  .ios-row .row-icon { width: 29px; height: 29px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .ios-row .row-label { flex: 1; font-size: 17px; letter-spacing: -0.41px; }
+  .ios-row .row-value { font-size: 17px; color: var(--label-tertiary); letter-spacing: -0.41px; }
+  .ios-row .row-chevron { color: rgba(60,60,67,0.3); font-size: 14px; font-weight: 600; }
+
+  /* ===== WIDGET CARDS ===== */
+  .widget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 16px 20px; }
+  .widget-card { background: var(--card); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .widget-card .widget-label { font-size: 13px; color: var(--label-tertiary); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .widget-card .widget-value { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .widget-card .widget-sub { font-size: 12px; color: var(--label-tertiary); margin-top: 2px; }
+  .widget-card.full { grid-column: 1 / -1; }
+
+  /* ===== EXPENSE LIST ===== */
+  .expense-item { display: flex; align-items: center; padding: 12px 16px; gap: 12px; min-height: 56px; }
+  .expense-item + .expense-item { border-top: 0.5px solid var(--separator); margin-left: 56px; padding-left: 0; }
+  .expense-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .expense-info { flex: 1; min-width: 0; }
+  .expense-info .exp-desc { font-size: 17px; font-weight: 400; letter-spacing: -0.41px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .expense-info .exp-meta { font-size: 13px; color: var(--label-tertiary); margin-top: 1px; display: flex; gap: 6px; align-items: center; }
+  .expense-amount { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.41px; text-align: right; flex-shrink: 0; }
+
+  /* ===== QUICK ACTIONS ROW ===== */
+  .quick-actions { display: flex; gap: 8px; margin: 0 16px 16px; }
+  .quick-action-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; background: var(--card); border-radius: var(--radius); border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .quick-action-btn:active { transform: scale(0.96); opacity: 0.8; }
+  .quick-action-btn .qa-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .quick-action-btn .qa-label { font-size: 11px; font-weight: 600; color: var(--label-secondary); letter-spacing: -0.08px; }
+
+  /* ===== TAB BAR ===== */
+  .ios-tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(249,249,249,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 0.5px solid rgba(0,0,0,0.12); display: flex; justify-content: space-around; padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)); z-index: 200; }
+  .tab-item { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; cursor: pointer; padding: 4px 12px; min-width: 56px; }
+  .tab-item .tab-icon { font-size: 24px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--label-quaternary); transition: color var(--transition); }
+  .tab-item .tab-label { font-size: 10px; font-weight: 500; color: var(--label-quaternary); letter-spacing: -0.24px; transition: color var(--transition); }
+  .tab-item.active .tab-icon, .tab-item.active .tab-label { color: var(--ios-blue); }
+
+  /* ===== FORM ===== */
+  .ios-input-group { background: var(--card); border-radius: var(--radius); overflow: hidden; margin: 0 16px 20px; }
+  .ios-input-row { display: flex; align-items: center; padding: 11px 16px; min-height: 44px; gap: 12px; }
+  .ios-input-row + .ios-input-row { border-top: 0.5px solid var(--separator); }
+  .ios-input-row label { font-size: 17px; letter-spacing: -0.41px; min-width: 90px; flex-shrink: 0; }
+  .ios-input-row input, .ios-input-row select { flex: 1; font-size: 17px; border: none; outline: none; background: transparent; text-align: right; color: var(--label); font-family: inherit; letter-spacing: -0.41px; -webkit-appearance: none; }
+  .ios-input-row input::placeholder { color: var(--label-quaternary); }
+
+  /* ===== SEGMENTED ===== */
+  .ios-segmented { display: flex; background: var(--fill); border-radius: 9px; padding: 2px; margin: 0 16px 16px; }
+  .ios-segmented button { flex: 1; padding: 7px 12px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; background: transparent; color: var(--label); font-family: inherit; transition: all 0.2s; }
+  .ios-segmented button.active { background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.08); }
+
+  /* ===== BUTTON ===== */
+  .ios-btn { width: calc(100% - 32px); margin: 0 16px 12px; padding: 14px; border: none; border-radius: var(--radius); font-size: 17px; font-weight: 600; cursor: pointer; letter-spacing: -0.41px; transition: all var(--transition); font-family: inherit; }
+  .ios-btn.primary { background: var(--ios-blue); color: white; }
+  .ios-btn.primary:active { opacity: 0.7; }
+  .ios-btn.secondary { background: rgba(0,122,255,0.12); color: var(--ios-blue); }
+  .ios-btn.green { background: var(--ios-green); color: white; }
+
+  /* ===== BANNER ===== */
+  .ios-banner { margin: 0 16px 16px; background: var(--card); border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .ios-banner .banner-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .ios-banner .banner-text { flex: 1; }
+  .ios-banner .banner-title { font-size: 15px; font-weight: 600; letter-spacing: -0.24px; }
+  .ios-banner .banner-sub { font-size: 13px; color: var(--label-tertiary); margin-top: 1px; }
+
+  /* ===== DRIVER SHARE PREVIEW ===== */
+  .share-preview { margin: 0 16px 16px; background: var(--card); border-radius: var(--radius); overflow: hidden; }
+  .share-preview-header { padding: 12px 16px; background: rgba(0,122,255,0.06); border-bottom: 0.5px solid var(--separator); display: flex; justify-content: space-between; align-items: center; }
+  .share-preview-header .sp-title { font-size: 13px; font-weight: 600; color: var(--label-tertiary); text-transform: uppercase; letter-spacing: -0.08px; }
+  .share-preview-body { padding: 16px; font-size: 14px; line-height: 1.6; white-space: pre-line; color: var(--label); font-family: -apple-system, 'SF Mono', 'Menlo', monospace; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 300; padding: 20px; }
+  .modal-box { background: var(--card); border-radius: var(--radius-lg); padding: 24px; max-width: 400px; width: 100%; max-height: 90vh; overflow-y: auto; }
+  .modal-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+
+  /* ===== DARK MODE ===== */
   [data-theme="dark"] {
-    --patrick:#60A5FA; --patrick-light:#1E3A5F; --patrick-bg:#172554;
-    --aica:#F9A8D4; --aica-light:#4A1942; --aica-bg:#3B0764;
-    --bg:#0F172A; --card:#1E293B; --border:#334155;
-    --text:#F1F5F9; --text-muted:#94A3B8; --text-light:#64748B;
-    --success:#4ADE80; --success-light:#14532D;
-    --warning:#FBBF24; --warning-light:#78350F;
+    --bg: #000000;
+    --card: #1C1C1E;
+    --separator: rgba(84,84,88,0.65);
+    --label: #FFFFFF;
+    --label-secondary: rgba(235,235,245,0.9);
+    --label-tertiary: rgba(235,235,245,0.6);
+    --label-quaternary: rgba(235,235,245,0.3);
+    --fill: rgba(120,120,128,0.36);
+    --fill-secondary: rgba(120,120,128,0.32);
+    --patrick-light: #1E3A5F;
+    --patrick-bg: #0A1929;
+    --aica-light: #4A1942;
+    --aica-bg: #2D0A1F;
   }
-  [data-theme="dark"] body{background:var(--bg);}
-  [data-theme="dark"] .app-header{background:rgba(30,41,59,0.85);border-bottom-color:var(--border);}
-  [data-theme="dark"] .tab-bar{background:rgba(30,41,59,0.92);border-bottom-color:var(--border);}
-  [data-theme="dark"] .upload-btn{background:var(--card);border-color:var(--border);color:var(--text-muted);}
-  [data-theme="dark"] .card{background:var(--card);border-color:var(--border);}
-  [data-theme="dark"] .form-group input,[data-theme="dark"] .form-group select,[data-theme="dark"] .form-group textarea{background:var(--bg);border-color:var(--border);color:var(--text);}
-  [data-theme="dark"] .quick-add-btn{background:var(--card);border-color:var(--border);color:var(--text-muted);}
-  [data-theme="dark"] .acct-card{background:var(--card);border-color:var(--border);}
-  [data-theme="dark"] .summary-card{background:var(--card);border-color:var(--border);}
-  [data-theme="dark"] tr.row-patrick td{background:var(--patrick-bg);}
-  [data-theme="dark"] tr.row-aica td{background:var(--aica-bg);}
-  [data-theme="dark"] .deposit-card{background:var(--card);border-color:var(--border);}
-  [data-theme="dark"] .bill-card{background:var(--card);border-color:var(--border);}
-  [data-theme="dark"] .reimb-card{background:var(--card);border-color:var(--border);}
-  [data-theme="dark"] .modal-overlay{background:rgba(0,0,0,0.6);}
-  [data-theme="dark"] .modal-box{background:var(--card);color:var(--text);}
-  [data-theme="dark"] .btn-cancel{background:#334155;color:var(--text-muted);}
-  [data-theme="dark"] .btn-cancel:hover{background:#475569;color:var(--text);}
-  [data-theme="dark"] .filter-bar select,[data-theme="dark"] .filter-bar input[type=text]{background:var(--bg);border-color:var(--border);color:var(--text);}
-  [data-theme="dark"] .rolling-banner{background:linear-gradient(145deg,#451A03,#78350F);border-color:#D97706;}
-  [data-theme="dark"] .rolling-item .notif-text{color:#FDE68A;}
-  [data-theme="dark"] .rolling-item .notif-sub{color:#FBBF24;}
-  [data-theme="dark"] .user-picker{background:linear-gradient(180deg,#0F172A,#1E293B);}
+  [data-theme="dark"] body { background: var(--bg); color: var(--label); }
+  [data-theme="dark"] .ios-nav { background: var(--bg); }
+  [data-theme="dark"] .ios-nav-large-title { color: var(--label); }
+  [data-theme="dark"] .ios-tab-bar { background: rgba(28,28,30,0.94); border-top-color: rgba(84,84,88,0.65); }
+  [data-theme="dark"] .ios-segmented button { color: var(--label); }
+  [data-theme="dark"] .ios-segmented button.active { background: rgba(99,99,102,0.55); color: #fff; }
+  [data-theme="dark"] .ios-input-row input { color: var(--label); }
+  [data-theme="dark"] .ios-input-row label { color: var(--label); }
+  [data-theme="dark"] .widget-card { background: var(--card); }
+  [data-theme="dark"] .widget-card .widget-value { color: var(--label); }
+  [data-theme="dark"] .ios-group { background: var(--card); }
+  [data-theme="dark"] .ios-banner { background: var(--card); }
+  [data-theme="dark"] .ios-banner .banner-title { color: var(--label); }
+  [data-theme="dark"] .quick-action-btn { background: var(--card); }
+  [data-theme="dark"] .quick-action-btn .qa-label { color: var(--label-secondary); }
+  [data-theme="dark"] .expense-info .exp-desc { color: var(--label); }
+  [data-theme="dark"] .expense-amount { color: var(--label); }
+  [data-theme="dark"] .ios-row .row-label { color: var(--label); }
+  [data-theme="dark"] .ios-row .row-value { color: var(--label-tertiary); }
+  [data-theme="dark"] .ios-section-header { color: var(--label-tertiary); }
+  [data-theme="dark"] .ios-section-header .header-link { color: var(--ios-blue); }
+  [data-theme="dark"] .share-preview { background: var(--card); }
+  [data-theme="dark"] .share-preview-header { border-bottom-color: var(--separator); }
+  [data-theme="dark"] .share-preview-body { color: var(--label); }
+  [data-theme="dark"] .sync-bar { color: var(--label-tertiary); }
+  [data-theme="dark"] .modal-box { background: var(--card); color: var(--label); }
+
+  /* Bottom padding */
+  .content-area { padding-bottom: 90px; }
+
+  .dark-toggle-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px; line-height: 1; transition: transform 0.2s; }
+  .dark-toggle-btn:active { transform: scale(0.85); }
+
+  .setup-screen { max-width: 340px; margin: 60px auto; padding: 36px; text-align: center; }
+  .setup-screen h1 { font-size: 30px; margin-bottom: 8px; letter-spacing: -0.04em; font-weight: 900; }
+  .setup-screen p { color: var(--label-tertiary); margin-bottom: 20px; line-height: 1.6; font-size: 14px; }
+  .setup-input { width: 100%; padding: 14px; border: 1.5px solid var(--separator); border-radius: var(--radius); font-size: 14px; font-family: 'Inter', inherit; outline: none; text-align: center; margin-bottom: 12px; transition: all var(--transition); background: var(--card); color: var(--label); }
+  .setup-input:focus { border-color: var(--ios-blue); box-shadow: 0 0 0 3px rgba(0,122,255,0.12); }
+  .setup-go { padding: 14px 32px; background: var(--ios-blue); color: white; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; transition: all var(--transition); }
+  .setup-go:hover { opacity: 0.9; }
+  .setup-go:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .user-picker { position: fixed; inset: 0; background: var(--bg); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 30px; }
+  .user-picker h1 { font-size: 30px; font-weight: 900; letter-spacing: -0.04em; }
+  .user-picker p { color: var(--label-tertiary); font-size: 15px; text-align: center; max-width: 300px; line-height: 1.5; }
+  .user-pick-btn { width: 200px; padding: 22px; border: 2px solid var(--separator); border-radius: var(--radius-lg); cursor: pointer; font-size: 18px; font-weight: 700; transition: all var(--transition); background: var(--card); text-align: center; color: var(--label); }
+  .user-pick-btn:active { transform: scale(0.95); }
+  .user-pick-btn.pick-patrick:active { border-color: var(--patrick); background: var(--patrick-bg); }
+  .user-pick-btn.pick-aica:active { border-color: var(--aica); background: var(--aica-bg); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--label-tertiary); font-size: 15px; }
+
+  .delete-btn { padding: 6px 8px; border: none; background: transparent; color: var(--ios-red); cursor: pointer; font-size: 16px; border-radius: 8px; transition: all 0.2s; }
+  .delete-btn:active { opacity: 0.6; }
 </style>
 </head>
 <body>
 <div id="root"></div>
+
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(function(err) { console.log('SW error:', err); });
 }
 </script>
 <script type="text/babel">
-const {useState,useMemo,useRef,useEffect,useCallback} = React;
+const {useState, useRef, useEffect, createElement: h} = React;
 
+// Constants
 const HOUSEHOLD_CATEGORIES = ['Groceries','Gas / Fuel','Grab Delivery','Driver Salary','Maid Salary','Restaurant / Eating Out','Home Improvements','Medical Expenses','Fertility Expenses','Hobbies','Housing Expenses','Other Expenses'];
 const PERSONAL_CATEGORIES = ['Shopping','Entertainment','Food & Drinks','Grab Delivery','Transport','Personal Care','Subscriptions','Groceries','Medical Expenses','Home Improvements','Other Personal'];
 const ALL_CATEGORIES = [...new Set([...PERSONAL_CATEGORIES,...HOUSEHOLD_CATEGORIES])].sort();
@@ -293,8 +248,7 @@ const QUICK_ADDS = [
   {desc:'Lunch',category:'Food & Drinks',icon:'🍱'},
   {desc:'Transport',category:'Transport',icon:'🚗'},
 ];
-const HOUSEHOLD_COLORS = ['#6366F1','#D97706','#00B900','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
-const PERSONAL_COLORS = ['#8B5CF6','#EC4899','#F97316','#00B900','#06B6D4','#10B981','#6366F1','#78716C'];
+const COLORS = ['#6366F1','#D97706','#00B900','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#06B6D4','#F97316','#78716C'];
 const DRIVER_DAILY = 1041.67;
 const DRIVER_OT_HR = 86.80;
 const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -316,8 +270,8 @@ function normalizeDate(d){
   return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
 }
 
-function safeDate(ds){return new Date(ds+'T00:00:00');}
-function fmtDate(ds,opts){return safeDate(ds).toLocaleDateString('en-US',opts||{month:'short',day:'numeric'});}
+function safeDate(ds){ return new Date(ds+'T00:00:00'); }
+function fmtDate(ds,opts){ return safeDate(ds).toLocaleDateString('en-US',opts||{month:'short',day:'numeric'}); }
 
 function api(scriptUrl,method,body){
   if(method==='GET') return fetch(scriptUrl+'?action=getAll',{redirect:'follow'}).then(r=>r.json());
@@ -355,46 +309,40 @@ function PieChartCanvas({data,title}){
     });
     return () => {if(chartRef.current) chartRef.current.destroy();};
   },[data,title]);
-  if(data.length === 0) return React.createElement('div',{className:'empty-state',style:{padding:30}},React.createElement('div',null,'No data for this period'));
-  return React.createElement('canvas',{ref:canvasRef});
+  if(data.length === 0) return h('div',{className:'empty-state'},'No data for this period');
+  return h('canvas',{ref:canvasRef});
 }
 
 function SetupScreen({onConnect}){
   const [url,setUrl] = useState('');
-  return React.createElement('div',{className:'setup-screen card'},
-    React.createElement('div',{style:{fontSize:48,marginBottom:12}},'💰'),
-    React.createElement('h1',null,'PoLedger'),
-    React.createElement('p',null,'Personal & Family Finance'),
-    React.createElement('p',null,'Paste your Google Apps Script URL to connect.'),
-    React.createElement('input',{className:'setup-input',placeholder:'https://script.google.com/macros/s/...',value:url,onChange:e=>setUrl(e.target.value)}),
-    React.createElement('button',{className:'setup-go',disabled:!url.includes('script.google.com'),onClick:()=>onConnect(url.trim())},'Connect'),
-    React.createElement('p',{style:{marginTop:16,fontSize:12,color:'#94A3B8'}},'See the setup guide for instructions.')
+  return h('div',{className:'setup-screen'},
+    h('div',{style:{fontSize:48,marginBottom:12}},'💰'),
+    h('h1',null,'PoLedger'),
+    h('p',null,'Personal & Family Finance'),
+    h('p',null,'Paste your Google Apps Script URL to connect.'),
+    h('input',{className:'setup-input',placeholder:'https://script.google.com/macros/s/...',value:url,onChange:e=>setUrl(e.target.value)}),
+    h('button',{className:'setup-go',disabled:!url.includes('script.google.com'),onClick:()=>onConnect(url.trim())},'Connect'),
+    h('p',{style:{marginTop:16,fontSize:12,color:'var(--label-tertiary)'}},'See the setup guide for instructions.')
   );
 }
 
 function UserPicker({onSelect}){
-  return React.createElement('div',{className:'user-picker'},
-    React.createElement('h1',null,'Welcome to PoLedger'),
-    React.createElement('p',null,'Select your profile to continue'),
-    React.createElement('button',{className:'user-pick-btn pick-patrick',onClick:()=>onSelect('Patrick')},'👨 Patrick'),
-    React.createElement('button',{className:'user-pick-btn pick-aica',onClick:()=>onSelect('Aica')},'👩 Aica')
+  return h('div',{className:'user-picker'},
+    h('h1',null,'Welcome to PoLedger'),
+    h('p',null,'Select your profile to continue'),
+    h('button',{className:'user-pick-btn pick-patrick',onClick:()=>onSelect('Patrick')},'👨 Patrick'),
+    h('button',{className:'user-pick-btn pick-aica',onClick:()=>onSelect('Aica')},'👩 Aica')
   );
 }
 
-function ExpenseForm({onSubmit,onCancel,bankAccounts,currentUser,inline}){
+function ExpenseForm({onSubmit,onCancel,currentUser}){
   const [date,setDate] = useState(new Date().toISOString().split('T')[0]);
   const [desc,setDesc] = useState('');
   const [amount,setAmount] = useState('');
   const [category,setCategory] = useState('');
-  const [account,setAccount] = useState(bankAccounts.length>0?bankAccounts[0].id:'');
   const [isHousehold,setIsHousehold] = useState(false);
-  const [reimbursement,setReimbursement] = useState(false);
-  const [reimburseTo,setReimburseTo] = useState('');
-  const [reimbPercent,setReimbPercent] = useState(50);
-  const [notes,setNotes] = useState('');
   const [receiptUrlLocal,setReceiptUrlLocal] = useState('');
 
-  // Listen for OCR data
   useEffect(()=>{
     function onOcr(){
       var d=window.__ocrData;
@@ -407,7 +355,6 @@ function ExpenseForm({onSubmit,onCancel,bankAccounts,currentUser,inline}){
       window.__ocrData=null;
     }
     window.addEventListener('ocr-complete',onOcr);
-    // Check if there's already pending OCR data
     if(window.__ocrData){onOcr();}
     return ()=>window.removeEventListener('ocr-complete',onOcr);
   },[]);
@@ -415,1670 +362,57 @@ function ExpenseForm({onSubmit,onCancel,bankAccounts,currentUser,inline}){
   const cats = isHousehold ? HOUSEHOLD_CATEGORIES : PERSONAL_CATEGORIES;
 
   function handleSubmit(){
-    if(!desc.trim()||!amount.trim()||!category||!account){alert('Fill all required fields');return;}
+    if(!desc.trim()||!amount.trim()||!category){alert('Fill all required fields');return;}
     const exp = {
       id:Date.now().toString(),
       date:normalizeDate(date),
       description:desc.trim(),
       amount:parseFloat(amount),
       category,
-      fundSource:account,
+      fundSource:'',
       scope:isHousehold?'shared':'personal',
       user:currentUser,
-      reimbursement:reimbursement?{to:reimburseTo,percent:reimbPercent}:null,
-      notes:notes.trim(),
+      reimbursement:null,
+      notes:'',
       receiptUrl:receiptUrlLocal||''
     };
     onSubmit(exp);
-    // Reset form for inline usage
-    if(inline){setDesc('');setAmount('');setCategory('');setNotes('');setIsHousehold(false);setReimbursement(false);setReceiptUrlLocal('');}
+    setDesc('');setAmount('');setCategory('');setIsHousehold(false);setReceiptUrlLocal('');
   }
 
-  return React.createElement('div',{className:'card'},
-    React.createElement('h2',null,'Add Expense'),
-    React.createElement('div',{className:'form-grid'},
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Date'),
-        React.createElement('input',{type:'date',value:date,onChange:e=>setDate(e.target.value)})
+  return h('div',null,
+    h('div',{className:'ios-input-group'},
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Amount'),
+        h('input',{type:'number',step:0.01,value:amount,onChange:e=>setAmount(e.target.value),placeholder:'0.00',style:{fontSize:20,fontWeight:'700'}})
       ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Amount'),
-        React.createElement('input',{type:'number',step:0.01,value:amount,onChange:e=>setAmount(e.target.value),placeholder:'0.00'})
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Description'),
+        h('input',{type:'text',value:desc,onChange:e=>setDesc(e.target.value),placeholder:'What was it for?'})
       ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Description'),
-        React.createElement('input',{type:'text',value:desc,onChange:e=>setDesc(e.target.value),placeholder:'Coffee, lunch, etc.'})
-      ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Category'),
-        React.createElement('select',{value:category,onChange:e=>setCategory(e.target.value)},
-          React.createElement('option',{value:''},'Choose...'),
-          cats.map(c=>React.createElement('option',{key:c,value:c},c))
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Category'),
+        h('select',{value:category,onChange:e=>setCategory(e.target.value)},
+          h('option',{value:''},'Choose...'),
+          cats.map(c=>h('option',{key:c,value:c},c))
         )
       ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Account'),
-        React.createElement('select',{value:account,onChange:e=>setAccount(e.target.value)},
-          bankAccounts.map(ba=>React.createElement('option',{key:ba.id,value:ba.id},ba.name))
-        )
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Date'),
+        h('input',{type:'date',value:date,onChange:e=>setDate(e.target.value)})
       ),
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10,cursor:'pointer'},onClick:()=>{const next=!isHousehold;setIsHousehold(next);if(!next){setReimbursement(false);}}},
-          React.createElement('div',{className:'toggle-circle'+(isHousehold?' on-purple':'')},
-            React.createElement('svg',{viewBox:'0 0 24 24'},React.createElement('polyline',{points:'20 6 9 17 4 12'}))
-          ),
-          React.createElement('span',{style:{fontSize:13,fontWeight:600,color:isHousehold?'#7C3AED':'var(--text-muted)'}},'Tag as Household Expense')
-        )
-      ),
-      isHousehold && React.createElement('div',{className:'form-group full-width'},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10,cursor:'pointer'},onClick:()=>{const next=!reimbursement;setReimbursement(next);if(next){setReimburseTo(currentUser==='Patrick'?'Aica':'Patrick');}}},
-          React.createElement('div',{className:'toggle-circle'+(reimbursement?' on-amber':'')},
-            React.createElement('svg',{viewBox:'0 0 24 24'},React.createElement('polyline',{points:'20 6 9 17 4 12'}))
-          ),
-          React.createElement('span',{style:{fontSize:13,fontWeight:600,color:reimbursement?'#D97706':'var(--text-muted)'}},'Request Reimbursement')
-        )
-      ),
-      isHousehold && reimbursement && React.createElement(React.Fragment,null,
-        React.createElement('div',{className:'form-group'},
-          React.createElement('label',null,'From'),
-          React.createElement('select',{value:reimburseTo,onChange:e=>setReimburseTo(e.target.value)},
-            React.createElement('option',{value:''},'Choose...'),
-            currentUser!=='Patrick'&&React.createElement('option',{value:'Patrick'},'Patrick'),
-            currentUser!=='Aica'&&React.createElement('option',{value:'Aica'},'Aica')
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Scope'),
+        h('div',{style:{flex:1,textAlign:'right'}},
+          h('div',{className:'ios-segmented',style:{margin:0,width:140}},
+            h('button',{className:isHousehold?'':'active',onClick:()=>setIsHousehold(false)},'Personal'),
+            h('button',{className:isHousehold?'active':'',onClick:()=>setIsHousehold(true)},'Shared')
           )
-        ),
-        React.createElement('div',{className:'form-group'},
-          React.createElement('label',null,'Percent'),
-          React.createElement('input',{type:'range',min:0,max:100,value:reimbPercent,onChange:e=>setReimbPercent(parseInt(e.target.value))}),
-          React.createElement('div',null,reimbPercent+'%')
         )
-      ),
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Notes'),
-        React.createElement('textarea',{value:notes,onChange:e=>setNotes(e.target.value),placeholder:'Add any notes...'})
       )
     ),
-    receiptUrlLocal&&React.createElement('div',{style:{fontSize:12,color:'var(--success)',fontWeight:600,marginTop:8}},'📎 Receipt attached'),
-    React.createElement('div',{style:{display:'flex',gap:10}},
-      React.createElement('button',{className:'submit-btn patrick',onClick:handleSubmit},'Save Expense'),
-      !inline&&React.createElement('button',{className:'submit-btn',style:{background:'#E2E8F0',color:'#0F172A'},onClick:onCancel},'Cancel')
-    )
-  );
-}
-
-function RollingBanner({items,dismissed,onDismiss}){
-  const visible = items.filter(function(item){return !dismissed[item.key];});
-  const VISIBLE_COUNT = 2;
-  const pages = [];
-  for(var p=0;p<visible.length;p+=VISIBLE_COUNT){pages.push(visible.slice(p,p+VISIBLE_COUNT));}
-  const [pageIdx,setPageIdx] = useState(0);
-  const totalPages = pages.length;
-  useEffect(()=>{
-    if(totalPages<=1) return;
-    const timer = setInterval(()=>setPageIdx(i=>(i+1)%totalPages), 5000);
-    return ()=>clearInterval(timer);
-  },[totalPages]);
-  useEffect(()=>{if(pageIdx>=totalPages&&totalPages>0)setPageIdx(0);},[totalPages,pageIdx]);
-  if(visible.length===0) return null;
-  var currentPage = pages[pageIdx]||pages[0]||[];
-  return React.createElement('div',{className:'rolling-banner'},
-    currentPage.map(function(item){
-      return React.createElement('div',{className:'rolling-item',key:item.key},
-        React.createElement('button',{className:'notif-dismiss',onClick:function(ev){ev.stopPropagation();handleDismiss(item.key);},title:'Dismiss'},'✕'),
-        React.createElement('div',{className:'notif-left'},
-          React.createElement('div',{style:{minWidth:0}},
-            React.createElement('div',{className:'notif-text'},item.text),
-            item.sub&&React.createElement('div',{className:'notif-sub'},item.sub)
-          )
-        ),
-        React.createElement('div',{className:'notif-right'},
-          item.badge&&React.createElement('span',{className:'notif-badge '+item.badgeClass},item.badge),
-          item.action&&React.createElement('button',{className:'notif-pay-btn',onClick:function(ev){ev.stopPropagation();item.action();}},item.actionLabel||'Pay Now')
-        )
-      );
-    }),
-    totalPages>1&&React.createElement('div',{className:'rolling-dots'},
-      pages.map(function(_,i){return React.createElement('div',{key:i,className:'rolling-dot'+(i===pageIdx?' active':''),onClick:function(){setPageIdx(i);}});})
-    )
-  );
-}
-
-function App(){
-  const today = new Date().toISOString().split('T')[0];
-  const now = new Date();
-  const curMonth = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-
-  const [scriptUrl,setScriptUrl] = useState(()=>{try{return localStorage.getItem(SCRIPT_URL_KEY)||'';}catch(e){return'';}});
-  const [connected,setConnected] = useState(!!scriptUrl);
-  const [currentUser,setCurrentUser] = useState(()=>{try{return localStorage.getItem('poledger_user')||'';}catch(e){return'';}});
-  const [darkMode,setDarkMode] = useState(()=>{try{return localStorage.getItem('poledger_dark')==='true';}catch(e){return false;}});
-  const [loading,setLoading] = useState(false);
-  const [activeTab,setActiveTab] = useState('home');
-  const [expenses,setExpenses] = useState([]);
-  const [deposits,setDeposits] = useState([]);
-  const [bills,setBills] = useState([]);
-  const [bankAccounts,setBankAccounts] = useState([]);
-  const [settings,setSettings] = useState({budget:0});
-  const [showExpenseForm,setShowExpenseForm] = useState(false);
-  const [editExpense,setEditExpense] = useState(null);
-  const [showBankForm,setShowBankForm] = useState(false);
-  const [showBillForm,setShowBillForm] = useState(false);
-  const [showDepositForm,setShowDepositForm] = useState(false);
-  const [payingReimbId,setPayingReimbId] = useState(null);
-  const [payAccount,setPayAccount] = useState('');
-  const [reimbTab,setReimbTab] = useState('owed');
-  const [dismissedNotifs,setDismissedNotifs] = useState({});
-  const [showDriverCalc,setShowDriverCalc] = useState(false);
-  const [expenseMonth,setExpenseMonth] = useState(curMonth);
-  const [expenseFilter,setExpenseFilter] = useState('all');
-  const [expenseSearch,setExpenseSearch] = useState('');
-  const [chartsTab,setChartsTab] = useState('mine');
-  const [expenseView,setExpenseView] = useState('list');
-  const [cardsTab,setCardsTab] = useState('cards');
-  const [ocrProcessing,setOcrProcessing] = useState(false);
-  const [ocrError,setOcrError] = useState('');
-  const [receiptUrl,setReceiptUrl] = useState('');
-  // Credit Card module state
-  const [creditCards,setCreditCards] = useState([]);
-  const [ccStatements,setCCStatements] = useState([]);
-  const [merchantMap,setMerchantMap] = useState([]);
-  const [showCCForm,setShowCCForm] = useState(false);
-  const [editingCC,setEditingCC] = useState(null);
-  const [selectedCard,setSelectedCard] = useState(null);
-  const [ccOcrProcessing,setCCOcrProcessing] = useState(false);
-  const [ccOcrError,setCCOcrError] = useState('');
-  const [batchItems,setBatchItems] = useState(null);
-  const [batchRawText,setBatchRawText] = useState('');
-  const [batchReimb,setBatchReimb] = useState(false);
-  const [batchReimbPct,setBatchReimbPct] = useState(50);
-  const [cropImage,setCropImage] = useState(null);
-  const [cropMode,setCropMode] = useState(null); // 'receipt' or 'statement'
-  const [showPasteModal,setShowPasteModal] = useState(false);
-  const [pasteText,setPasteText] = useState('');
-
-  // Image file → open crop modal first
-  function handleReceiptUpload(ev){
-    var file=ev.target.files[0];
-    if(!file)return;
-    var reader=new FileReader();
-    reader.onload=function(e2){setCropImage(e2.target.result);setCropMode('receipt');};
-    reader.readAsDataURL(file);
-    ev.target.value='';
-  }
-
-  // After crop: send to OCR
-  function sendReceiptOCR(b64){
-    setOcrError('');setOcrProcessing(true);
-    api(scriptUrl,'POST',{action:'ocrReceipt',photoBase64:b64}).then(function(d){
-      setOcrProcessing(false);
-      if(d.error){setOcrError(d.error);return;}
-      if(d.receiptUrl)setReceiptUrl(d.receiptUrl);
-      window.__ocrData={storeName:d.storeName,amount:d.amount,date:d.date,category:d.category,receiptUrl:d.receiptUrl};
-      window.dispatchEvent(new Event('ocr-complete'));
-    }).catch(function(err){
-      setOcrProcessing(false);
-      setOcrError('OCR failed: '+err);
-    });
-  }
-
-  useEffect(() => {
-    if(!scriptUrl) return;
-    setLoading(true);
-    api(scriptUrl,'GET')
-      .then(data => {
-        if(data.expenses) setExpenses(data.expenses.map(e=>({...e,date:normalizeDate(e.date)})));
-        if(data.deposits) setDeposits(data.deposits.map(d=>({...d,date:normalizeDate(d.date)})));
-        if(data.bills) setBills(data.bills);
-        if(data.bankAccounts) setBankAccounts(data.bankAccounts);
-        if(data.creditCards) setCreditCards(data.creditCards);
-        if(data.ccStatements) setCCStatements(data.ccStatements);
-        if(data.merchantMap) setMerchantMap(data.merchantMap);
-        if(data.settings) setSettings(data.settings);
-      })
-      .catch(e=>{console.error(e);alert('Failed to load data');})
-      .finally(()=>setLoading(false));
-  },[scriptUrl]);
-
-  function handleConnect(url){
-    try{localStorage.setItem(SCRIPT_URL_KEY,url);}catch(e){}
-    setScriptUrl(url);
-    setConnected(true);
-  }
-
-  function handleSelectUser(user){
-    try{localStorage.setItem('poledger_user',user);}catch(e){}
-    setCurrentUser(user);
-  }
-
-  function handleSwitchUser(){
-    setCurrentUser('');
-  }
-
-  function toggleDarkMode(){
-    const newVal = !darkMode;
-    setDarkMode(newVal);
-    try{localStorage.setItem('poledger_dark',newVal);}catch(e){}
-  }
-
-  function handleAddExpense(exp){
-    const newExpenses = [exp,...expenses];
-    setExpenses(newExpenses);
-    setShowExpenseForm(false);
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'addExpense',expense:exp})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleDeleteExpense(id){
-    setExpenses(expenses.filter(e=>e.id!==id));
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'deleteExpense',id})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleAddDeposit(dep){
-    const newDeposits = [dep,...deposits];
-    setDeposits(newDeposits);
-    setShowDepositForm(false);
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'addDeposit',deposit:dep})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleDeleteDeposit(id){
-    setDeposits(deposits.filter(d=>d.id!==id));
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'deleteDeposit',id})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleAddBill(bill){
-    const newBills = [bill,...bills];
-    setBills(newBills);
-    setShowBillForm(false);
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'addBill',bill})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleDeleteBill(id){
-    setBills(bills.filter(b=>b.id!==id));
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'deleteBill',id})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleAddBankAccount(acct){
-    const newAccounts = [acct,...bankAccounts];
-    setBankAccounts(newAccounts);
-    setShowBankForm(false);
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'addBankAccount',account:acct})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleDeleteBankAccount(id){
-    setBankAccounts(bankAccounts.filter(a=>a.id!==id));
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'deleteBankAccount',id})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  function handleDriverSalary(amount,date,account){
-    const exp = {
-      id:Date.now().toString(),
-      date:normalizeDate(date),
-      description:'Driver Salary',
-      amount:parseFloat(amount),
-      category:'Driver Salary',
-      fundSource:account,
-      scope:'shared',
-      user:currentUser,
-      reimbursement:null,
-      notes:''
-    };
-    handleAddExpense(exp);
-    setShowDriverCalc(false);
-  }
-
-  function handleMarkReimbursed(expenseId, payerAccount){
-    const updated = expenses.map(e=>{
-      if(e.id===expenseId) return {...e, reimbursed:true, reimbursedDate:new Date().toISOString().split('T')[0], reimbursedFrom:payerAccount};
-      return e;
-    });
-    setExpenses(updated);
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'markReimbursed',id:expenseId,reimbursedFrom:payerAccount})
-        .catch(e=>console.error(e));
-    }
-  }
-
-  // ---- Credit Card handlers ----
-  function handleAddCreditCard(cc){
-    setCreditCards([cc,...creditCards]);
-    setShowCCForm(false);
-    if(scriptUrl){api(scriptUrl,'POST',{action:'addCreditCard',creditCard:cc}).catch(e=>console.error(e));}
-  }
-  function handleEditCreditCard(cc){
-    setCreditCards(creditCards.map(c=>c.id===cc.id?cc:c));
-    setEditingCC(null);
-    setShowCCForm(false);
-    if(scriptUrl){api(scriptUrl,'POST',{action:'editCreditCard',creditCard:cc}).catch(e=>console.error(e));}
-  }
-  function handleDeleteCreditCard(id){
-    setCreditCards(creditCards.filter(c=>c.id!==id));
-    if(selectedCard===id)setSelectedCard(null);
-    if(scriptUrl){api(scriptUrl,'POST',{action:'deleteCreditCard',id}).catch(e=>console.error(e));}
-  }
-  function handleStatementUpload(ev){
-    var file=ev.target.files[0];
-    if(!file||!selectedCard)return;
-    var reader=new FileReader();
-    reader.onload=function(e2){setCropImage(e2.target.result);setCropMode('statement');};
-    reader.readAsDataURL(file);
-    ev.target.value='';
-  }
-
-  // After crop: send statement to OCR
-  function sendStatementOCR(b64){
-    setCCOcrError('');setCCOcrProcessing(true);
-    api(scriptUrl,'POST',{action:'ocrStatement',photoBase64:b64}).then(function(d){
-      setCCOcrProcessing(false);
-      if(d.error){setCCOcrError(d.error);return;}
-      if(!d.items||d.items.length===0){
-        setCCOcrError('No transactions found. Raw OCR text:\n\n'+(d.rawText||'(empty)'));return;
-      }
-      var card=creditCards.find(c=>c.id===selectedCard);
-      var itemsWithMeta=(d.items||[]).map(function(item,idx){
-        var isDuplicate=false;var dupType='';
-        for(var ei=0;ei<expenses.length;ei++){
-          var ex=expenses[ei];
-          if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01 && ex.date===item.date){
-            isDuplicate=true;dupType='exact';break;
-          }
-          if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01){
-            var d1=new Date(ex.date),d2=new Date(item.date);
-            if(Math.abs(d1-d2)<=(2*86400000)){isDuplicate=true;dupType='close';break;}
-          }
-        }
-        var cat=item.category||'';
-        var autoTagged=!!item.autoCategory;
-        if(!cat){
-          var descU=String(item.description).toUpperCase();
-          for(var mi=0;mi<merchantMap.length;mi++){
-            if(descU.indexOf(merchantMap[mi].pattern.toUpperCase())!==-1){
-              cat=merchantMap[mi].category;autoTagged=true;break;
-            }
-          }
-        }
-        return {
-          ...item,idx:idx,category:cat,autoTagged:autoTagged,isDuplicate:isDuplicate,dupType:dupType,
-          skip:isDuplicate,isHousehold:false,fundSource:card?card.id:'',user:currentUser,scope:'personal',
-          merchantPattern:item.merchantPattern||''
-        };
-      });
-      setBatchItems(itemsWithMeta);
-      setBatchRawText(d.rawText||'');
-    }).catch(function(err){setCCOcrProcessing(false);setCCOcrError('OCR failed: '+err);});
-  }
-  // Client-side statement parser (same logic as backend, no OCR needed)
-  function parseStatementLocal(text){
-    var items=[];if(!text)return items;
-    text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').replace(/[\u2013\u2014\u2212]/g,'-');
-
-    // === BDO continuous-paste preprocessing ===
-    text=text.replace(/([A-Za-z])(-\d)/g,'$1 $2');
-    text=text.replace(/([\d,]+\.\d{2})\s+(\d{2}\/\d{2}\/\d{2}\s+\d{2}\/\d{2}\/\d{2}\b)/g,'$1\n$2');
-    text=text.replace(/\s+(Reference:\s*\S+)/gi,'\n$1');
-    text=text.replace(/\s+(INSTALMENT\s)/gi,'\n$1');
-    text=text.replace(/(Reference:\s*\S+)\s+(\d{2}\/\d{2}\/\d{2})/gi,'$1\n$2');
-    text=text.replace(/(INSTALMENT[^\n]*?)\s+(\d{2}\/\d{2}\/\d{2})/gi,'$1\n$2');
-    text=text.replace(/^(\d{2}\/\d{2}\/\d{2})\s+\d{2}\/\d{2}\/\d{2}\s/gm,'$1 ');
-    // === end preprocessing ===
-
-    var lines=text.split('\n').map(function(l){return l.replace(/\s+/g,' ').trim();}).filter(function(l){return l.length>0;});
-    var currentYear=new Date().getFullYear();
-    var skipPat=/^(statement|credit card|card no|card number|account|page|date|description|amount|total|minimum|payment due|balance|previous|new charges|transaction|posting|reference|instalment|credit limit|available|billing|closing|opening|finance charge|annual fee|late charge|over limit|interest|thank you|due date|your |please |effective|as of)/i;
-    var monthMap={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
-    for(var i=0;i<lines.length;i++){
-      var line=lines[i];
-      if(skipPat.test(line))continue;if(/^[\s\-=_*]+$/.test(line))continue;
-      if(/^(INSTALMENT|Reference:|Ref\s)/i.test(line))continue;
-      if(/^PAYMENT RECEIVED/i.test(line))continue;if(/^\d{1,4}$/.test(line))continue;
-      var amtM=line.match(/^(.+?)\s+(-?[\d,]+\.\d{2})\s*$/);if(!amtM)continue;
-      var before=amtM[1].trim();var amt=parseFloat(amtM[2].replace(/,/g,''));
-      if(Math.abs(amt)<1||Math.abs(amt)>=10000000)continue;
-      var date='';var desc='';
-      var bdo=before.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+\d{1,2}\/\d{1,2}\/\d{2,4}\s+(.+)$/);
-      if(bdo){var m=parseInt(bdo[1],10),d=parseInt(bdo[2],10),y=parseInt(bdo[3],10);if(y<100)y+=2000;if(m>12){var t=m;m=d;d=t;}date=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');desc=bdo[4].trim();}
-      if(!desc){var sy=before.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+(.+)$/);if(sy){var m1=parseInt(sy[1],10),d1=parseInt(sy[2],10),y1=parseInt(sy[3],10);if(y1<100)y1+=2000;if(m1>12){var t1=m1;m1=d1;d1=t1;}date=y1+'-'+String(m1).padStart(2,'0')+'-'+String(d1).padStart(2,'0');desc=sy[4].trim();}}
-      if(!desc){var td=before.match(/^(\d{1,2})[\/.](\d{1,2})\s+\d{1,2}[\/.]?\d{1,2}\s+(.+)$/);if(td){var m2=parseInt(td[1],10),d2=parseInt(td[2],10);if(m2>12){var t2=m2;m2=d2;d2=t2;}date=currentYear+'-'+String(m2).padStart(2,'0')+'-'+String(d2).padStart(2,'0');desc=td[3].trim();}}
-      if(!desc){var sd=before.match(/^(\d{1,2})[\/.](\d{1,2})\s+(.+)$/);if(sd){var m3=parseInt(sd[1],10),d3=parseInt(sd[2],10);if(m3>12){var t3=m3;m3=d3;d3=t3;}date=currentYear+'-'+String(m3).padStart(2,'0')+'-'+String(d3).padStart(2,'0');desc=sd[3].trim();}}
-      if(!desc){var dm=before.match(/^(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(.+)$/i);if(dm){var mm=monthMap[dm[2].substring(0,3).toLowerCase()]||1;date=currentYear+'-'+String(mm).padStart(2,'0')+'-'+String(parseInt(dm[1],10)).padStart(2,'0');desc=dm[3].trim();}}
-      if(!desc){var md=before.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2})\s+(.+)$/i);if(md){var mm2=monthMap[md[1].substring(0,3).toLowerCase()]||1;date=currentYear+'-'+String(mm2).padStart(2,'0')+'-'+String(parseInt(md[2],10)).padStart(2,'0');desc=md[3].trim();}}
-      if(!desc){if(/^[A-Za-z]/.test(before)){desc=before;}else{continue;}}
-      if(skipPat.test(desc))continue;if(/^PAYMENT RECEIVED/i.test(desc))continue;
-      var mk=String(desc).toUpperCase().replace(/\s+(PH|PHL|SGP|SWE|DEU)\s*$/i,'').replace(/[^A-Z0-9\s]/g,'').replace(/\s+/g,' ').trim().split(' ').slice(0,3).join(' ');
-      items.push({date:date,description:desc,amount:Math.abs(amt),category:'',merchantPattern:mk,isRefund:amt<0});
-    }
-    // Second pass for split lines
-    if(items.length===0&&lines.length>1){
-      var pd='';var pde='';
-      for(var j=0;j<lines.length;j++){
-        var ln=lines[j];
-        if(skipPat.test(ln)||/^(INSTALMENT|Reference:|Ref\s|PAYMENT RECEIVED)/i.test(ln)){pd='';pde='';continue;}
-        var dOnly=ln.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})(\s+\d{1,2}\/\d{1,2}\/\d{2,4})?\s*$/);
-        if(dOnly){var dm2=parseInt(dOnly[1],10),dd2=parseInt(dOnly[2],10),dy2=parseInt(dOnly[3],10);if(dy2<100)dy2+=2000;if(dm2>12){var tt=dm2;dm2=dd2;dd2=tt;}pd=dy2+'-'+String(dm2).padStart(2,'0')+'-'+String(dd2).padStart(2,'0');pde='';continue;}
-        if(pd){var da=ln.match(/^(.+?)\s+(-?[\d,]+\.\d{2})\s*$/);if(da){var dav=parseFloat(da[2].replace(/,/g,''));if(Math.abs(dav)>=1&&Math.abs(dav)<10000000){items.push({date:pd,description:da[1].trim(),amount:Math.abs(dav),category:'',merchantPattern:'',isRefund:dav<0});}pd='';pde='';continue;}
-        if(/^[A-Za-z]/.test(ln)&&!ln.match(/-?[\d,]+\.\d{2}\s*$/)){pde=ln.trim();continue;}
-        if(pde){var ao=ln.match(/^(-?[\d,]+\.\d{2})\s*$/);if(ao){var aov=parseFloat(ao[1].replace(/,/g,''));if(Math.abs(aov)>=1&&Math.abs(aov)<10000000){items.push({date:pd,description:pde,amount:Math.abs(aov),category:'',merchantPattern:'',isRefund:aov<0});}pd='';pde='';continue;}}}
-        pd='';pde='';
-      }
-    }
-    return items;
-  }
-
-  function handlePasteStatement(rawText){
-    if(!rawText||!selectedCard)return;
-    var parsedItems=parseStatementLocal(rawText);
-    if(parsedItems.length===0){setCCOcrError('No transactions found in pasted text. Make sure you copied the transaction rows from your statement.');return;}
-    var card=creditCards.find(c=>c.id===selectedCard);
-    var itemsWithMeta=parsedItems.map(function(item,idx){
-      var isDuplicate=false;var dupType='';
-      for(var ei=0;ei<expenses.length;ei++){
-        var ex=expenses[ei];
-        if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01&&ex.date===item.date){isDuplicate=true;dupType='exact';break;}
-        if(Math.abs(parseFloat(ex.amount)-item.amount)<0.01){var d1=new Date(ex.date),d2=new Date(item.date);if(Math.abs(d1-d2)<=(2*86400000)){isDuplicate=true;dupType='close';break;}}
-      }
-      var cat=item.category||'';var autoTagged=false;
-      if(!cat){var descU=String(item.description).toUpperCase();for(var mi=0;mi<merchantMap.length;mi++){if(descU.indexOf(merchantMap[mi].pattern.toUpperCase())!==-1){cat=merchantMap[mi].category;autoTagged=true;break;}}}
-      return {...item,idx:idx,category:cat,autoTagged:autoTagged,isDuplicate:isDuplicate,dupType:dupType,skip:isDuplicate,isHousehold:false,fundSource:card?card.id:'',user:currentUser,scope:'personal',merchantPattern:item.merchantPattern||''};
-    });
-    setBatchItems(itemsWithMeta);
-    setBatchRawText(rawText);
-    setShowPasteModal(false);setPasteText('');
-  }
-
-  function handleApproveBatch(){
-    if(!batchItems||!selectedCard)return;
-    var card=creditCards.find(c=>c.id===selectedCard);
-    var approvedItems=batchItems.filter(function(it){return !it.skip;});
-    // Check if batch reimbursement is enabled
-    var householdItems=approvedItems.filter(function(it){return it.isHousehold;});
-    var finalItems=approvedItems.map(function(it){
-      return {
-        date:it.date||new Date().toISOString().split('T')[0],
-        description:it.description,
-        amount:it.amount,
-        category:it.category||'Other Personal',
-        fundSource:card?card.name:'',
-        user:currentUser,
-        scope:it.isHousehold?'shared':'personal',
-        reimbursable:it.reimbursable||false,
-        reimbTo:it.reimbTo||'',
-        reimbPct:it.reimbPct||50,
-        merchantPattern:it.merchantPattern,
-        skip:false
-      };
-    });
-    var stmtId=Date.now().toString();
-    var stmt={
-      id:stmtId,
-      creditCardId:selectedCard,
-      billingMonth:new Date().toISOString().slice(0,7),
-      totalAmount:finalItems.reduce(function(s,it){return s+it.amount;},0),
-      dueDate:'',
-      importedCount:finalItems.length
-    };
-    // Optimistic local update: add expenses
-    var newExpenses=finalItems.map(function(it,i){
-      return {
-        id:'cc-'+stmtId+'-'+i,
-        date:it.date,
-        description:it.description,
-        amount:it.amount,
-        category:it.category,
-        fundSource:it.fundSource,
-        user:it.user,
-        reimbursable:it.reimbursable,
-        reimbursement:it.reimbursable?{to:it.reimbTo,percent:it.reimbPct}:null,
-        reimbTo:it.reimbTo,
-        reimbPct:it.reimbPct,
-        reimbursed:false,
-        notes:'CC Import',
-        receiptUrl:'',
-        scope:it.scope
-      };
-    });
-    setExpenses([...newExpenses,...expenses]);
-    setCCStatements([{...stmt,paid:false,paidDate:''},...ccStatements]);
-    // Update merchant map locally
-    var newMerchants=[];
-    finalItems.forEach(function(it){
-      if(it.merchantPattern&&it.category){
-        var exists=merchantMap.some(function(m){return m.pattern.toUpperCase()===it.merchantPattern.toUpperCase();});
-        if(!exists)newMerchants.push({pattern:it.merchantPattern,category:it.category,user:currentUser});
-      }
-    });
-    if(newMerchants.length>0)setMerchantMap([...merchantMap,...newMerchants]);
-    setBatchItems(null);setBatchRawText('');
-    // Send to backend
-    if(scriptUrl){
-      api(scriptUrl,'POST',{action:'importCCStatement',statement:stmt,items:finalItems}).catch(function(err){console.error(err);});
-    }
-  }
-
-  // Crop modal — shown before OCR for both receipts and statements
-  var cropModalEl = null;
-  if(cropImage){
-    cropModalEl = React.createElement(CropModal,{
-      imageSrc:cropImage,
-      onConfirm:function(croppedB64){
-        setCropImage(null);
-        if(cropMode==='receipt'){sendReceiptOCR(croppedB64);}
-        else if(cropMode==='statement'){sendStatementOCR(croppedB64);}
-        setCropMode(null);
-      },
-      onSkip:function(){
-        var orig=cropImage;
-        setCropImage(null);
-        if(cropMode==='receipt'){sendReceiptOCR(orig);}
-        else if(cropMode==='statement'){sendStatementOCR(orig);}
-        setCropMode(null);
-      },
-      onCancel:function(){setCropImage(null);setCropMode(null);}
-    });
-  }
-  if(cropModalEl) return cropModalEl;
-
-  if(!connected) return React.createElement(SetupScreen,{onConnect:handleConnect});
-  if(!currentUser) return React.createElement(UserPicker,{onSelect:handleSelectUser});
-
-  const userColor = currentUser === 'Patrick' ? '#2563EB' : '#E879A0';
-  const userExpenses = expenses.filter(e=>e.user===currentUser);
-  const userAccounts = bankAccounts.filter(a=>a.user===currentUser);
-
-  const filteredMonth = expenseMonth ? expenses.filter(e=>e.date.startsWith(expenseMonth)) : expenses;
-  let filtered = filteredMonth;
-  if(expenseFilter==='household') filtered = filtered.filter(e=>e.scope==='shared');
-  if(expenseFilter==='personal') filtered = filtered.filter(e=>e.scope==='personal');
-  if(expenseSearch) filtered = filtered.filter(e=>e.description.toLowerCase().includes(expenseSearch.toLowerCase()));
-
-  const monthExpenses = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const recentExpenses = userExpenses.sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
-
-  const userDepositsTotal = deposits.filter(d=>d.account && userAccounts.map(a=>a.id).includes(d.account)).reduce((s,d)=>s+parseFloat(d.amount||0),0);
-  const userExpensesTotal = userExpenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
-
-  const householdExpenses = expenses.filter(e=>e.scope==='shared');
-  const householdTotal = householdExpenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
-  const householdByCategory = {};
-  householdExpenses.forEach(e=>{
-    const key = e.category||'Other';
-    householdByCategory[key] = (householdByCategory[key]||0) + parseFloat(e.amount||0);
-  });
-  const householdPieData = Object.entries(householdByCategory).map(([cat,amt],i)=>({
-    name:cat,
-    value:amt,
-    color:HOUSEHOLD_COLORS[i%HOUSEHOLD_COLORS.length]
-  }));
-
-  const personalTotal = userExpenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
-  const personalByCategory = {};
-  userExpenses.forEach(e=>{
-    const key = e.category||'Other';
-    personalByCategory[key] = (personalByCategory[key]||0) + parseFloat(e.amount||0);
-  });
-  const personalPieData = Object.entries(personalByCategory).map(([cat,amt],i)=>({
-    name:cat,
-    value:amt,
-    color:PERSONAL_COLORS[i%PERSONAL_COLORS.length]
-  }));
-
-  const billReminders = bills.filter(b=>{
-    const dueDate = new Date(b.dueDate);
-    const now = new Date();
-    const diffDays = Math.ceil((dueDate-now)/(1000*60*60*24));
-    return diffDays <= 5;
-  });
-
-  const pendingReimburses = expenses.filter(e=>e.reimbursement&&e.reimbursement.to===currentUser&&!e.reimbursed);
-  // Owed to others = someone else requested reimbursement FROM me (pending)
-  const owedToOthers = expenses.filter(e=>e.reimbursement&&e.reimbursement.to===currentUser&&!e.reimbursed);
-  // My requests = I requested reimbursement from someone else (pending)
-  const myPendingRequests = expenses.filter(e=>e.reimbursement&&e.user===currentUser&&!e.reimbursed);
-  // Completed reimbursements (both sides)
-  const completedReimburses = expenses.filter(e=>e.reimbursement&&e.reimbursed&&(e.user===currentUser||e.reimbursement.to===currentUser));
-
-  // Shared header + tab bar component
-  const headerEl = React.createElement('div',{className:'app-header'},
-    React.createElement('div',{className:'app-title'},'💰 PoLedger'),
-    React.createElement('div',{className:'header-right'},
-      React.createElement('div',{className:'user-badge'},
-        currentUser==='Patrick'?'👨':'👩',
-        React.createElement('span',null,currentUser),
-        React.createElement('a',{className:'switch-user-link',onClick:handleSwitchUser},'Switch')
-      ),
-      React.createElement('button',{className:'dark-toggle',onClick:toggleDarkMode},'🌙')
-    )
-  );
-
-  const tabBarEl = React.createElement('div',{className:'tab-bar'},
-    ['home','expenses','cards','accounts','reimburse'].map(t=>
-      React.createElement('button',{key:t,className:'tab-btn'+(activeTab===t?' active':''),onClick:()=>setActiveTab(t)},
-        t==='home'?'🏠 Home':t==='expenses'?'📝 Expenses':t==='cards'?'💳 Cards & Bills':t==='accounts'?'🏦 Accounts':'💸 Reimburse'
-      )
-    )
-  );
-
-  if(activeTab==='home'){
-    return React.createElement('div',null,
-      headerEl,
-      tabBarEl,
-      React.createElement('div',{className:'container'},
-        (function(){
-          var notifs=[];
-          billReminders.forEach(function(b){
-            var dueDate=new Date(b.dueDate);var now=new Date();
-            var diffDays=Math.ceil((dueDate-now)/(1000*60*60*24));
-            var status=diffDays<0?'overdue':diffDays<=1?'soon':'info';
-            var badgeText=diffDays<0?'OVERDUE':diffDays===0?'TODAY':diffDays+'d left';
-            notifs.push({key:'bill-'+b.id,icon:'📋',text:b.name,sub:fmt(b.amount)+' due '+fmtDate(b.dueDate),badge:badgeText,badgeClass:status});
-          });
-          pendingReimburses.forEach(function(e){
-            var reimbAmt=parseFloat(e.amount||0)*parseFloat(e.reimbursement.percent||0)/100;
-            notifs.push({key:'reimb-'+e.id,icon:'💸',text:e.user+' requests '+fmt(reimbAmt),sub:e.description+' ('+e.reimbursement.percent+'%)',badge:'Pending',badgeClass:'info',action:function(){setActiveTab('reimburse');},actionLabel:'Pay Now'});
-          });
-          return notifs.length>0?React.createElement(RollingBanner,{items:notifs,dismissed:dismissedNotifs,onDismiss:function(key){setDismissedNotifs(function(prev){var n={};for(var k in prev)n[k]=prev[k];n[key]=true;return n;});}}):null;
-        })(),
-        React.createElement('div',{className:'upload-row'},
-          React.createElement('button',{className:'upload-btn'+(ocrProcessing?' processing':''),onClick:()=>document.getElementById('receipt-camera').click()},
-            React.createElement('span',{className:'upload-icon'},'📷'),
-            ocrProcessing?'Scanning...':'Snap Receipt'
-          ),
-          React.createElement('button',{className:'upload-btn'+(ocrProcessing?' processing':''),onClick:()=>document.getElementById('receipt-upload').click()},
-            React.createElement('span',{className:'upload-icon'},'🖼️'),
-            ocrProcessing?'Scanning...':'Upload Photo'
-          ),
-          React.createElement('button',{className:'upload-btn',onClick:()=>setShowDriverCalc(true)},
-            React.createElement('span',{className:'upload-icon'},'🚗'),
-            'Driver Salary'
-          ),
-          React.createElement('button',{className:'upload-btn',onClick:()=>setShowBillForm(true)},
-            React.createElement('span',{className:'upload-icon'},'📋'),
-            'Add Bill'
-          ),
-          React.createElement('input',{id:'receipt-camera',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleReceiptUpload}),
-          React.createElement('input',{id:'receipt-upload',type:'file',accept:'image/*',style:{display:'none'},onChange:handleReceiptUpload})
-        ),
-        ocrError&&React.createElement('div',{style:{color:'#EF4444',fontSize:12,marginBottom:12,fontWeight:600}},ocrError),
-        React.createElement(ExpenseForm,{
-          onSubmit:handleAddExpense,
-          onCancel:()=>{},
-          bankAccounts:userAccounts,
-          currentUser:currentUser,
-          inline:true
-        }),
-        React.createElement('h3',{style:{marginBottom:12,fontSize:14,fontWeight:700,marginTop:24}},'Recent Expenses'),
-        recentExpenses.length===0?
-          React.createElement('div',{className:'empty-state'},'No expenses yet')
-          :React.createElement('div',null,
-            recentExpenses.map(e=>React.createElement('div',{className:'card',key:e.id,style:{marginBottom:8}},
-              React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
-                React.createElement('div',null,
-                  React.createElement('div',{style:{fontWeight:700}},e.description),
-                  React.createElement('div',{style:{fontSize:12,color:'#94A3B8',marginTop:4}},e.category),
-                  React.createElement('div',{style:{fontSize:11,color:'#94A3B8',marginTop:2}},fmtDate(e.date))
-                ),
-                React.createElement('div',{style:{textAlign:'right'}},
-                  React.createElement('div',{style:{fontWeight:800,fontSize:16,color:userColor}},fmt(e.amount)),
-                  e.scope==='shared'&&React.createElement('div',{className:'badge badge-scope',style:{marginTop:4}},'Household')
-                )
-              )
-            ))
-          )
-      ),
-      showDriverCalc && React.createElement('div',{className:'modal-overlay',onClick:()=>setShowDriverCalc(false)},
-        React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-          React.createElement(DriverSalaryCalc,{onSubmit:handleDriverSalary,onCancel:()=>setShowDriverCalc(false),bankAccounts:userAccounts})
-        )
-      ),
-      showBillForm && React.createElement('div',{className:'modal-overlay',onClick:()=>setShowBillForm(false)},
-        React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-          React.createElement(BillForm,{onSubmit:handleAddBill,onCancel:()=>setShowBillForm(false)})
-        )
-      )
-    );
-  }
-
-  if(activeTab==='expenses'){
-    return React.createElement('div',null,
-      headerEl,
-      tabBarEl,
-      React.createElement('div',{className:'container'},
-        React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
-          React.createElement('h2',{style:{fontSize:18,fontWeight:700}},'Expenses'),
-          React.createElement('div',{style:{display:'flex',gap:4,background:'#F1F5F9',borderRadius:10,padding:3}},
-            React.createElement('button',{style:{padding:'6px 14px',borderRadius:8,border:'none',fontSize:12,fontWeight:700,cursor:'pointer',background:expenseView==='list'?'white':'transparent',color:expenseView==='list'?'var(--text)':'var(--text-muted)',boxShadow:expenseView==='list'?'var(--shadow-sm)':'none',transition:'all 0.2s'},onClick:()=>setExpenseView('list')},'📋 List'),
-            React.createElement('button',{style:{padding:'6px 14px',borderRadius:8,border:'none',fontSize:12,fontWeight:700,cursor:'pointer',background:expenseView==='charts'?'white':'transparent',color:expenseView==='charts'?'var(--text)':'var(--text-muted)',boxShadow:expenseView==='charts'?'var(--shadow-sm)':'none',transition:'all 0.2s'},onClick:()=>setExpenseView('charts')},'📊 Charts')
-          )
-        ),
-        expenseView==='list'?React.createElement('div',null,
-          React.createElement('div',{className:'filter-bar'},
-            React.createElement('select',{value:expenseMonth,onChange:e=>setExpenseMonth(e.target.value)},
-              React.createElement('option',{value:''},'All time'),
-              React.createElement('option',{value:curMonth},'This month'),
-              [...Array(12).keys()].map((i)=>{
-                const d=new Date();
-                d.setMonth(d.getMonth()-i);
-                const m=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-                return React.createElement('option',{key:m,value:m},(d.getMonth()+1)+'/'+(d.getFullYear()%100));
-              })
-            ),
-            React.createElement('select',{value:expenseFilter,onChange:e=>setExpenseFilter(e.target.value)},
-              React.createElement('option',{value:'all'},'All'),
-              React.createElement('option',{value:'household'},'Household'),
-              React.createElement('option',{value:'personal'},'Personal')
-            ),
-            React.createElement('input',{type:'text',placeholder:'Search...',value:expenseSearch,onChange:e=>setExpenseSearch(e.target.value)})
-          ),
-          monthExpenses.length===0?
-            React.createElement('div',{className:'empty-state'},'No expenses found')
-            :React.createElement('table',{className:'expense-table'},
-              React.createElement('thead',null,
-                React.createElement('tr',null,
-                  React.createElement('th',null,'Date'),
-                  React.createElement('th',null,'Description'),
-                  React.createElement('th',null,'Category'),
-                  React.createElement('th',null,'Amount'),
-                  React.createElement('th',null,'Type'),
-                  React.createElement('th',null,'')
-                )
-              ),
-              React.createElement('tbody',null,
-                monthExpenses.map(e=>React.createElement('tr',{key:e.id,className:e.user==='Patrick'?'row-patrick':'row-aica'},
-                  React.createElement('td',null,fmtDate(e.date)),
-                  React.createElement('td',null,e.description),
-                  React.createElement('td',null,React.createElement('span',{className:'category-badge'},e.category)),
-                  React.createElement('td',null,fmt(e.amount)),
-                  React.createElement('td',null,React.createElement('span',{className:'badge badge-scope'},e.scope==='shared'?'Household':'Personal')),
-                  React.createElement('td',null,
-                    React.createElement('button',{className:'delete-btn',onClick:()=>handleDeleteExpense(e.id)},'🗑️')
-                  )
-                ))
-              )
-            )
-        ):React.createElement('div',null,
-          React.createElement('div',{style:{display:'flex',gap:8,marginBottom:16}},
-            React.createElement('button',{className:'tab-btn'+(chartsTab==='mine'?' active':''),onClick:()=>setChartsTab('mine'),style:{flex:1,borderRadius:10}},'My Spending'),
-            React.createElement('button',{className:'tab-btn'+(chartsTab==='household'?' active':''),onClick:()=>setChartsTab('household'),style:{flex:1,borderRadius:10}},'Household')
-          ),
-          chartsTab==='mine'?React.createElement('div',null,
-            React.createElement('div',{className:'summary-cards'},
-              React.createElement('div',{className:'summary-card'},
-                React.createElement('div',{className:'label'},'My Total'),
-                React.createElement('div',{className:'amount'},fmt(personalTotal))
-              )
-            ),
-            personalPieData.length===0?
-              React.createElement('div',{className:'empty-state'},'No expenses yet')
-              :React.createElement('div',{className:'chart-row'},
-                React.createElement('div',{className:'chart-box'},
-                  React.createElement(PieChartCanvas,{data:personalPieData,title:'My Spending by Category'})
-                )
-              )
-          ):React.createElement('div',null,
-            React.createElement('div',{className:'summary-cards'},
-              React.createElement('div',{className:'summary-card'},
-                React.createElement('div',{className:'label'},'Household Total'),
-                React.createElement('div',{className:'amount'},fmt(householdTotal))
-              )
-            ),
-            householdPieData.length===0?
-              React.createElement('div',{className:'empty-state'},'No household expenses yet')
-              :React.createElement('div',{className:'chart-row'},
-                React.createElement('div',{className:'chart-box'},
-                  React.createElement(PieChartCanvas,{data:householdPieData,title:'Household by Category'})
-                )
-              )
-          )
-        )
-      )
-    );
-  }
-
-  if(activeTab==='accounts'){
-    return React.createElement('div',null,
-      headerEl,
-      tabBarEl,
-      React.createElement('div',{className:'container'},
-        React.createElement('h2',{style:{marginBottom:16,fontSize:18,fontWeight:700}},'Bank Accounts'),
-        React.createElement('button',{className:'submit-btn patrick',onClick:()=>setShowBankForm(true),style:{marginBottom:16}},'+ Add Account'),
-        React.createElement('div',{className:'acct-cards'},
-          userAccounts.map(acct=>{
-            const acctExpenses = expenses.filter(e=>e.fundSource===acct.id).reduce((s,e)=>s+parseFloat(e.amount||0),0);
-            const acctDeposits = deposits.filter(d=>d.account===acct.id).reduce((s,d)=>s+parseFloat(d.amount||0),0);
-            const balance = parseFloat(acct.startingBalance||0) + acctDeposits - acctExpenses;
-            return React.createElement('div',{className:'acct-card',key:acct.id},
-              React.createElement('div',{className:'acct-icon'},'🏦'),
-              React.createElement('div',{className:'acct-name'},acct.name),
-              React.createElement('div',{className:'acct-bal'},fmt(balance)),
-              React.createElement('div',{className:'acct-sub'},acct.bankName),
-              React.createElement('button',{className:'delete-btn',onClick:()=>handleDeleteBankAccount(acct.id),style:{marginTop:8}},'🗑️')
-            );
-          })
-        ),
-        React.createElement('h3',{style:{marginBottom:16,marginTop:24,fontSize:16,fontWeight:700}},'Deposits'),
-        React.createElement('button',{className:'add-deposit-btn',onClick:()=>setShowDepositForm(true)},'+ Add Deposit'),
-        deposits.filter(d=>userAccounts.map(a=>a.id).includes(d.account)).length===0?
-          React.createElement('div',{className:'empty-state'},'No deposits yet')
-          :React.createElement('div',null,
-            deposits.filter(d=>userAccounts.map(a=>a.id).includes(d.account)).map(d=>{
-              const acctName = bankAccounts.find(a=>a.id===d.account)?.name||d.account;
-              return React.createElement('div',{className:'deposit-card',key:d.id,style:{borderLeftColor:'#16A34A'}},
-                React.createElement('div',{className:'dep-top'},
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'dep-desc'},d.description),
-                    React.createElement('div',{style:{fontSize:12,color:'#94A3B8',marginTop:4}},acctName)
-                  ),
-                  React.createElement('div',{className:'dep-amt'},'+'+fmt(d.amount))
-                ),
-                React.createElement('div',{className:'dep-meta'},
-                  React.createElement('span',{className:'category-badge'},fmtDate(d.date))
-                ),
-                React.createElement('div',{className:'dep-actions'},
-                  React.createElement('button',{className:'delete-btn',onClick:()=>handleDeleteDeposit(d.id)},'🗑️')
-                )
-              );
-            })
-          )
-      ),
-      showBankForm && React.createElement('div',{className:'modal-overlay',onClick:()=>setShowBankForm(false)},
-        React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-          React.createElement(BankAccountForm,{
-            onSubmit:handleAddBankAccount,
-            onCancel:()=>setShowBankForm(false),
-            currentUser
-          })
-        )
-      ),
-      showDepositForm && React.createElement('div',{className:'modal-overlay',onClick:()=>setShowDepositForm(false)},
-        React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-          React.createElement(DepositForm,{
-            onSubmit:handleAddDeposit,
-            onCancel:()=>setShowDepositForm(false),
-            bankAccounts:userAccounts
-          })
-        )
-      ),
-    );
-  }
-
-  if(activeTab==='cards'){
-    const BANK_COLORS = {BDO:'#003DA5',Chinabank:'#D4A017',Eastwest:'#E4002B',BPI:'#C41E3A',Unionbank:'#F58220',Metrobank:'#00529B','Security Bank':'#1A3C6D',RCBC:'#003399',HSBC:'#DB0011',Citi:'#003B70',Other:'#6366F1'};
-    const userCards = creditCards.filter(c=>c.user===currentUser);
-
-    // Batch review screen
-    if(batchItems){
-      const householdCount = batchItems.filter(it=>it.isHousehold&&!it.skip).length;
-      const approvedCount = batchItems.filter(it=>!it.skip).length;
-      const approvedTotal = batchItems.filter(it=>!it.skip).reduce((s,it)=>s+it.amount,0);
-      const dupCount = batchItems.filter(it=>it.isDuplicate).length;
-      const personalTotal = batchItems.filter(it=>!it.skip&&!it.isHousehold).reduce((s,it)=>s+it.amount,0);
-      const householdTotal = batchItems.filter(it=>!it.skip&&it.isHousehold).reduce((s,it)=>s+it.amount,0);
-      const reimbAmt = batchReimb ? householdTotal*(batchReimbPct/100) : 0;
-      const netTotal = approvedTotal - reimbAmt;
-
-      return React.createElement('div',null,
-        headerEl,tabBarEl,
-        React.createElement('div',{className:'container'},
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
-            React.createElement('h2',{style:{fontSize:18,fontWeight:700}},'Review Statement'),
-            React.createElement('button',{className:'btn-cancel',onClick:()=>{setBatchItems(null);setBatchRawText('');setBatchReimb(false);setBatchReimbPct(50);}},'Cancel')
-          ),
-          React.createElement('div',{className:'summary-cards'},
-            React.createElement('div',{className:'summary-card'},
-              React.createElement('div',{className:'label'},'Items'),
-              React.createElement('div',{className:'amount',style:{fontSize:16}},approvedCount+'/'+batchItems.length)
-            ),
-            React.createElement('div',{className:'summary-card'},
-              React.createElement('div',{className:'label'},'Total'),
-              React.createElement('div',{className:'amount',style:{fontSize:16}},fmt(approvedTotal))
-            ),
-            dupCount>0&&React.createElement('div',{className:'summary-card',style:{borderColor:'#F59E0B'}},
-              React.createElement('div',{className:'label'},'Duplicates'),
-              React.createElement('div',{className:'amount',style:{fontSize:16,color:'#D97706'}},dupCount)
-            )
-          ),
-          batchRawText&&React.createElement('details',{style:{marginBottom:12}},
-            React.createElement('summary',{style:{fontSize:11,color:'var(--text-light)',cursor:'pointer',fontWeight:600}},'Show raw OCR text (debug)'),
-            React.createElement('pre',{style:{fontSize:10,background:'#F8FAFC',border:'1px solid var(--border)',borderRadius:8,padding:10,marginTop:6,maxHeight:200,overflowY:'auto',whiteSpace:'pre-wrap',wordBreak:'break-all',color:'var(--text-muted)'}},batchRawText)
-          ),
-          // Line items
-          batchItems.map(function(item,idx){
-            const bgColor = item.skip ? '#F8F8F8' : item.autoTagged ? '#F0FFF4' : item.category ? '#FFFBEB' : '#FFF';
-            const borderColor = item.skip ? '#E5E5E5' : item.isDuplicate ? '#F59E0B' : item.autoTagged ? '#16A34A' : '#E2E8F0';
-            return React.createElement('div',{key:idx,className:'card',style:{padding:14,marginBottom:8,borderLeft:'4px solid '+borderColor,opacity:item.skip?0.5:1,background:bgColor}},
-              React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:8}},
-                React.createElement('div',{style:{flex:1,minWidth:0}},
-                  React.createElement('div',{style:{fontWeight:700,fontSize:14,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},
-                    item.skip&&React.createElement('span',{style:{textDecoration:'line-through',color:'#94A3B8'}},item.description),
-                    !item.skip&&item.description
-                  ),
-                  React.createElement('div',{style:{display:'flex',flexWrap:'wrap',gap:4,marginTop:6,alignItems:'center'}},
-                    item.date&&React.createElement('span',{style:{fontSize:11,color:'#94A3B8'}},fmtDate(item.date)),
-                    item.isDuplicate&&React.createElement('span',{style:{fontSize:10,fontWeight:700,padding:'2px 8px',borderRadius:10,background:'#FEF3C7',color:'#B45309'}},item.dupType==='exact'?'Duplicate':'Possible dup'),
-                    item.autoTagged&&!item.skip&&React.createElement('span',{style:{fontSize:10,fontWeight:700,padding:'2px 8px',borderRadius:10,background:'#DCFCE7',color:'#16A34A'}},'Auto-tagged')
-                  )
-                ),
-                React.createElement('div',{style:{textAlign:'right',flexShrink:0,display:'flex',alignItems:'center',gap:8}},
-                  React.createElement('div',{style:{fontWeight:800,fontSize:16}},fmt(item.amount)),
-                  React.createElement('button',{style:{width:22,height:22,borderRadius:'50%',border:'none',background:'#FEE2E2',color:'#DC2626',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,transition:'all 0.2s'},onClick:function(ev){ev.stopPropagation();var newItems=batchItems.filter(function(_,i){return i!==idx;});setBatchItems(newItems.length?newItems:null);},onMouseOver:function(ev){ev.currentTarget.style.background='#DC2626';ev.currentTarget.style.color='white';},onMouseOut:function(ev){ev.currentTarget.style.background='#FEE2E2';ev.currentTarget.style.color='#DC2626';}},'✕')
-                )
-              ),
-              !item.skip&&React.createElement('div',{style:{display:'flex',flexWrap:'wrap',gap:8,marginTop:10,alignItems:'center'}},
-                React.createElement('select',{value:item.category,style:{flex:1,minWidth:120,padding:'6px 10px',border:'1.5px solid var(--border)',borderRadius:10,fontSize:12,fontFamily:'Inter',background:'white'},onChange:function(ev){
-                  var newItems=[...batchItems];newItems[idx]={...newItems[idx],category:ev.target.value,autoTagged:false};setBatchItems(newItems);
-                }},
-                  React.createElement('option',{value:''},'Choose category...'),
-                  ALL_CATEGORIES.map(function(c){return React.createElement('option',{key:c,value:c},c);})
-                ),
-                React.createElement('div',{style:{display:'flex',alignItems:'center',gap:6,cursor:'pointer'},onClick:function(){
-                  var newItems=[...batchItems];var it=newItems[idx];
-                  it.isHousehold=!it.isHousehold;it.scope=it.isHousehold?'shared':'personal';
-                  newItems[idx]=it;setBatchItems(newItems);
-                }},
-                  React.createElement('div',{className:'toggle-circle'+(item.isHousehold?' on-purple':''),style:{width:18,height:18}},
-                    React.createElement('svg',{viewBox:'0 0 24 24',style:{width:11,height:11}},React.createElement('polyline',{points:'20 6 9 17 4 12'}))
-                  ),
-                  React.createElement('span',{style:{fontSize:11,fontWeight:600,color:item.isHousehold?'#7C3AED':'#94A3B8'}},'Household')
-                )
-              ),
-              item.isDuplicate&&React.createElement('div',{style:{display:'flex',justifyContent:'flex-end',marginTop:8}},
-                React.createElement('button',{style:{fontSize:11,fontWeight:600,padding:'4px 12px',border:'1px solid var(--border)',borderRadius:16,background:'white',cursor:'pointer',color:'var(--text-muted)'},onClick:function(){
-                  var newItems=[...batchItems];newItems[idx]={...newItems[idx],skip:!newItems[idx].skip};setBatchItems(newItems);
-                }},item.skip?'Include':'Skip')
-              )
-            );
-          }),
-          // Batch reimbursement section
-          householdCount>0&&React.createElement('div',{className:'card',style:{background:'linear-gradient(135deg,#F5F3FF,#EDE9FE)',borderColor:'#7C3AED',marginTop:16}},
-            React.createElement('h3',{style:{fontSize:14,fontWeight:700,marginBottom:12,color:'#7C3AED'}},'Batch Reimbursement — '+householdCount+' household items'),
-            React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10,cursor:'pointer',marginBottom:12},onClick:function(){setBatchReimb(!batchReimb);}},
-              React.createElement('div',{className:'toggle-circle'+(batchReimb?' on-amber':'')},
-                React.createElement('svg',{viewBox:'0 0 24 24'},React.createElement('polyline',{points:'20 6 9 17 4 12'}))
-              ),
-              React.createElement('span',{style:{fontSize:13,fontWeight:600,color:batchReimb?'#D97706':'var(--text-muted)'}},'Request reimbursement for all household items')
-            ),
-            batchReimb&&React.createElement('div',{style:{marginTop:8}},
-              React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12,marginBottom:12}},
-                React.createElement('span',{style:{fontSize:12,fontWeight:600,color:'var(--text-muted)'}},'Split:'),
-                React.createElement('input',{type:'range',min:0,max:100,value:batchReimbPct,onChange:function(ev){setBatchReimbPct(parseInt(ev.target.value));},style:{flex:1}}),
-                React.createElement('span',{style:{fontSize:14,fontWeight:700,color:'#D97706',minWidth:40,textAlign:'right'}},batchReimbPct+'%'),
-                React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},'from '+(currentUser==='Patrick'?'Aica':'Patrick'))
-              ),
-              React.createElement('div',{style:{background:'white',borderRadius:12,padding:12,border:'1px solid #E9D5FF'}},
-                React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:6}},
-                  React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},'Household total ('+householdCount+' items)'),
-                  React.createElement('span',{style:{fontSize:12,fontWeight:700}},fmt(householdTotal))
-                ),
-                React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:6}},
-                  React.createElement('span',{style:{fontSize:12,color:'#D97706',fontWeight:600}},'Reimbursement from '+(currentUser==='Patrick'?'Aica':'Patrick')+' ('+batchReimbPct+'%)'),
-                  React.createElement('span',{style:{fontSize:12,fontWeight:700,color:'#16A34A'}},'-'+fmt(reimbAmt))
-                ),
-                React.createElement('div',{style:{borderTop:'1px dashed #E2E8F0',paddingTop:6,display:'flex',justifyContent:'space-between'}},
-                  React.createElement('span',{style:{fontSize:12,fontWeight:700}},'Your share'),
-                  React.createElement('span',{style:{fontSize:12,fontWeight:700}},fmt(householdTotal-reimbAmt))
-                )
-              )
-            )
-          ),
-          // Bottom summary card
-          React.createElement('div',{className:'card',style:{marginTop:16,background:'linear-gradient(135deg,#F0F9FF,#E0F2FE)',borderColor:'#0284C7'}},
-            React.createElement('h3',{style:{fontSize:14,fontWeight:700,marginBottom:12,color:'#0284C7'}},'Import Summary'),
-            React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:6}},
-              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},'Personal expenses'),
-              React.createElement('span',{style:{fontSize:12,fontWeight:700}},fmt(personalTotal))
-            ),
-            householdCount>0&&React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:6}},
-              React.createElement('span',{style:{fontSize:12,color:'var(--text-muted)'}},'Household expenses'),
-              React.createElement('span',{style:{fontSize:12,fontWeight:700}},fmt(householdTotal))
-            ),
-            batchReimb&&householdCount>0&&React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:6}},
-              React.createElement('span',{style:{fontSize:12,color:'#16A34A',fontWeight:600}},'Reimbursement deduction'),
-              React.createElement('span',{style:{fontSize:12,fontWeight:700,color:'#16A34A'}},'-'+fmt(reimbAmt))
-            ),
-            React.createElement('div',{style:{borderTop:'1.5px solid #BAE6FD',paddingTop:8,marginTop:4,display:'flex',justifyContent:'space-between'}},
-              React.createElement('span',{style:{fontSize:14,fontWeight:800}},'Net Total'),
-              React.createElement('span',{style:{fontSize:14,fontWeight:800,color:'#0284C7'}},fmt(netTotal))
-            )
-          ),
-          // Approve button
-          React.createElement('button',{className:'submit-btn patrick',style:{marginTop:16,fontSize:16},onClick:function(){
-            // Apply batch reimbursement to household items
-            if(batchReimb&&householdCount>0){
-              var updated=batchItems.map(function(it){
-                if(it.isHousehold&&!it.skip){
-                  return {...it,reimbursable:true,reimbTo:currentUser==='Patrick'?'Aica':'Patrick',reimbPct:batchReimbPct};
-                }
-                return it;
-              });
-              setBatchItems(updated);
-              setTimeout(function(){handleApproveBatch();setBatchReimb(false);setBatchReimbPct(50);},50);
-            } else {
-              handleApproveBatch();setBatchReimb(false);setBatchReimbPct(50);
-            }
-          }},'Approve All ('+approvedCount+' items — '+fmt(netTotal)+')')
-        )
-      );
-    }
-
-    // Card detail view
-    if(selectedCard){
-      const card = creditCards.find(c=>c.id===selectedCard);
-      if(!card) { setSelectedCard(null); }
-      else {
-        const cardColor = BANK_COLORS[card.bankName]||'#6366F1';
-        const cardExpenses = expenses.filter(e=>e.fundSource===card.name||e.notes&&e.notes.indexOf('CC Import')!==-1);
-        const cardStatements = ccStatements.filter(s=>s.creditCardId===card.id);
-        return React.createElement('div',null,
-          headerEl,tabBarEl,
-          React.createElement('div',{className:'container'},
-            React.createElement('button',{style:{background:'none',border:'none',color:'var(--patrick)',fontWeight:700,fontSize:13,cursor:'pointer',marginBottom:12,padding:0},onClick:()=>setSelectedCard(null)},'← Back to Cards'),
-            // Card visual
-            React.createElement('div',{style:{background:'linear-gradient(135deg,'+cardColor+','+cardColor+'CC)',borderRadius:16,padding:24,color:'white',marginBottom:16,boxShadow:'0 8px 24px '+cardColor+'40'}},
-              React.createElement('div',{style:{fontSize:12,fontWeight:600,opacity:0.8,marginBottom:4}},card.bankName),
-              React.createElement('div',{style:{fontSize:18,fontWeight:800,letterSpacing:'-0.02em'}},card.name),
-              React.createElement('div',{style:{fontSize:20,fontWeight:300,letterSpacing:'0.15em',marginTop:16}},'•••• •••• •••• '+card.lastFour),
-              card.creditLimit>0&&React.createElement('div',{style:{fontSize:12,opacity:0.7,marginTop:8}},'Limit: '+fmt(card.creditLimit))
-            ),
-            // Import statement - Paste is primary, photo/image are secondary
-            React.createElement('button',{style:{width:'100%',padding:'14px 20px',border:'2px solid var(--patrick)',borderRadius:'var(--radius)',background:'var(--patrick-bg)',cursor:'pointer',fontSize:14,fontWeight:700,color:'var(--patrick)',display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginBottom:8,transition:'all var(--transition)'},onClick:()=>{setShowPasteModal(true);setCCOcrError('');}},
-              React.createElement('span',{style:{fontSize:20}},'📋'),'Paste Statement Text'
-            ),
-            React.createElement('div',{style:{fontSize:11,color:'var(--text-light)',marginBottom:10,textAlign:'center'}},'Open your PDF statement, select transaction rows, copy & paste. Most reliable method.'),
-            React.createElement('div',{className:'upload-row'},
-              React.createElement('button',{className:'upload-btn'+(ccOcrProcessing?' processing':''),onClick:()=>document.getElementById('cc-stmt-camera').click()},
-                React.createElement('span',{className:'upload-icon'},'📷'),
-                ccOcrProcessing?'Scanning...':'Photo'
-              ),
-              React.createElement('button',{className:'upload-btn'+(ccOcrProcessing?' processing':''),onClick:()=>document.getElementById('cc-stmt-upload').click()},
-                React.createElement('span',{className:'upload-icon'},'🖼️'),
-                ccOcrProcessing?'Scanning...':'Screenshot'
-              ),
-              React.createElement('input',{id:'cc-stmt-camera',type:'file',accept:'image/*',capture:'environment',style:{display:'none'},onChange:handleStatementUpload}),
-              React.createElement('input',{id:'cc-stmt-upload',type:'file',accept:'image/*',style:{display:'none'},onChange:handleStatementUpload})
-            ),
-            // Paste modal
-            showPasteModal&&React.createElement('div',{style:{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.6)',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center',padding:16}},
-              React.createElement('div',{style:{background:'white',borderRadius:18,padding:20,maxWidth:500,width:'100%',maxHeight:'90vh',display:'flex',flexDirection:'column'}},
-                React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}},
-                  React.createElement('h3',{style:{fontSize:16,fontWeight:700}},'Paste Statement Text'),
-                  React.createElement('button',{style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'var(--text-muted)'},onClick:()=>{setShowPasteModal(false);setPasteText('');}},'✕')
-                ),
-                React.createElement('div',{style:{fontSize:12,color:'var(--text-muted)',marginBottom:12}},'Copy the transaction rows from your bank app or online banking and paste them here. Works best with BDO, BPI, and other PH bank formats.'),
-                React.createElement('textarea',{value:pasteText,onChange:function(ev){setPasteText(ev.target.value);},placeholder:'Paste your statement text here...\n\ne.g.:\n01/10/26  01/11/26  MAKANAI BGC TAGUIG PH  11,099.82\n01/14/26  01/15/26  WILD FLOUR QC QUEZON CITY PHL  3,097.37',style:{width:'100%',minHeight:200,flex:1,padding:12,border:'1.5px solid var(--border)',borderRadius:12,fontSize:12,fontFamily:'monospace',resize:'vertical',lineHeight:1.5}}),
-                React.createElement('div',{style:{display:'flex',gap:10,marginTop:12}},
-                  React.createElement('button',{style:{flex:1,padding:'12px',borderRadius:12,border:'1px solid var(--border)',background:'white',fontSize:13,fontWeight:600,cursor:'pointer'},onClick:()=>{setShowPasteModal(false);setPasteText('');}},'Cancel'),
-                  React.createElement('button',{className:'submit-btn patrick',style:{flex:1,fontSize:13},disabled:!pasteText.trim(),onClick:function(){handlePasteStatement(pasteText);}},'Parse '+((pasteText.match(/\n/g)||[]).length+1)+' lines')
-                )
-              )
-            ),
-            ccOcrError&&React.createElement('div',{style:{color:'#EF4444',fontSize:12,marginBottom:12,fontWeight:600,whiteSpace:'pre-wrap',maxHeight:200,overflowY:'auto',background:'#FEF2F2',padding:10,borderRadius:10,border:'1px solid #FECACA'}},ccOcrError),
-            // Past statements
-            cardStatements.length>0&&React.createElement('div',null,
-              React.createElement('h3',{style:{fontSize:14,fontWeight:700,marginBottom:12,marginTop:16}},'Import History'),
-              cardStatements.map(function(s){
-                return React.createElement('div',{className:'card',key:s.id,style:{padding:14,marginBottom:8}},
-                  React.createElement('div',{style:{display:'flex',justifyContent:'space-between'}},
-                    React.createElement('div',null,
-                      React.createElement('div',{style:{fontWeight:700,fontSize:14}},s.billingMonth||'Statement'),
-                      React.createElement('div',{style:{fontSize:12,color:'#94A3B8'}},s.importedCount+' items imported')
-                    ),
-                    React.createElement('div',{style:{fontWeight:800,fontSize:16}},fmt(s.totalAmount))
-                  )
-                );
-              })
-            ),
-            // Card actions
-            React.createElement('div',{style:{display:'flex',gap:8,marginTop:16}},
-              React.createElement('button',{className:'btn-cancel',style:{flex:1},onClick:()=>{setEditingCC(card);setShowCCForm(true);}},'Edit Card'),
-              React.createElement('button',{className:'btn-danger',style:{flex:1},onClick:()=>{if(confirm('Delete this card?'))handleDeleteCreditCard(card.id);}},'Delete Card')
-            )
-          ),
-          showCCForm && React.createElement('div',{className:'modal-overlay',onClick:()=>{setShowCCForm(false);setEditingCC(null);}},
-            React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-              React.createElement(CreditCardForm,{onSubmit:editingCC?handleEditCreditCard:handleAddCreditCard,onCancel:()=>{setShowCCForm(false);setEditingCC(null);},currentUser,editCard:editingCC})
-            )
-          )
-        );
-      }
-    }
-
-    // Main cards & bills view
-    return React.createElement('div',null,
-      headerEl,tabBarEl,
-      React.createElement('div',{className:'container'},
-        React.createElement('div',{style:{display:'flex',gap:8,marginBottom:16}},
-          React.createElement('button',{className:'tab-btn'+(cardsTab==='cards'?' active':''),onClick:()=>setCardsTab('cards'),style:{flex:1,borderRadius:10}},'💳 My Cards'),
-          React.createElement('button',{className:'tab-btn'+(cardsTab==='bills'?' active':''),onClick:()=>setCardsTab('bills'),style:{flex:1,borderRadius:10}},'📋 Bills')
-        ),
-        cardsTab==='cards'?React.createElement('div',null,
-          React.createElement('button',{className:'submit-btn patrick',style:{marginBottom:16},onClick:()=>{setEditingCC(null);setShowCCForm(true);}},'+ Add Credit Card'),
-          userCards.length===0?
-            React.createElement('div',{className:'empty-state'},
-              React.createElement('div',{className:'icon'},'💳'),
-              React.createElement('p',null,'No credit cards yet. Add your first card to start tracking.')
-            )
-          :React.createElement('div',{style:{display:'grid',gap:12}},
-            userCards.map(function(card){
-              const cardColor = BANK_COLORS[card.bankName]||'#6366F1';
-              const cardStmts = ccStatements.filter(s=>s.creditCardId===card.id);
-              const lastStmt = cardStmts.length>0?cardStmts[0]:null;
-              return React.createElement('div',{key:card.id,style:{background:'linear-gradient(135deg,'+cardColor+','+cardColor+'CC)',borderRadius:16,padding:20,color:'white',cursor:'pointer',boxShadow:'0 4px 16px '+cardColor+'30',transition:'all 0.25s'},onClick:()=>setSelectedCard(card.id)},
-                React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
-                  React.createElement('div',null,
-                    React.createElement('div',{style:{fontSize:11,fontWeight:600,opacity:0.7}},card.bankName),
-                    React.createElement('div',{style:{fontSize:16,fontWeight:800,marginTop:2}},card.name)
-                  ),
-                  React.createElement('div',{style:{fontSize:20,letterSpacing:'0.1em',fontWeight:300}},'••'+card.lastFour)
-                ),
-                React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:14}},
-                  card.creditLimit>0&&React.createElement('div',{style:{fontSize:11,opacity:0.7}},'Limit: '+fmt(card.creditLimit)),
-                  lastStmt&&React.createElement('div',{style:{fontSize:11,opacity:0.7}},'Last: '+lastStmt.billingMonth),
-                  React.createElement('div',{style:{fontSize:11,fontWeight:700,background:'rgba(255,255,255,0.2)',padding:'3px 10px',borderRadius:12}},'Due day '+card.statementDueDay)
-                )
-              );
-            })
-          )
-        ):React.createElement('div',null,
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
-            React.createElement('h3',{style:{fontSize:16,fontWeight:700}},'Bills'),
-            React.createElement('button',{className:'submit-btn patrick',style:{fontSize:12,padding:'8px 16px'},onClick:()=>setShowBillForm(true)},'+ Add Bill')
-          ),
-          bills.length===0?
-            React.createElement('div',{className:'empty-state'},'No bills yet. Add your first bill to start tracking due dates.')
-            :bills.map(b=>{
-              const dueDate=new Date(b.dueDate);const now=new Date();
-              const diffDays=Math.ceil((dueDate-now)/(1000*60*60*24));
-              const status=diffDays<0?'overdue':diffDays<=1?'soon':diffDays<=5?'info':'';
-              const statusText=diffDays<0?'OVERDUE':diffDays===0?'TODAY':diffDays<=5?diffDays+'d left':'Due '+fmtDate(b.dueDate);
-              return React.createElement('div',{className:'bill-card',key:b.id},
-                React.createElement('div',{className:'bill-top'},
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'bill-name'},b.name),
-                    React.createElement('div',{style:{fontSize:12,color:'#94A3B8',marginTop:4}},fmtDate(b.dueDate))
-                  ),
-                  React.createElement('div',{style:{textAlign:'right'}},
-                    React.createElement('div',{className:'bill-amt'},fmt(b.amount)),
-                    status&&React.createElement('span',{className:'notif-badge '+status,style:{marginTop:4,display:'inline-block'}},statusText)
-                  )
-                ),
-                React.createElement('div',{className:'bill-actions'},
-                  React.createElement('button',{className:'bill-paid-btn',onClick:()=>handleDeleteBill(b.id)},'✅ Mark Paid'),
-                  React.createElement('button',{className:'delete-btn',onClick:()=>handleDeleteBill(b.id)},'🗑️')
-                )
-              );
-            })
-        )
-      ),
-      showCCForm && React.createElement('div',{className:'modal-overlay',onClick:()=>{setShowCCForm(false);setEditingCC(null);}},
-        React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-          React.createElement(CreditCardForm,{onSubmit:editingCC?handleEditCreditCard:handleAddCreditCard,onCancel:()=>{setShowCCForm(false);setEditingCC(null);},currentUser,editCard:editingCC})
-        )
-      ),
-      showBillForm && React.createElement('div',{className:'modal-overlay',onClick:()=>setShowBillForm(false)},
-        React.createElement('div',{className:'modal-box',onClick:e=>e.stopPropagation()},
-          React.createElement(BillForm,{onSubmit:handleAddBill,onCancel:()=>setShowBillForm(false)})
-        )
-      )
-    );
-  }
-
-  if(activeTab==='reimburse'){
-    return React.createElement('div',null,
-      headerEl,
-      tabBarEl,
-      React.createElement('div',{className:'container'},
-        React.createElement('div',{style:{display:'flex',gap:8,marginBottom:16}},
-          React.createElement('button',{className:'tab-btn'+(reimbTab==='owed'?' active':''),onClick:()=>setReimbTab('owed'),style:{flex:1,borderRadius:10}},'Owed to Others'),
-          React.createElement('button',{className:'tab-btn'+(reimbTab==='requests'?' active':''),onClick:()=>setReimbTab('requests'),style:{flex:1,borderRadius:10}},'My Requests'),
-          React.createElement('button',{className:'tab-btn'+(reimbTab==='history'?' active':''),onClick:()=>setReimbTab('history'),style:{flex:1,borderRadius:10}},'History')
-        ),
-        reimbTab==='owed'?React.createElement('div',null,
-          React.createElement('div',{className:'reimb-section-title'},
-            '💸 People are requesting from you',
-            owedToOthers.length>0&&React.createElement('span',{className:'reimb-count'},owedToOthers.length)
-          ),
-          owedToOthers.length===0?
-            React.createElement('div',{className:'empty-state'},'No pending reimbursements owed')
-            :owedToOthers.map(e=>{
-              const reimbAmt = parseFloat(e.amount||0)*parseFloat(e.reimbursement.percent||0)/100;
-              return React.createElement('div',{className:'reimb-card owed',key:e.id},
-                React.createElement('div',{className:'reimb-top'},
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'reimb-desc'},e.description),
-                    React.createElement('div',{className:'reimb-meta'},
-                      React.createElement('span',null,'From: '+e.user),
-                      React.createElement('span',null,' • '),
-                      React.createElement('span',null,fmtDate(e.date)),
-                      React.createElement('span',null,' • '),
-                      React.createElement('span',{className:'category-badge'},e.category)
-                    )
-                  ),
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'reimb-amt',style:{color:'#D97706'}},fmt(reimbAmt)),
-                    React.createElement('div',{style:{fontSize:11,color:'var(--text-light)',textAlign:'right'}},e.reimbursement.percent+'% of '+fmt(e.amount))
-                  )
-                ),
-                payingReimbId===e.id?
-                  React.createElement('div',{className:'reimb-actions',style:{flexDirection:'column',alignItems:'stretch'}},
-                    React.createElement('div',{className:'form-group',style:{marginBottom:8}},
-                      React.createElement('label',{style:{fontSize:12}},'Pay from account:'),
-                      React.createElement('select',{value:payAccount,onChange:ev=>setPayAccount(ev.target.value),style:{width:'100%'}},
-                        React.createElement('option',{value:''},'Choose account...'),
-                        userAccounts.map(a=>React.createElement('option',{key:a.id,value:a.id},a.name+' ('+a.bankName+')'))
-                      )
-                    ),
-                    React.createElement('div',{style:{display:'flex',gap:8,justifyContent:'flex-end'}},
-                      React.createElement('button',{style:{padding:'6px 14px',border:'1.5px solid var(--border)',borderRadius:20,background:'white',fontSize:11,fontWeight:700,cursor:'pointer'},onClick:()=>{setPayingReimbId(null);setPayAccount('');}},'Cancel'),
-                      React.createElement('button',{className:'reimb-pay-btn',onClick:()=>{if(!payAccount){alert('Select an account');return;}handleMarkReimbursed(e.id,payAccount);setPayingReimbId(null);setPayAccount('');}},'Confirm Payment')
-                    )
-                  )
-                  :React.createElement('div',{className:'reimb-actions'},
-                    React.createElement('button',{className:'reimb-pay-btn',onClick:()=>{setPayingReimbId(e.id);setPayAccount(userAccounts.length>0?userAccounts[0].id:'');}},'💳 Pay Now')
-                  )
-              );
-            })
-        ):reimbTab==='requests'?React.createElement('div',null,
-          React.createElement('div',{className:'reimb-section-title'},
-            '📋 Your reimbursement requests',
-            myPendingRequests.length>0&&React.createElement('span',{className:'reimb-count'},myPendingRequests.length)
-          ),
-          myPendingRequests.length===0?
-            React.createElement('div',{className:'empty-state'},'No pending requests')
-            :myPendingRequests.map(e=>{
-              const reimbAmt = parseFloat(e.amount||0)*parseFloat(e.reimbursement.percent||0)/100;
-              return React.createElement('div',{className:'reimb-card requested',key:e.id},
-                React.createElement('div',{className:'reimb-top'},
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'reimb-desc'},e.description),
-                    React.createElement('div',{className:'reimb-meta'},
-                      React.createElement('span',null,'Requested from: '+e.reimbursement.to),
-                      React.createElement('span',null,' • '),
-                      React.createElement('span',null,fmtDate(e.date)),
-                      React.createElement('span',null,' • '),
-                      React.createElement('span',{className:'category-badge'},e.category)
-                    )
-                  ),
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'reimb-amt',style:{color:'var(--patrick)'}},fmt(reimbAmt)),
-                    React.createElement('div',{style:{fontSize:11,color:'var(--text-light)',textAlign:'right'}},e.reimbursement.percent+'% of '+fmt(e.amount))
-                  )
-                ),
-                React.createElement('div',{className:'reimb-meta',style:{marginTop:10}},
-                  React.createElement('span',{className:'reimb-badge pending'},'⏳ Pending')
-                )
-              );
-            })
-        ):React.createElement('div',null,
-          React.createElement('div',{className:'reimb-section-title'},'✅ Completed Reimbursements'),
-          completedReimburses.length===0?
-            React.createElement('div',{className:'empty-state'},'No completed reimbursements yet')
-            :completedReimburses.map(e=>{
-              const reimbAmt = parseFloat(e.amount||0)*parseFloat(e.reimbursement.percent||0)/100;
-              const isPayer = e.reimbursement.to===currentUser;
-              return React.createElement('div',{className:'reimb-card paid',key:e.id},
-                React.createElement('div',{className:'reimb-top'},
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'reimb-desc'},e.description),
-                    React.createElement('div',{className:'reimb-meta'},
-                      React.createElement('span',null,isPayer?'You paid '+e.user:e.reimbursement.to+' paid you'),
-                      React.createElement('span',null,' • '),
-                      React.createElement('span',null,fmtDate(e.reimbursedDate||e.date))
-                    )
-                  ),
-                  React.createElement('div',null,
-                    React.createElement('div',{className:'reimb-amt',style:{color:'var(--success)'}},fmt(reimbAmt)),
-                    React.createElement('span',{className:'reimb-badge complete'},'✅ Paid')
-                  )
-                )
-              );
-            })
-        )
-      )
-    );
-  }
-
-  return React.createElement('div',null,'Loading...');
-}
-
-function CropModal({imageSrc,onConfirm,onSkip,onCancel}){
-  const canvasRef = useRef(null);
-  const imgRef = useRef(null);
-  const addFileRef = useRef(null);
-  const [imgLoaded,setImgLoaded] = useState(false);
-  const [dragging,setDragging] = useState(false);
-  const [dragType,setDragType] = useState(null);
-  const [startPos,setStartPos] = useState({x:0,y:0});
-  const [crop,setCrop] = useState({x:0,y:0,w:0,h:0});
-  const [imgDims,setImgDims] = useState({w:0,h:0,scale:1});
-  const [pages,setPages] = useState([]); // array of cropped base64 strings from previous pages
-  const [currentSrc,setCurrentSrc] = useState(imageSrc); // current image being cropped
-
-  function loadImage(src){
-    setImgLoaded(false);
-    var img=new Image();
-    img.onload=function(){
-      imgRef.current=img;
-      var maxW=window.innerWidth-40;
-      var maxH=window.innerHeight-200;
-      var scale=Math.min(maxW/img.width,maxH/img.height,1);
-      var dw=Math.round(img.width*scale);
-      var dh=Math.round(img.height*scale);
-      setImgDims({w:dw,h:dh,scale:scale,natW:img.width,natH:img.height});
-      var mx=Math.round(dw*0.05);
-      var my=Math.round(dh*0.05);
-      setCrop({x:mx,y:my,w:dw-mx*2,h:dh-my*2});
-      setImgLoaded(true);
-    };
-    img.src=src;
-  }
-
-  useEffect(function(){if(currentSrc)loadImage(currentSrc);},[currentSrc]);
-
-  function getPos(ev){
-    var t=ev.touches?ev.touches[0]:ev;
-    var r=canvasRef.current.getBoundingClientRect();
-    return {x:t.clientX-r.left,y:t.clientY-r.top};
-  }
-
-  function hitTest(pos){
-    var g=12;var c=crop;
-    var inX=pos.x>=c.x-g&&pos.x<=c.x+c.w+g;
-    var inY=pos.y>=c.y-g&&pos.y<=c.y+c.h+g;
-    if(!inX||!inY)return null;
-    var onN=Math.abs(pos.y-c.y)<g;var onS=Math.abs(pos.y-(c.y+c.h))<g;
-    var onW=Math.abs(pos.x-c.x)<g;var onE=Math.abs(pos.x-(c.x+c.w))<g;
-    if(onN&&onW)return 'nw';if(onN&&onE)return 'ne';if(onS&&onW)return 'sw';if(onS&&onE)return 'se';
-    if(onN)return 'n';if(onS)return 's';if(onW)return 'w';if(onE)return 'e';
-    if(pos.x>c.x&&pos.x<c.x+c.w&&pos.y>c.y&&pos.y<c.y+c.h)return 'move';
-    return null;
-  }
-
-  function onDown(ev){ev.preventDefault();var pos=getPos(ev);var ht=hitTest(pos);if(ht){setDragging(true);setDragType(ht);setStartPos({x:pos.x,y:pos.y,crop:{...crop}});}}
-  function onMove(ev){
-    if(!dragging)return;ev.preventDefault();var pos=getPos(ev);
-    var dx=pos.x-startPos.x;var dy=pos.y-startPos.y;var sc=startPos.crop;var nc={...sc};
-    var mW=imgDims.w;var mH=imgDims.h;
-    if(dragType==='move'){nc.x=Math.max(0,Math.min(mW-sc.w,sc.x+dx));nc.y=Math.max(0,Math.min(mH-sc.h,sc.y+dy));}
-    else{
-      if(dragType.indexOf('n')!==-1){nc.y=Math.max(0,sc.y+dy);nc.h=sc.h-(nc.y-sc.y);}
-      if(dragType.indexOf('s')!==-1){nc.h=Math.min(mH-sc.y,sc.h+dy);}
-      if(dragType.indexOf('w')!==-1){nc.x=Math.max(0,sc.x+dx);nc.w=sc.w-(nc.x-sc.x);}
-      if(dragType.indexOf('e')!==-1){nc.w=Math.min(mW-sc.x,sc.w+dx);}
-      if(nc.w<30)nc.w=30;if(nc.h<30)nc.h=30;
-    }
-    setCrop(nc);
-  }
-  function onUp(){setDragging(false);setDragType(null);}
-
-  function getCroppedB64(){
-    var s=imgDims.scale;
-    var natX=Math.round(crop.x/s);var natY=Math.round(crop.y/s);
-    var natW=Math.round(crop.w/s);var natH=Math.round(crop.h/s);
-    var c=document.createElement('canvas');c.width=natW;c.height=natH;
-    var ctx=c.getContext('2d');
-    ctx.drawImage(imgRef.current,natX,natY,natW,natH,0,0,natW,natH);
-    return c.toDataURL('image/jpeg',0.9);
-  }
-
-  // Stitch all pages into one tall image then send
-  function stitchAndSend(allPages){
-    if(allPages.length===1){onConfirm(allPages[0]);return;}
-    // Load all page images, stack vertically
-    var imgs=[];var loaded=0;
-    allPages.forEach(function(src,i){
-      var im=new Image();
-      im.onload=function(){imgs[i]=im;loaded++;if(loaded===allPages.length)doStitch();};
-      im.src=src;
-    });
-    function doStitch(){
-      var maxW=0;var totalH=0;
-      imgs.forEach(function(im){if(im.width>maxW)maxW=im.width;totalH+=im.height;});
-      var c=document.createElement('canvas');c.width=maxW;c.height=totalH;
-      var ctx=c.getContext('2d');var yOff=0;
-      imgs.forEach(function(im){ctx.drawImage(im,0,yOff);yOff+=im.height;});
-      onConfirm(c.toDataURL('image/jpeg',0.85));
-    }
-  }
-
-  function handleCropAndFinish(){stitchAndSend([...pages,getCroppedB64()]);}
-
-  function handleCropAndAddPage(){
-    var cropped=getCroppedB64();
-    setPages(function(prev){return [...prev,cropped];});
-    // Open file picker for next page
-    if(addFileRef.current)addFileRef.current.click();
-  }
-
-  function handleAddFile(ev){
-    var file=ev.target.files[0];
-    if(!file)return;
-    var reader=new FileReader();
-    reader.onload=function(e2){setCurrentSrc(e2.target.result);};
-    reader.readAsDataURL(file);
-    ev.target.value='';
-  }
-
-  function handleSkipAll(){
-    // If pages already saved, stitch those + current uncropped; if no pages, send original
-    if(pages.length>0){stitchAndSend([...pages,currentSrc]);}
-    else{onSkip();}
-  }
-
-  var overlayStyle={position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.92)',zIndex:9999,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:20};
-  var totalPages=pages.length+1;
-
-  return React.createElement('div',{style:overlayStyle},
-    React.createElement('input',{ref:addFileRef,type:'file',accept:'image/*',style:{display:'none'},onChange:handleAddFile}),
-    // Header with page count
-    React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12,marginBottom:8}},
-      React.createElement('div',{style:{color:'white',fontSize:16,fontWeight:700}},'Crop Image'),
-      totalPages>1&&React.createElement('div',{style:{background:'#3B82F6',color:'white',fontSize:11,fontWeight:700,padding:'3px 10px',borderRadius:12}},'Page '+totalPages)
-    ),
-    React.createElement('div',{style:{color:'rgba(255,255,255,0.6)',fontSize:12,marginBottom:12}},'Drag corners to adjust. Crop to just the transaction rows.'),
-    // Page thumbnails row
-    pages.length>0&&React.createElement('div',{style:{display:'flex',gap:6,marginBottom:12,overflowX:'auto',maxWidth:'100%'}},
-      pages.map(function(pg,i){
-        return React.createElement('div',{key:i,style:{position:'relative',flexShrink:0}},
-          React.createElement('img',{src:pg,style:{height:48,borderRadius:6,border:'2px solid #3B82F6',opacity:0.8}}),
-          React.createElement('div',{style:{position:'absolute',top:-4,right:-4,width:16,height:16,borderRadius:'50%',background:'#3B82F6',color:'white',fontSize:9,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}},i+1),
-          React.createElement('button',{style:{position:'absolute',top:-4,left:-4,width:16,height:16,borderRadius:'50%',background:'#DC2626',color:'white',fontSize:10,fontWeight:700,border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'},onClick:function(){setPages(function(p){return p.filter(function(_,j){return j!==i;});});}},'✕')
-        );
-      })
-    ),
-    // Crop area
-    imgLoaded&&React.createElement('div',{ref:canvasRef,style:{position:'relative',width:imgDims.w,height:imgDims.h,touchAction:'none',userSelect:'none',cursor:dragging?(dragType==='move'?'grabbing':'crosshair'):'default'},
-      onMouseDown:onDown,onMouseMove:onMove,onMouseUp:onUp,onMouseLeave:onUp,
-      onTouchStart:onDown,onTouchMove:onMove,onTouchEnd:onUp},
-      React.createElement('img',{src:currentSrc,style:{width:imgDims.w,height:imgDims.h,display:'block',pointerEvents:'none'}}),
-      React.createElement('div',{style:{position:'absolute',top:0,left:0,width:imgDims.w,height:crop.y,background:'rgba(0,0,0,0.55)'}}),
-      React.createElement('div',{style:{position:'absolute',top:crop.y,left:0,width:crop.x,height:crop.h,background:'rgba(0,0,0,0.55)'}}),
-      React.createElement('div',{style:{position:'absolute',top:crop.y,left:crop.x+crop.w,width:imgDims.w-crop.x-crop.w,height:crop.h,background:'rgba(0,0,0,0.55)'}}),
-      React.createElement('div',{style:{position:'absolute',top:crop.y+crop.h,left:0,width:imgDims.w,height:imgDims.h-crop.y-crop.h,background:'rgba(0,0,0,0.55)'}}),
-      React.createElement('div',{style:{position:'absolute',top:crop.y,left:crop.x,width:crop.w,height:crop.h,border:'2px solid #3B82F6',boxSizing:'border-box',pointerEvents:'none'}}),
-      ['nw','ne','sw','se'].map(function(corner){
-        var sx=corner.indexOf('w')!==-1?crop.x:crop.x+crop.w;
-        var sy=corner.indexOf('n')!==-1?crop.y:crop.y+crop.h;
-        return React.createElement('div',{key:corner,style:{position:'absolute',left:sx-6,top:sy-6,width:12,height:12,background:'#3B82F6',borderRadius:2,border:'2px solid white',cursor:corner+'-resize',pointerEvents:'auto',zIndex:2},
-          onMouseDown:function(ev){ev.preventDefault();ev.stopPropagation();var pos=getPos(ev);setDragging(true);setDragType(corner);setStartPos({x:pos.x,y:pos.y,crop:{...crop}});},
-          onTouchStart:function(ev){ev.stopPropagation();var pos=getPos(ev);setDragging(true);setDragType(corner);setStartPos({x:pos.x,y:pos.y,crop:{...crop}});}
-        });
-      })
-    ),
-    // Buttons row
-    React.createElement('div',{style:{display:'flex',gap:8,marginTop:16,flexWrap:'wrap',justifyContent:'center'}},
-      React.createElement('button',{style:{padding:'10px 20px',borderRadius:12,border:'1px solid rgba(255,255,255,0.3)',background:'transparent',color:'white',fontSize:13,fontWeight:600,cursor:'pointer'},onClick:onCancel},'Cancel'),
-      React.createElement('button',{style:{padding:'10px 20px',borderRadius:12,border:'1px solid rgba(255,255,255,0.3)',background:'transparent',color:'white',fontSize:13,fontWeight:600,cursor:'pointer'},onClick:handleSkipAll},'Skip Crop'),
-      React.createElement('button',{style:{padding:'10px 20px',borderRadius:12,border:'2px solid #3B82F6',background:'transparent',color:'#93C5FD',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:6},onClick:handleCropAndAddPage},
-        React.createElement('span',{style:{fontSize:18,lineHeight:'1'}},'+'),'Add Page'
-      ),
-      React.createElement('button',{style:{padding:'10px 24px',borderRadius:12,border:'none',background:'#3B82F6',color:'white',fontSize:13,fontWeight:700,cursor:'pointer'},onClick:handleCropAndFinish},
-        pages.length>0?'Crop & Upload All ('+totalPages+')':'Crop & Upload'
-      )
-    )
-  );
-}
-
-function CreditCardForm({onSubmit,onCancel,currentUser,editCard}){
-  const [name,setName] = useState(editCard?editCard.name:'');
-  const [bankName,setBankName] = useState(editCard?editCard.bankName:'');
-  const [lastFour,setLastFour] = useState(editCard?editCard.lastFour:'');
-  const [statementDueDay,setStatementDueDay] = useState(editCard?editCard.statementDueDay:15);
-  const [creditLimit,setCreditLimit] = useState(editCard?String(editCard.creditLimit||''):'');
-
-  const BANK_COLORS = {BDO:'#003DA5',Chinabank:'#D4A017',Eastwest:'#E4002B',BPI:'#C41E3A',Unionbank:'#F58220',Metrobank:'#00529B',Security:'#1A3C6D',RCBC:'#003399',HSBC:'#DB0011',Citi:'#003B70'};
-
-  function handleSubmit(){
-    if(!name.trim()||!bankName.trim()){alert('Fill name and bank');return;}
-    onSubmit({
-      id:editCard?editCard.id:Date.now().toString(),
-      name:name.trim(),
-      bankName:bankName.trim(),
-      lastFour:lastFour.trim(),
-      statementDueDay:parseInt(statementDueDay)||15,
-      creditLimit:parseFloat(creditLimit)||0,
-      user:currentUser
-    });
-  }
-
-  return React.createElement('div',null,
-    React.createElement('h3',null,editCard?'Edit Credit Card':'Add Credit Card'),
-    React.createElement('div',{className:'form-grid'},
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Card Name'),
-        React.createElement('input',{type:'text',value:name,onChange:e=>setName(e.target.value),placeholder:'e.g., BDO Gold Visa'})
-      ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Bank'),
-        React.createElement('select',{value:bankName,onChange:e=>setBankName(e.target.value)},
-          React.createElement('option',{value:''},'Choose...'),
-          ['BDO','Chinabank','Eastwest','BPI','Unionbank','Metrobank','Security Bank','RCBC','HSBC','Citi','Other'].map(b=>
-            React.createElement('option',{key:b,value:b},b)
-          )
-        )
-      ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Last 4 Digits'),
-        React.createElement('input',{type:'text',maxLength:4,value:lastFour,onChange:e=>setLastFour(e.target.value.replace(/\D/g,'')),placeholder:'1234'})
-      ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Statement Due Day'),
-        React.createElement('input',{type:'number',min:1,max:31,value:statementDueDay,onChange:e=>setStatementDueDay(e.target.value)})
-      ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Credit Limit'),
-        React.createElement('input',{type:'number',step:1000,value:creditLimit,onChange:e=>setCreditLimit(e.target.value),placeholder:'0'})
-      )
-    ),
-    React.createElement('div',{className:'modal-actions'},
-      React.createElement('button',{className:'btn-cancel',onClick:onCancel},'Cancel'),
-      React.createElement('button',{className:'btn-primary',onClick:handleSubmit},editCard?'Update':'Create')
-    )
-  );
-}
-
-function BankAccountForm({onSubmit,onCancel,currentUser}){
-  const [name,setName] = useState('');
-  const [bankName,setBankName] = useState('');
-  const [startingBalance,setStartingBalance] = useState('');
-
-  function handleSubmit(){
-    if(!name.trim()||!bankName.trim()||!startingBalance){alert('Fill all fields');return;}
-    onSubmit({
-      id:Date.now().toString(),
-      name:name.trim(),
-      bankName:bankName.trim(),
-      startingBalance:parseFloat(startingBalance),
-      user:currentUser
-    });
-  }
-
-  return React.createElement('div',null,
-    React.createElement('h3',null,'Add Bank Account'),
-    React.createElement('div',{className:'form-grid'},
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Account Name'),
-        React.createElement('input',{type:'text',value:name,onChange:e=>setName(e.target.value),placeholder:'e.g., Savings'})
-      ),
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Bank Name'),
-        React.createElement('input',{type:'text',value:bankName,onChange:e=>setBankName(e.target.value),placeholder:'e.g., BDO'})
-      ),
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Starting Balance'),
-        React.createElement('input',{type:'number',step:0.01,value:startingBalance,onChange:e=>setStartingBalance(e.target.value),placeholder:'0.00'})
-      )
-    ),
-    React.createElement('div',{className:'modal-actions'},
-      React.createElement('button',{className:'btn-cancel',onClick:onCancel},'Cancel'),
-      React.createElement('button',{className:'btn-primary',onClick:handleSubmit},'Create')
-    )
-  );
-}
-
-function DepositForm({onSubmit,onCancel,bankAccounts}){
-  const [date,setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [desc,setDesc] = useState('');
-  const [amount,setAmount] = useState('');
-  const [account,setAccount] = useState(bankAccounts.length>0?bankAccounts[0].id:'');
-
-  function handleSubmit(){
-    if(!desc.trim()||!amount||!account){alert('Fill all fields');return;}
-    onSubmit({
-      id:Date.now().toString(),
-      date:normalizeDate(date),
-      description:desc.trim(),
-      amount:parseFloat(amount),
-      account
-    });
-  }
-
-  return React.createElement('div',null,
-    React.createElement('h3',null,'Add Deposit'),
-    React.createElement('div',{className:'form-grid'},
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Date'),
-        React.createElement('input',{type:'date',value:date,onChange:e=>setDate(e.target.value)})
-      ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Amount'),
-        React.createElement('input',{type:'number',step:0.01,value:amount,onChange:e=>setAmount(e.target.value),placeholder:'0.00'})
-      ),
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Account'),
-        React.createElement('select',{value:account,onChange:e=>setAccount(e.target.value)},
-          bankAccounts.map(ba=>React.createElement('option',{key:ba.id,value:ba.id},ba.name))
-        )
-      ),
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Description'),
-        React.createElement('input',{type:'text',value:desc,onChange:e=>setDesc(e.target.value),placeholder:'Salary, transfer, etc.'})
-      )
-    ),
-    React.createElement('div',{className:'modal-actions'},
-      React.createElement('button',{className:'btn-cancel',onClick:onCancel},'Cancel'),
-      React.createElement('button',{className:'btn-primary',onClick:handleSubmit},'Save')
-    )
+    h('button',{className:'ios-btn primary',onClick:handleSubmit},'Save Expense'),
+    onCancel && h('button',{className:'ios-btn secondary',onClick:onCancel,style:{background:'transparent',color:'var(--ios-blue)'},marginTop:'4px'},'Cancel')
   );
 }
 
@@ -2097,102 +431,707 @@ function BillForm({onSubmit,onCancel}){
     });
   }
 
-  return React.createElement('div',null,
-    React.createElement('h3',null,'Add Bill'),
-    React.createElement('div',{className:'form-grid'},
-      React.createElement('div',{className:'form-group full-width'},
-        React.createElement('label',null,'Bill Name'),
-        React.createElement('input',{type:'text',value:name,onChange:e=>setName(e.target.value),placeholder:'e.g., Internet'})
+  return h('div',null,
+    h('h3',null,'Add Bill'),
+    h('div',{className:'ios-input-group'},
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Name'),
+        h('input',{type:'text',value:name,onChange:e=>setName(e.target.value),placeholder:'e.g., Internet'})
       ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Amount'),
-        React.createElement('input',{type:'number',step:0.01,value:amount,onChange:e=>setAmount(e.target.value),placeholder:'0.00'})
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Amount'),
+        h('input',{type:'number',step:0.01,value:amount,onChange:e=>setAmount(e.target.value),placeholder:'0.00'})
       ),
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'Due Date'),
-        React.createElement('input',{type:'date',value:dueDate,onChange:e=>setDueDate(e.target.value)})
+      h('div',{className:'ios-input-row'},
+        h('label',null,'Due Date'),
+        h('input',{type:'date',value:dueDate,onChange:e=>setDueDate(e.target.value)})
       )
     ),
-    React.createElement('div',{className:'modal-actions'},
-      React.createElement('button',{className:'btn-cancel',onClick:onCancel},'Cancel'),
-      React.createElement('button',{className:'btn-primary',onClick:handleSubmit},'Save')
+    h('button',{className:'ios-btn primary',onClick:handleSubmit},'Save Bill'),
+    h('button',{className:'ios-btn secondary',onClick:onCancel,style:{background:'transparent',color:'var(--ios-blue)'}},
+      'Cancel'
     )
   );
 }
 
-function DriverSalaryCalc({onSubmit,onCancel,bankAccounts}){
-  const [week,setWeek] = useState(0);
-  const [days,setDays] = useState([false,false,false,false,false,false,false]);
-  const [otHours,setOtHours] = useState(0);
-  const [adjustments,setAdjustments] = useState([]);
-  const [account,setAccount] = useState(bankAccounts.length>0?bankAccounts[0].id:'');
+function CropModal({pages,onCrop,onCancel}){
+  const canvasRef = useRef(null);
+  const [imgLoaded,setImgLoaded] = useState(false);
+  const [imgDims,setImgDims] = useState({w:0,h:0});
+  const [crop,setCrop] = useState({x:10,y:10,w:300,h:200});
+  const [dragging,setDragging] = useState(false);
+  const [dragType,setDragType] = useState(null);
+  const [startPos,setStartPos] = useState({x:0,y:0,crop:null});
 
-  const daysWorked = days.filter(d=>d).length;
-  const basePay = daysWorked * DRIVER_DAILY;
-  const otPay = otHours * DRIVER_OT_HR;
-  const adjTotal = adjustments.reduce((s,a)=>s+parseFloat(a.amount||0),0);
-  const total = basePay + otPay + adjTotal;
+  const currentSrc = pages.length>0 ? pages[0] : null;
 
-  function handleSubmit(){
-    if(!account||total<=0){alert('Select account and ensure positive amount');return;}
-    const today = new Date().toISOString().split('T')[0];
-    onSubmit(fmt(total),today,account);
+  useEffect(()=>{
+    if(!currentSrc) return;
+    const img = new Image();
+    img.onload = () => {
+      const rect = canvasRef.current?.getBoundingClientRect();
+      const scale = rect ? rect.width / img.width : 1;
+      setImgDims({w: img.width * scale, h: img.height * scale});
+      setImgLoaded(true);
+    };
+    img.src = currentSrc;
+  },[currentSrc]);
+
+  function getPos(ev){
+    const rect = canvasRef.current.getBoundingClientRect();
+    return {x: (ev.clientX || ev.touches?.[0]?.clientX) - rect.left, y: (ev.clientY || ev.touches?.[0]?.clientY) - rect.top};
   }
 
-  return React.createElement('div',null,
-    React.createElement('h3',null,'Driver Salary Calculator'),
-    React.createElement('div',{className:'form-group'},
-      React.createElement('label',null,'Account'),
-      React.createElement('select',{value:account,onChange:e=>setAccount(e.target.value)},
-        bankAccounts.map(ba=>React.createElement('option',{key:ba.id,value:ba.id},ba.name))
+  function onDown(ev){
+    if(!ev.target.getAttribute('data-corner') && ev.target !== canvasRef.current) return;
+    setDragging(true);
+    const pos = getPos(ev);
+    setStartPos({x:pos.x,y:pos.y,crop:{...crop}});
+  }
+
+  function onMove(ev){
+    if(!dragging || !startPos.crop) return;
+    const pos = getPos(ev);
+    const dx = pos.x - startPos.x;
+    const dy = pos.y - startPos.y;
+    const newCrop = {...startPos.crop};
+    setCrop(newCrop);
+  }
+
+  function onUp(){ setDragging(false); }
+
+  function handleCropAndFinish(){
+    const canvas = document.createElement('canvas');
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      const scale = img.width / imgDims.w;
+      ctx.drawImage(img, crop.x*scale, crop.y*scale, crop.w*scale, crop.h*scale, 0, 0, crop.w*scale, crop.h*scale);
+      onCrop(canvas.toDataURL('image/jpeg'));
+    };
+    img.src = currentSrc;
+  }
+
+  return h('div',{className:'modal-overlay',style:{background:'rgba(0,0,0,0.8)'}},
+    h('div',{className:'modal-box',style:{background:'rgba(0,0,0,0.9)',color:'white',maxWidth:'100%',padding:'20px',maxHeight:'100vh'}},
+      h('div',{style:{fontSize:16,fontWeight:'700',marginBottom:12}},'Crop Receipt'),
+      imgLoaded && h('div',{ref:canvasRef,style:{position:'relative',width:imgDims.w,height:imgDims.h,touchAction:'none',userSelect:'none',cursor:'default',marginBottom:16},
+        onMouseDown:onDown,onMouseMove:onMove,onMouseUp:onUp,onMouseLeave:onUp,
+        onTouchStart:onDown,onTouchMove:onMove,onTouchEnd:onUp},
+        h('img',{src:currentSrc,style:{width:imgDims.w,height:imgDims.h,display:'block',pointerEvents:'none'}}),
+        h('div',{style:{position:'absolute',top:0,left:0,width:imgDims.w,height:crop.y,background:'rgba(0,0,0,0.55)'}}),
+        h('div',{style:{position:'absolute',top:crop.y,left:0,width:crop.x,height:crop.h,background:'rgba(0,0,0,0.55)'}}),
+        h('div',{style:{position:'absolute',top:crop.y,left:crop.x+crop.w,width:imgDims.w-crop.x-crop.w,height:crop.h,background:'rgba(0,0,0,0.55)'}}),
+        h('div',{style:{position:'absolute',top:crop.y+crop.h,left:0,width:imgDims.w,height:imgDims.h-crop.y-crop.h,background:'rgba(0,0,0,0.55)'}}),
+        h('div',{style:{position:'absolute',top:crop.y,left:crop.x,width:crop.w,height:crop.h,border:'2px solid #007AFF',boxSizing:'border-box',pointerEvents:'none'}})
+      ),
+      h('div',{style:{display:'flex',gap:8,justifyContent:'center'}},
+        h('button',{className:'ios-btn secondary',onClick:onCancel},'Cancel'),
+        h('button',{className:'ios-btn primary',onClick:handleCropAndFinish},'Crop & Use')
       )
-    ),
-    React.createElement('h4',{style:{fontSize:13,fontWeight:700,marginTop:16,marginBottom:8}},'Select Days Worked'),
-    React.createElement('div',{className:'day-grid'},
-      DAY_NAMES.map((dayName,i)=>React.createElement('div',{
-        className:'day-cell'+(days[i]?' checked':''),
-        key:i,
-        onClick:()=>{const newDays=[...days];newDays[i]=!newDays[i];setDays(newDays);}
+    )
+  );
+}
+
+function TabBar(props) {
+  var tabs = [
+    { id:'home', icon:'🏠', label:'Home' },
+    { id:'expenses', icon:'💳', label:'Expenses' },
+    { id:'driver', icon:'🚗', label:'Driver' },
+    { id:'reimburse', icon:'💰', label:'Reimburse' },
+  ];
+  return h('div', {className:'ios-tab-bar'},
+    tabs.map(function(t) {
+      return h('button', {
+        key: t.id,
+        className: 'tab-item' + (props.active === t.id ? ' active' : ''),
+        onClick: function(){ if(props.onNavigate) props.onNavigate(t.id); }
       },
-        React.createElement('div',{className:'day-name'},dayName),
-        days[i]&&React.createElement('div',{className:'day-check'},'✓')
-      ))
+        h('span', {className:'tab-icon'}, t.icon),
+        h('span', {className:'tab-label'}, t.label)
+      );
+    })
+  );
+}
+
+function HomeScreen(props) {
+  var isDark = props.dark;
+  var currentUser = props.currentUser;
+  var expenses = props.expenses;
+  var syncStatus = props.syncStatus;
+  var lastSyncTime = props.lastSyncTime;
+
+  var now = new Date();
+  var curMonth = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+
+  // Filter visible expenses (hide other user's personal expenses)
+  var visibleExpenses = expenses.filter(function(e){
+    if(e.scope === 'shared') return true;
+    if(e.scope === 'personal' && e.user === currentUser) return true;
+    return false;
+  });
+
+  // Calculate month totals
+  var monthExpenses = visibleExpenses.filter(function(e){ return e.date.startsWith(curMonth); });
+  var totalMonth = monthExpenses.reduce(function(s,e){ return s + parseFloat(e.amount||0); }, 0);
+
+  var sharedExpenses = monthExpenses.filter(function(e){ return e.scope === 'shared'; });
+  var sharedTotal = sharedExpenses.reduce(function(s,e){ return s + parseFloat(e.amount||0); }, 0);
+
+  var recentShared = sharedExpenses.sort(function(a,b){ return new Date(b.date) - new Date(a.date); }).slice(0,5);
+
+  var pendingReimburses = expenses.filter(function(e){ return e.reimbursement && e.reimbursement.to === currentUser && !e.reimbursed; });
+
+  var syncDotColor = syncStatus==='success'?'#34C759':syncStatus==='syncing'?'#FF9500':syncStatus==='error'?'#FF3B30':'#94A3B8';
+
+  return h('div', null,
+    h('div', {className:'content-area'},
+      h('div', {className:'ios-nav'},
+        h('div', {className:'ios-nav-top'},
+          h('button', {className:'nav-action',onClick:props.onSettings}, '⚙️'),
+          h('div', {style:{display:'flex',alignItems:'center',gap:10}},
+            h('span', {style:{fontSize:15,fontWeight:600,color:'var(--label)'}}, currentUser),
+            h('span', {style:{fontSize:13,color:'var(--ios-blue)',fontWeight:500,cursor:'pointer',onClick:props.onSwitchUser}}, 'Switch'),
+            h('button', {className:'dark-toggle-btn', title:'Toggle dark mode', onClick:props.onToggleDark}, isDark ? '☀️' : '🌙')
+          )
+        ),
+        h('div', {className:'ios-nav-large-title'}, 'PoLedger')
+      ),
+      h('div', {className:'sync-bar'},
+        h('span', {className:'sync-dot',style:{background:syncDotColor}}),
+        h('span', null, syncStatus==='syncing'?'Syncing...':syncStatus==='success'&&lastSyncTime?'Synced just now':'Sync failed'),
+        h('button', {style:{background:'none',border:'none',color:'var(--ios-blue)',fontSize:13,cursor:'pointer',marginLeft:'auto',fontWeight:500},onClick:props.onSync}, '↻ Sync')
+      ),
+      pendingReimburses.length > 0 && h('div', {className:'ios-banner'},
+        h('div', {className:'banner-icon', style:{background:'#FFF3CD'}}, '⚠️'),
+        h('div', {className:'banner-text'},
+          h('div', {className:'banner-title'}, currentUser === 'Patrick' ? 'Aica owes you ₱'+pendingReimburses.reduce(function(s,e){ return s + parseFloat(e.amount||0)*(parseFloat(e.reimbursement.percent||0)/100); }, 0).toLocaleString() : 'Patrick owes you ₱'+pendingReimburses.reduce(function(s,e){ return s + parseFloat(e.amount||0)*(parseFloat(e.reimbursement.percent||0)/100); }, 0).toLocaleString()),
+          h('div', {className:'banner-sub'}, pendingReimburses.length + ' unpaid reimbursements')
+        ),
+        h('span', {style:{color:'var(--ios-blue)',fontSize:14,fontWeight:600,cursor:'pointer'},onClick:function(){props.onNavigate('reimburse');}}, '›')
+      ),
+      h('div', {className:'widget-grid'},
+        h('div', {className:'widget-card'},
+          h('div', {className:'widget-label'}, '📊 Total This Month'),
+          h('div', {className:'widget-value'}, fmt(totalMonth))
+        ),
+        h('div', {className:'widget-card'},
+          h('div', {className:'widget-label'}, '👥 Shared Expenses'),
+          h('div', {className:'widget-value', style:{color:'var(--ios-blue)'}}, fmt(sharedTotal))
+        )
+      ),
+      h('div', {className:'quick-actions'},
+        h('button', {className:'quick-action-btn', onClick:function(){props.onNavigate('add');}},
+          h('div', {className:'qa-icon', style:{background:'rgba(0,122,255,0.12)'}}, '✏️'),
+          h('div', {className:'qa-label'}, 'Add Expense')
+        ),
+        h('button', {className:'quick-action-btn',onClick:function(){document.getElementById('receipt-camera').click();}},
+          h('div', {className:'qa-icon', style:{background:'rgba(52,199,89,0.12)'}}, '📷'),
+          h('div', {className:'qa-label'}, 'Take Photo')
+        ),
+        h('button', {className:'quick-action-btn',onClick:function(){document.getElementById('receipt-upload').click();}},
+          h('div', {className:'qa-icon', style:{background:'rgba(255,149,0,0.12)'}}, '🖼️'),
+          h('div', {className:'qa-label'}, 'Upload Receipt')
+        )
+      ),
+      h('div', {className:'ios-section'},
+        h('div', {className:'ios-section-header'},
+          h('span', null, 'Recent Shared Expenses'),
+          h('span', {className:'header-link', onClick:function(){props.onNavigate('expenses');}}, 'See All')
+        ),
+        recentShared.length === 0 ?
+          h('div', {className:'empty-state'}, 'No shared expenses yet')
+          :
+          h('div', {className:'ios-group'},
+            recentShared.map(function(e,i) {
+              var isPatrick = e.user === 'Patrick';
+              return h('div', {className:'expense-item', key:i},
+                h('div', {className:'expense-icon', style:{background: isPatrick ? 'var(--patrick-bg)' : 'var(--aica-bg)'}}, '💳'),
+                h('div', {className:'expense-info'},
+                  h('div', {className:'exp-desc'}, e.description),
+                  h('div', {className:'exp-meta'},
+                    h('span', null, fmtDate(e.date)),
+                    h('span', null, '·'),
+                    h('span', null, e.category),
+                    h('span', null, '·'),
+                    h('span', {style:{color: isPatrick ? 'var(--ios-blue)' : 'var(--aica)', fontWeight:600}}, e.user)
+                  )
+                ),
+                h('div', {className:'expense-amount'}, fmt(e.amount))
+              );
+            })
+          )
+      ),
+      h('input', {id:'receipt-camera', type:'file', accept:'image/*', capture:'environment', style:{display:'none'}, onChange:props.onReceiptUpload}),
+      h('input', {id:'receipt-upload', type:'file', accept:'image/*', style:{display:'none'}, onChange:props.onReceiptUpload}),
+      h(TabBar, {active: 'home', onNavigate: props.onNavigate})
+    )
+  );
+}
+
+function ExpensesScreen(props) {
+  var currentUser = props.currentUser;
+  var expenses = props.expenses;
+  var onNavigate = props.onNavigate;
+  var onDeleteExpense = props.onDeleteExpense;
+
+  var now = new Date();
+  var curMonth = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+
+  // Filter visible expenses
+  var visibleExpenses = expenses.filter(function(e){
+    if(e.scope === 'shared') return true;
+    if(e.scope === 'personal' && e.user === currentUser) return true;
+    return false;
+  });
+
+  var monthExpenses = visibleExpenses.filter(function(e){ return e.date.startsWith(curMonth); });
+
+  return h('div', {className:'content-area'},
+    h('div', {className:'ios-nav'},
+      h('div', {className:'ios-nav-top'},
+        h('span', null),
+        h('button', {className:'nav-action', style:{fontSize:28,fontWeight:300},onClick:function(){onNavigate('add');}}, '+')
+      ),
+      h('div', {className:'ios-nav-large-title'}, 'Expenses')
     ),
-    React.createElement('div',{className:'form-grid'},
-      React.createElement('div',{className:'form-group'},
-        React.createElement('label',null,'OT Hours'),
-        React.createElement('input',{type:'number',step:0.5,value:otHours,onChange:e=>setOtHours(parseFloat(e.target.value)||0)})
-      )
+    h('div', {className:'ios-section'},
+      h('div', {className:'ios-section-header'}, 'This Month'),
+      monthExpenses.length === 0 ?
+        h('div', {className:'empty-state'}, 'No expenses yet')
+        :
+        h('div', {className:'ios-group'},
+          monthExpenses.sort(function(a,b){ return new Date(b.date) - new Date(a.date); }).map(function(e,i) {
+            var isPatrick = e.user === 'Patrick';
+            return h('div', {className:'expense-item', key:i},
+              h('div', {className:'expense-icon', style:{background: isPatrick ? 'var(--patrick-bg)' : 'var(--aica-bg)'}}, '💳'),
+              h('div', {className:'expense-info'},
+                h('div', {className:'exp-desc'}, e.description),
+                h('div', {className:'exp-meta'},
+                  h('span', null, fmtDate(e.date)),
+                  h('span', null, '·'),
+                  h('span', null, e.category),
+                  h('span', null, '·'),
+                  h('span', {style:{color: isPatrick ? 'var(--ios-blue)' : 'var(--aica)', fontWeight:600}}, e.user)
+                )
+              ),
+              h('div', {style:{display:'flex',alignItems:'center',gap:8}},
+                h('div', {className:'expense-amount'}, fmt(e.amount)),
+                h('button', {className:'delete-btn',onClick:function(){onDeleteExpense(e.id);}}, '🗑️')
+              )
+            );
+          })
+        )
     ),
-    React.createElement('h4',{style:{fontSize:13,fontWeight:700,marginTop:16,marginBottom:8}},'Adjustments'),
-    adjustments.map((adj,i)=>React.createElement('div',{className:'adj-row',key:i},
-      React.createElement('input',{type:'text',placeholder:'Description',value:adj.description||'',onChange:e=>{const newAdj=[...adjustments];newAdj[i].description=e.target.value;setAdjustments(newAdj);}}),
-      React.createElement('input',{type:'number',step:0.01,placeholder:'Amount',value:adj.amount||'',onChange:e=>{const newAdj=[...adjustments];newAdj[i].amount=e.target.value;setAdjustments(newAdj);}}),
-      React.createElement('button',{className:'adj-del',onClick:()=>setAdjustments(adjustments.filter((_,j)=>j!==i))},'🗑️')
-    )),
-    React.createElement('button',{className:'data-btn',onClick:()=>setAdjustments([...adjustments,{description:'',amount:''}]),style:{marginBottom:16}},'+ Add Adjustment'),
-    React.createElement('div',{className:'card',style:{background:'#F8FAFC',marginBottom:16}},
-      React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,fontSize:13}},
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'Daily Rate'),React.createElement('div',{style:{fontWeight:700}},fmt(DRIVER_DAILY))),
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'Days Worked'),React.createElement('div',{style:{fontWeight:700}},daysWorked)),
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'Base Pay'),React.createElement('div',{style:{fontWeight:700}},fmt(basePay))),
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'OT Rate'),React.createElement('div',{style:{fontWeight:700}},fmt(DRIVER_OT_HR))),
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'OT Hours'),React.createElement('div',{style:{fontWeight:700}},otHours)),
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'OT Pay'),React.createElement('div',{style:{fontWeight:700}},fmt(otPay))),
-        React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'Adjustments'),React.createElement('div',{style:{fontWeight:700}},fmt(adjTotal))),
-        React.createElement('div',{style:{gridColumn:'1/-1',paddingTop:8,borderTop:'1px solid #E2E8F0',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}},
-          React.createElement('div',null,React.createElement('div',{style:{color:'#94A3B8'}},'Total'),React.createElement('div',{style:{fontWeight:800,fontSize:18,color:'#2563EB'}},fmt(total)))
+    h(TabBar, {active: 'expenses', onNavigate: onNavigate})
+  );
+}
+
+function DriverScreen(props) {
+  var onSubmit = props.onSubmit;
+  var currentUser = props.currentUser;
+
+  var dayNames = DAY_NAMES;
+  var checked = [true,true,true,false,true,false,false];
+  var daysWorked = checked.filter(function(d){return d}).length;
+  var dailyRate = DRIVER_DAILY;
+  var basePay = daysWorked * dailyRate;
+  var otHours = 2;
+  var otRate = DRIVER_OT_HR;
+  var otPay = otHours * otRate;
+  var adjTotal = 0;
+  var total = basePay + otPay + adjTotal;
+
+  var weekLabel = 'Feb 23 – Mar 1, 2026';
+  var workedDays = dayNames.filter(function(d,i){return checked[i];});
+
+  var shareText = '🚗 Driver Salary\n' +
+    weekLabel + '\n' +
+    '━━━━━━━━━━━━━━━━━━━\n' +
+    '📅 Days: ' + workedDays.join(', ') + ' (' + daysWorked + ' days)\n' +
+    '💰 Base Pay: ' + fmt(basePay) + '\n' +
+    '⏱️ OT: ' + otHours + ' hrs = ' + fmt(otPay) + '\n' +
+    '📝 Adjustments: None\n' +
+    '━━━━━━━━━━━━━━━━━━━\n' +
+    '✅ TOTAL: ' + fmt(total);
+
+  return h('div', {className:'content-area'},
+    h('div', {className:'ios-nav'},
+      h('div', {className:'ios-nav-top'},
+        h('span', null),
+        h('span', null)
+      ),
+      h('div', {className:'ios-nav-large-title'}, 'Driver Salary')
+    ),
+    h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between',margin:'0 16px 16px',background:'var(--card)',borderRadius:13,padding:'10px 12px'}},
+      h('button', {style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'var(--ios-blue)',padding:'4px 8px',lineHeight:1}}, '‹'),
+      h('div', {style:{textAlign:'center'}},
+        h('div', {style:{fontSize:15,fontWeight:600,letterSpacing:'-0.24px'}}, weekLabel),
+        h('div', {style:{fontSize:12,color:'var(--label-tertiary)',marginTop:2}}, 'Week 9 of 2026')
+      ),
+      h('button', {style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'var(--ios-blue)',padding:'4px 8px',lineHeight:1}}, '›')
+    ),
+    h('div', {className:'ios-section'},
+      h('div', {className:'ios-section-header'}, 'Days Worked'),
+      h('div', {className:'ios-group', style:{padding:16}},
+        h('div', {style:{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:8,textAlign:'center'}},
+          dayNames.map(function(d,i) {
+            return h('div', {key:i, style:{
+              padding:'10px 4px', borderRadius:12,
+              border: checked[i] ? '2px solid var(--ios-green)' : '2px solid var(--separator)',
+              background: checked[i] ? 'rgba(52,199,89,0.08)' : 'transparent',
+              cursor: 'pointer', transition: 'all 0.2s'
+            }},
+              h('div', {style:{fontSize:11,fontWeight:600,color:checked[i]?'var(--ios-green)':'var(--label-tertiary)'}}, d),
+              h('div', {style:{fontSize:18,marginTop:4}}, checked[i] ? '✅' : '○')
+            );
+          })
         )
       )
     ),
-    React.createElement('div',{className:'modal-actions'},
-      React.createElement('button',{className:'btn-cancel',onClick:onCancel},'Cancel'),
-      React.createElement('button',{className:'btn-primary',onClick:handleSubmit},'Save as Expense')
-    )
+    h('div', {className:'ios-section'},
+      h('div', {className:'ios-section-header'}, 'Summary'),
+      h('div', {className:'ios-group'},
+        h('div', {className:'ios-row'},
+          h('div', {className:'row-label'}, 'Base Pay (' + daysWorked + ' days)'),
+          h('div', {className:'row-value'}, fmt(basePay))
+        ),
+        h('div', {className:'ios-row'},
+          h('div', {className:'row-label'}, 'OT (' + otHours + ' hrs)'),
+          h('div', {className:'row-value'}, fmt(otPay))
+        ),
+        h('div', {className:'ios-row'},
+          h('div', {className:'row-label'}, 'Adjustments'),
+          h('div', {className:'row-value'}, '₱0.00')
+        ),
+        h('div', {className:'ios-row', style:{background:'rgba(0,122,255,0.04)'}},
+          h('div', {className:'row-label', style:{fontWeight:700,fontSize:18}}, 'Total'),
+          h('div', {className:'row-value', style:{fontWeight:800,fontSize:22,color:'var(--ios-blue)'}}, fmt(total))
+        )
+      )
+    ),
+    h('div', {className:'share-preview'},
+      h('div', {className:'share-preview-header'},
+        h('span', {className:'sp-title'}, 'Message Preview'),
+        h('button', {style:{background:'none',border:'none',color:'var(--ios-blue)',fontSize:14,fontWeight:500,cursor:'pointer',fontFamily:'inherit'},onClick:function(){navigator.clipboard.writeText(shareText).then(function(){alert('Copied!');}).catch(function(){});}},'Copy Text')
+      ),
+      h('div', {className:'share-preview-body', style:{fontSize:12,lineHeight:1.5}}, shareText)
+    ),
+    h('button', {className:'ios-btn primary',onClick:function(){onSubmit(total);}}, '💾 Log as Expense'),
+    h(TabBar, {active: 'driver', onNavigate: props.onNavigate})
   );
 }
 
-ReactDOM.render(React.createElement(App),document.getElementById('root'));
+function ReimburseScreen(props) {
+  var expenses = props.expenses;
+  var currentUser = props.currentUser;
+  var onMarkReimbursed = props.onMarkReimbursed;
+  var onNavigate = props.onNavigate;
+
+  // Filter visible expenses
+  var visibleExpenses = expenses.filter(function(e){
+    if(e.scope === 'shared') return true;
+    if(e.scope === 'personal' && e.user === currentUser) return true;
+    return false;
+  });
+
+  var pendingReimburses = visibleExpenses.filter(function(e){ return e.reimbursement && !e.reimbursed; });
+  var completedReimburses = visibleExpenses.filter(function(e){ return e.reimbursement && e.reimbursed; });
+
+  var owedAmount = pendingReimburses.reduce(function(s,e){
+    return s + parseFloat(e.amount||0)*(parseFloat(e.reimbursement.percent||0)/100);
+  }, 0);
+
+  var settledAmount = completedReimburses.reduce(function(s,e){
+    return s + parseFloat(e.amount||0)*(parseFloat(e.reimbursement.percent||0)/100);
+  }, 0);
+
+  return h('div', {className:'content-area'},
+    h('div', {className:'ios-nav'},
+      h('div', {className:'ios-nav-top'}, h('span',null), h('span',null)),
+      h('div', {className:'ios-nav-large-title'}, 'Reimburse')
+    ),
+    h('div', {className:'widget-grid'},
+      h('div', {className:'widget-card'},
+        h('div', {className:'widget-label'}, '💰 Owed Amount'),
+        h('div', {className:'widget-value', style:{color:'var(--ios-orange)'}}, fmt(owedAmount))
+      ),
+      h('div', {className:'widget-card'},
+        h('div', {className:'widget-label'}, '✅ Settled'),
+        h('div', {className:'widget-value', style:{color:'var(--ios-green)'}}, fmt(settledAmount))
+      )
+    ),
+    h('div', {className:'ios-section'},
+      h('div', {className:'ios-section-header'}, 'Pending Reimbursements'),
+      pendingReimburses.length === 0 ?
+        h('div', {className:'empty-state'}, 'All settled!')
+        :
+        h('div', {className:'ios-group'},
+          pendingReimburses.map(function(e,i) {
+            var reimbAmt = parseFloat(e.amount)*parseFloat(e.reimbursement.percent)/100;
+            return h('div', {className:'expense-item', key:i},
+              h('div', {className:'expense-icon', style:{background:'#FEF3C7'}}, '💸'),
+              h('div', {className:'expense-info'},
+                h('div', {className:'exp-desc'}, e.description),
+                h('div', {className:'exp-meta'},
+                  h('span', null, fmtDate(e.date)),
+                  h('span', null, '·'),
+                  h('span', {style:{color:'var(--ios-orange)',fontWeight:600}}, e.reimbursement.to + ' owes')
+                )
+              ),
+              h('div', {style:{textAlign:'right'}},
+                h('div', {className:'expense-amount'}, fmt(reimbAmt)),
+                h('button', {style:{
+                  fontSize:12, fontWeight:600, color:'var(--ios-green)', background:'none',
+                  border:'1px solid var(--ios-green)', borderRadius:14, padding:'4px 12px',
+                  cursor:'pointer', marginTop:4, fontFamily:'inherit'
+                },onClick:function(){onMarkReimbursed(e.id);}}, 'Mark Paid')
+              )
+            );
+          })
+        )
+    ),
+    h(TabBar, {active: 'reimburse', onNavigate: onNavigate})
+  );
+}
+
+function App(){
+  const today = new Date().toISOString().split('T')[0];
+
+  const [scriptUrl,setScriptUrl] = useState(()=>{try{return localStorage.getItem(SCRIPT_URL_KEY)||'';}catch(e){return'';}});
+  const [connected,setConnected] = useState(!!scriptUrl);
+  const [currentUser,setCurrentUser] = useState(()=>{try{return localStorage.getItem('poledger_user')||'';}catch(e){return'';}});
+  const [darkMode,setDarkMode] = useState(()=>{try{return localStorage.getItem('poledger_dark')==='true';}catch(e){return false;}});
+  const [syncStatus,setSyncStatus] = useState('idle');
+  const [lastSyncTime,setLastSyncTime] = useState(null);
+  const [activeTab,setActiveTab] = useState('home');
+  const [expenses,setExpenses] = useState([]);
+  const [showExpenseForm,setShowExpenseForm] = useState(false);
+  const [showBillForm,setShowBillForm] = useState(false);
+  const [showCropModal,setShowCropModal] = useState(false);
+  const [cropPages,setCropPages] = useState([]);
+  const [ocrProcessing,setOcrProcessing] = useState(false);
+
+  function handleConnect(url){
+    try{localStorage.setItem(SCRIPT_URL_KEY,url);}catch(e){}
+    setScriptUrl(url);
+    setConnected(true);
+  }
+
+  function handleSwitchUser(){
+    setCurrentUser('');
+  }
+
+  function handleSelectUser(user){
+    setCurrentUser(user);
+    try{localStorage.setItem('poledger_user',user);}catch(e){}
+  }
+
+  function toggleDarkMode(){
+    const newVal = !darkMode;
+    setDarkMode(newVal);
+    try{localStorage.setItem('poledger_dark',newVal);}catch(e){}
+  }
+
+  useEffect(function(){
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  },[darkMode]);
+
+  function loadData(){
+    if(!scriptUrl) return;
+    setSyncStatus('syncing');
+    api(scriptUrl,'GET')
+      .then(data => {
+        if(data.expenses) setExpenses(data.expenses.map(e=>({...e,date:normalizeDate(e.date)})));
+        setSyncStatus('success');
+        setLastSyncTime(new Date());
+      })
+      .catch(e=>{console.error(e);setSyncStatus('error');});
+  }
+
+  useEffect(function(){
+    if(!scriptUrl) return;
+    loadData();
+  },[scriptUrl]);
+
+  function handleAddExpense(exp){
+    const newExpenses = [exp,...expenses];
+    setExpenses(newExpenses);
+    setShowExpenseForm(false);
+    setActiveTab('home');
+    if(scriptUrl){
+      api(scriptUrl,'POST',{action:'addExpense',expense:exp}).catch(e=>console.error(e));
+    }
+  }
+
+  function handleDeleteExpense(id){
+    setExpenses(expenses.filter(e=>e.id!==id));
+    if(scriptUrl){
+      api(scriptUrl,'POST',{action:'deleteExpense',id}).catch(e=>console.error(e));
+    }
+  }
+
+  function handleAddBill(bill){
+    setShowBillForm(false);
+    if(scriptUrl){
+      api(scriptUrl,'POST',{action:'addBill',bill}).catch(e=>console.error(e));
+    }
+  }
+
+  function handleDriverSalary(amount){
+    const exp = {
+      id:Date.now().toString(),
+      date:today,
+      description:'Driver Salary',
+      amount:parseFloat(amount),
+      category:'Driver Salary',
+      scope:'shared',
+      user:currentUser,
+      reimbursement:null,
+      notes:''
+    };
+    handleAddExpense(exp);
+  }
+
+  function handleMarkReimbursed(expenseId){
+    const updated = expenses.map(e=>{
+      if(e.id===expenseId) return {...e, reimbursed:true, reimbursedDate:today};
+      return e;
+    });
+    setExpenses(updated);
+    if(scriptUrl){
+      api(scriptUrl,'POST',{action:'markReimbursed',id:expenseId}).catch(e=>console.error(e));
+    }
+  }
+
+  function handleReceiptUpload(ev){
+    var file=ev.target.files[0];
+    if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(e2){
+      setCropPages([e2.target.result]);
+      setShowCropModal(true);
+    };
+    reader.readAsDataURL(file);
+    ev.target.value='';
+  }
+
+  function handleCropComplete(b64){
+    setOcrProcessing(true);
+    setShowCropModal(false);
+    api(scriptUrl,'POST',{action:'ocrReceipt',photoBase64:b64}).then(function(d){
+      setOcrProcessing(false);
+      if(d.error) return;
+      window.__ocrData={storeName:d.storeName,amount:d.amount,date:d.date,category:d.category,receiptUrl:d.receiptUrl};
+      window.dispatchEvent(new Event('ocr-complete'));
+      setShowExpenseForm(true);
+    }).catch(function(err){
+      setOcrProcessing(false);
+      console.error(err);
+    });
+  }
+
+  if(!connected){
+    return h('div', {style:{background:'var(--bg)',minHeight:'100vh'}},
+      h(SetupScreen, {onConnect:handleConnect})
+    );
+  }
+
+  if(!currentUser){
+    return h(UserPicker, {onSelect:handleSelectUser});
+  }
+
+  var wrapperProps = darkMode ? {'data-theme':'dark', style:{background:'#000',minHeight:'100vh',color:'#fff'}} : {};
+
+  if(activeTab === 'home'){
+    return h('div', wrapperProps,
+      h(HomeScreen, {
+        dark:darkMode,
+        currentUser:currentUser,
+        expenses:expenses,
+        syncStatus:syncStatus,
+        lastSyncTime:lastSyncTime,
+        onToggleDark:toggleDarkMode,
+        onSwitchUser:handleSwitchUser,
+        onSync:loadData,
+        onSettings:()=>{},
+        onNavigate:setActiveTab,
+        onReceiptUpload:handleReceiptUpload
+      }),
+      showExpenseForm && h('div', {className:'modal-overlay',onClick:()=>setShowExpenseForm(false)},
+        h('div', {className:'modal-box',onClick:e=>e.stopPropagation()},
+          h(ExpenseForm, {
+            onSubmit:handleAddExpense,
+            onCancel:()=>setShowExpenseForm(false),
+            currentUser:currentUser
+          })
+        )
+      ),
+      showBillForm && h('div', {className:'modal-overlay',onClick:()=>setShowBillForm(false)},
+        h('div', {className:'modal-box',onClick:e=>e.stopPropagation()},
+          h(BillForm, {
+            onSubmit:handleAddBill,
+            onCancel:()=>setShowBillForm(false)
+          })
+        )
+      ),
+      showCropModal && h(CropModal, {pages:cropPages, onCrop:handleCropComplete, onCancel:()=>setShowCropModal(false)})
+    );
+  }
+
+  if(activeTab === 'expenses'){
+    return h('div', wrapperProps,
+      h(ExpensesScreen, {
+        currentUser:currentUser,
+        expenses:expenses,
+        onNavigate:setActiveTab,
+        onDeleteExpense:handleDeleteExpense
+      })
+    );
+  }
+
+  if(activeTab === 'driver'){
+    return h('div', wrapperProps,
+      h(DriverScreen, {
+        currentUser:currentUser,
+        onSubmit:handleDriverSalary,
+        onNavigate:setActiveTab
+      })
+    );
+  }
+
+  if(activeTab === 'reimburse'){
+    return h('div', wrapperProps,
+      h(ReimburseScreen, {
+        currentUser:currentUser,
+        expenses:expenses,
+        onMarkReimbursed:handleMarkReimbursed,
+        onNavigate:setActiveTab
+      })
+    );
+  }
+
+  // Default: home
+  return h('div', wrapperProps,
+    h(HomeScreen, {
+      dark:darkMode,
+      currentUser:currentUser,
+      expenses:expenses,
+      syncStatus:syncStatus,
+      lastSyncTime:lastSyncTime,
+      onToggleDark:toggleDarkMode,
+      onSwitchUser:handleSwitchUser,
+      onSync:loadData,
+      onSettings:()=>{},
+      onNavigate:setActiveTab,
+      onReceiptUpload:handleReceiptUpload
+    })
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
 </script>
 </body>
 </html>
